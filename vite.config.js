@@ -2,6 +2,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
 import { fileURLToPath } from "url";
+import eslint from "vite-plugin-eslint";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,6 +17,7 @@ export default defineConfig({
       jsxRuntime: "automatic",
       fastRefresh: true,
     }),
+    eslint(),
   ],
   server: {
     port: 3000,
@@ -24,7 +26,7 @@ export default defineConfig({
     alias: {
       "@": createAlias(""), // src/, 项目根目录
       "@components": createAlias("components"), // src/components/, 组件专用通道
-      "~img": createAlias("assets/img"), // src/assets/img/, 图片专用通道
+      "~img": createAlias("assets/images"), // src/assets/images/, 图片专用通道
       "#types": createAlias("types"), // src/types/, TS类型定义目录
     },
   },

@@ -1,9 +1,21 @@
 // 主程序
 import React, { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
+import Product from "@components/Product";
+import "./main.css";
+import { product } from "@/assets/data";
 
 function App() {
-  return <h1>Hello, React!</h1>;
+  const handleProductClick = (title) => {
+    alert("Product clicked! " + title);
+  };
+
+  return (
+    <div>
+      <h1>Hello, React!</h1>
+      <Product {...product} onProductClick={handleProductClick} />
+    </div>
+  );
 }
 
 // JSX 是 JavaScript 的语法扩展，允许我们在 JavaScript 代码中编写类似 HTML 的代码.
