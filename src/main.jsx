@@ -1,19 +1,14 @@
 // 主程序
 import React, { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
-import Product from "@components/Product";
 import "./main.css";
-import { product } from "@/assets/data";
+import { NEW_ARRIVALS_LIST } from "@/assets/data"; // 导入产品数据
+import ProductList from "@components/ProductList";
 
 function App() {
-  const handleProductClick = (title) => {
-    alert("Product clicked! " + title);
-  };
-
   return (
     <div>
-      <h1>Hello, React!</h1>
-      <Product {...product} onProductClick={handleProductClick} />
+      <ProductList data={NEW_ARRIVALS_LIST} />
     </div>
   );
 }
