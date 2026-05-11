@@ -24,7 +24,7 @@ function ProductList({ data }) {
       </div>
 
       {data.map((p) => (
-        <Product {...p} />
+        <Product {...p} key={p.title} />
       ))}
     </div>
   );
