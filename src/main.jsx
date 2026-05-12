@@ -2,13 +2,13 @@
 import React, { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import "./main.css";
-import { NEW_ARRIVALS_LIST } from "@/assets/data"; // 导入产品数据
+import { NEW_ARRIVALS_LIST_2 } from "@/assets/data"; // 导入产品数据
 import ProductList from "@components/ProductList";
 
 function App() {
   return (
     <div>
-      <ProductList data={NEW_ARRIVALS_LIST} />
+      <ProductList data={NEW_ARRIVALS_LIST_2} />
     </div>
   );
 }
