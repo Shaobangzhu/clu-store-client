@@ -3,7 +3,15 @@ import React from "react";
 import Product from "@components/Product";
 
 function ProductList({ data }) {
-  return data.length > 0 ? (
+  const isReleased = new Date() <= new Date("2199-01-01T00:00:00");
+  if (!isReleased) {
+    return <div>新产品发布日期: 2199-01-01, 请耐心等待</div>;
+  }
+
+  if (data.length <= 0) {
+    return <div>产品未发布</div>;
+  }
+  return (
     <div
       style={{
         display: "grid",
@@ -27,8 +35,6 @@ function ProductList({ data }) {
         <Product {...p} key={p.title} />
       ))}
     </div>
-  ) : (
-    <div>产品未发布</div>
   );
 }
 
