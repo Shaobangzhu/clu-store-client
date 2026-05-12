@@ -2,6 +2,14 @@ import { NEW_ARRIVALS_LIST, OFFER_LIST } from "@/assets/data"; // 导入产品�
 import ProductList from "@components/ProductList";
 import NewArrival from "@components/NewArrival";
 import Offer from "@components/Offer";
+import withSoldOut from "../HOCs/withSoldOut";
+
+const NewArrivalWithSoldOutCheck = withSoldOut((props) => {
+  const { title } = props;
+  return <NewArrival {...props} title={"商品: " + title} />;
+});
+
+const OfferWithSoldOutCheck = withSoldOut(Offer);
 
 function Home() {
   return (
@@ -11,7 +19,7 @@ function Home() {
         datalength={NEW_ARRIVALS_LIST.length}
       >
         {NEW_ARRIVALS_LIST.map((item) => (
-          <NewArrival {...item} key={item.title} />
+          <NewArrivalWithSoldOutCheck {...item} key={item.title} scale={1.05} />
         ))}
       </ProductList>
       <ProductList
@@ -19,7 +27,7 @@ function Home() {
         datalength={OFFER_LIST.length}
       >
         {OFFER_LIST.map((item) => (
-          <Offer {...item} key={item.title} />
+          <OfferWithSoldOutCheck {...item} key={item.title} />
         ))}
       </ProductList>
     </div>
