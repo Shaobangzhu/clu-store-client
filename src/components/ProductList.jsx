@@ -1,6 +1,6 @@
 // 主程序
 import React from "react";
-import Product from "@components/Product";
+import NewArrival from "@components/NewArrival";
 
 const ReleaseNote = () => (
   <div>
@@ -16,7 +16,7 @@ const ProductNotFound = () => (
   </div>
 );
 
-const ListTitle = () => (
+const ListTitle = ({ title }) => (
   <div style={{ display: "flex", justifyContent: "center" }}>
     <h1
       style={{
@@ -25,18 +25,18 @@ const ListTitle = () => (
         backgroundPosition: "center",
       }}
     >
-      上新品，各个添新意
+      {title || "新品上市"}
     </h1>
   </div>
 );
 
-function ProductList({ data }) {
+function ProductList({ title, datalength, children }) {
   const isReleased = new Date() <= new Date("2199-01-01T00:00:00");
   if (!isReleased) {
     return <ReleaseNote />;
   }
 
-  if (data.length <= 0) {
+  if (datalength <= 0) {
     return <ProductNotFound />;
   }
   return (
@@ -47,10 +47,8 @@ function ProductList({ data }) {
         rowGap: "3rem",
       }}
     >
-      <ListTitle />
-      {data.map((p) => (
-        <Product {...p} key={p.title} />
-      ))}
+      <ListTitle title={title} />
+      {children}
     </div>
   );
 }
