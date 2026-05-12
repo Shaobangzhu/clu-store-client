@@ -1,18 +1,34 @@
 import styles from "./Product.module.css";
 import styled from "styled-components";
 
+const StyledProductTextContainer = styled.div`
+  position: absolute;
+  top: 1.5rem;
+  padding-left: 1.5rem;
+  padding-top: 2rem;
+  color: ${(props) => props.$textColor || "white"};
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+`;
+
 const StyledProductContainer = styled.div`
   max-width: 28rem;
   position: relative;
-  transition: transform ${(props) => props.transition || "0.1s"} ease-in-out;
+  transition: transform ${(props) => props.$transition || "0.1s"} ease-in-out;
 
   &:hover {
-    transform: scale(${(props) => props.scale || 1});
+    transform: scale(${(props) => props.$scale || 1});
     cursor: pointer;
   }
 `;
 
-function Product({ image, title, detail, scale = 1.05, onProductClick }) {
+function Product({
+  image,
+  title,
+  detail,
+  textColor,
+  scale = 1.05,
+  onProductClick,
+}) {
   const imgStyle = {
     height: "auto",
     width: "100%",
@@ -21,15 +37,15 @@ function Product({ image, title, detail, scale = 1.05, onProductClick }) {
 
   return (
     <StyledProductContainer
-      scale={scale}
-      transition="0.5s"
+      $scale={scale}
+      $transition="0.5s"
       onClick={() => onProductClick(title)}
     >
       <img style={imgStyle} src={image} alt="iPad Pro" />
-      <div className={styles.productTextContainer}>
+      <StyledProductTextContainer $textColor={textColor}>
         <div className={styles.productTitle}>{title}</div>
         <div className={styles.productDetail}>{detail}</div>
-      </div>
+      </StyledProductTextContainer>
     </StyledProductContainer>
   );
 }
