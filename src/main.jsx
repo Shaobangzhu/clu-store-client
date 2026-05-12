@@ -2,31 +2,15 @@
 import React, { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import "./main.css";
-import { NEW_ARRIVALS_LIST, OFFER_LIST } from "@/assets/data"; // 导入产品数据
-import ProductList from "@components/ProductList";
-import NewArrival from "@components/NewArrival";
-import Offer from "@components/Offer";
+
+import MainLayout from "./layouts/MainLayout";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import Home from "./pages/Home";
 
 function App() {
   return (
-    <div>
-      <ProductList
-        title={"上新品, 各个添新意。"}
-        datalength={NEW_ARRIVALS_LIST.length}
-      >
-        {NEW_ARRIVALS_LIST.map((item) => (
-          <NewArrival {...item} key={item.title} />
-        ))}
-      </ProductList>
-      <ProductList
-        title={"限时折扣, 买到就是赚到。"}
-        datalength={OFFER_LIST.length}
-      >
-        {OFFER_LIST.map((item) => (
-          <Offer {...item} key={item.title} />
-        ))}
-      </ProductList>
-    </div>
+    <MainLayout header={<Header />} content={<Home />} footer={<Footer />} />
   );
 }
 
