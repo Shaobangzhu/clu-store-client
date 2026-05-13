@@ -10,7 +10,11 @@ import Home from "./pages/Home";
 
 function App() {
   return (
-    <MainLayout header={<Header />} content={<Home />} footer={<Footer />} />
+    <h1 className="text-3xl font-bold text-blue-600">
+      Tailwind css + Vite + React
+    </h1>
+
+    // <MainLayout header={<Header />} content={<Home />} footer={<Footer />} />
   );
 }
 
