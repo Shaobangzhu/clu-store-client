@@ -4,6 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import eslint from "vite-plugin-eslint";
 import tailwindcss from "@tailwindcss/vite";
+import svgr from "vite-plugin-svgr";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,6 +21,7 @@ export default defineConfig({
     }),
     eslint(),
     tailwindcss(),
+    svgr(),
   ],
   server: {
     port: 3000,
