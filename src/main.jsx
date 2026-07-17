@@ -10,11 +10,7 @@ import Home from "./pages/Home";
 
 function App() {
   return (
-    <h1 className="text-3xl font-bold text-blue-600">
-      Tailwind css + Vite + React
-    </h1>
-
-    // <MainLayout header={<Header />} content={<Home />} footer={<Footer />} />
+    <MainLayout header={<Header />} content={<Home />} footer={<Footer />} />
   );
 }
 
@@ -25,5 +21,5 @@ const rootElement = ReactDOM.createRoot(root); // 创建一个 React 根元素
 rootElement.render(
   <StrictMode>
     <App />
-  </StrictMode>,
+  </StrictMode>
 ); // 将 App 组件渲染到根元素中

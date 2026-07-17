@@ -2,6 +2,7 @@ import { NEW_ARRIVALS_LIST, OFFER_LIST } from "@/assets/data"; // 导入产品�
 import ProductList from "@components/ProductList";
 import NewArrival from "@components/NewArrival";
 import Offer from "@components/Offer";
+import ImageHero from "@components/ImageHero";
 import withSoldOut from "../HOCs/withSoldOut";
 import withBanner from "../HOCs/withBanner";
 
@@ -20,6 +21,7 @@ const OfferWithSoldOutCheck = withSoldOut(Offer);
 function Home() {
   return (
     <div>
+      <ImageHero />
       <ProductList
         title={"上新品, 各个添新意。"}
         datalength={NEW_ARRIVALS_LIST.length}
