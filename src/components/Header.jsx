@@ -2,17 +2,21 @@ import Logo from "../assets/apple.svg?react";
 // 不加 ?react 需要使用 <img src={Logo} alt="logo" />
 import { AiOutlineMenu, AiOutlineSearch } from "react-icons/ai";
 import { useState } from "react";
+import DarkToggle from "./DarkToggle";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSearchEnable, setIsSearchEnable] = useState(false);
 
   return (
-    <nav className="flex items-center justify-between px-4 h-16 shadow-md sticky top-0 z-50 bg-white/70 backdrop-blur-md">
+    <nav 
+      className="flex items-center justify-between px-4 h-16 shadow-md sticky top-0 z-50 
+      bg-white/70 dark:bg-black/90 backdrop-blur-md"
+    >
       <a href="#" className="text-xl font-bold">
-        <Logo className="w-6 h-6 hover:scale-105 transition-transform" />
+        <Logo className="w-6 h-6 hover:scale-105 transition-transform dark:fill-white" />
       </a>
-      <div className="flex gap-6 hidden md:flex mx-auto">
+      <div className="gap-6 hidden md:flex mx-auto dark:text-white">
         <a href="#">商店</a>
         <a href="#">电脑</a>
         <a href="#">手机</a>
@@ -31,21 +35,26 @@ const Header = () => {
             peer-focus:text-xs
             peer-focus:text-blue-500
             transition-all
+            dark:text-white
           ">
             搜索
           </label>
         </div>
       )}
-      <div className="gap-2">
+      <div className="gap-2 dark:text-white space-x-2">
         <button onClick={() => setIsSearchEnable(!isSearchEnable)}>
           <AiOutlineSearch size={24} />
         </button>
+        <DarkToggle />
         <button className="md:hidden" onClick={() => setIsOpen(true)}>
           <AiOutlineMenu size={24}/>
         </button>
       </div>
       <div className={`md:hidden fixed top-0 right-0 h-full w-64 ${isOpen ? "block" : "hidden"}`}>
-        <div className="flex flex-col mt-17 space-y-6 bg-white text-center p-6 rounded-lg">
+        <div 
+          className="flex flex-col mt-17 space-y-6 
+          bg-white dark:bg-black/70 text-center p-6 rounded-lg dark:text-white"
+        >
           <a href="#">商店</a>
           <a href="#">电脑</a>
           <a href="#">手机</a>
