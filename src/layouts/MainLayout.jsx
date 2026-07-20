@@ -1,6 +1,6 @@
 const MainLayout = ({ header, content, footer }) => {
   return (
-    <div>
+    <div className="bg-gray-100 dark:bg-gray-800">
       {header ?? <h1>默认标题</h1>}
       {content ?? <p>默认内容</p>}
       {footer ?? <p>默认页脚</p>}

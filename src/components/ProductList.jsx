@@ -20,10 +20,12 @@ const ListTitle = ({ title }) => (
   <div style={{ display: "flex", justifyContent: "center" }}>
     <h1
       style={{
+        fontSize: 32,
         fontWeight: "800",
         backgroundImage: "url('src/assets/lines.png')",
         backgroundPosition: "center",
       }}
+      className="dark:text-white"
     >
       {title || "新品上市"}
     </h1>
@@ -42,6 +44,7 @@ function ProductList({ title, datalength, children }) {
   return (
     <div
       style={{
+        marginTop: "4rem",
         display: "grid",
         justifyItems: "center",
         rowGap: "3rem",
