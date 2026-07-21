@@ -10,13 +10,20 @@ const Header = () => {
 
   return (
     <nav 
-      className="flex items-center justify-between px-4 h-16 shadow-md sticky top-0 z-50 
-      bg-white/70 dark:bg-black/90 backdrop-blur-md"
+      className="flex items-center justify-between px-4 h-16 sticky top-0 z-50 
+      bg-apple-light
+      dark:bg-apple-dark 
+      shadow-apple-md
+      backdrop-blur-md"
     >
       <a href="#" className="text-xl font-bold">
         <Logo className="w-6 h-6 hover:scale-105 transition-transform dark:fill-white" />
       </a>
-      <div className="gap-6 hidden md:flex mx-auto dark:text-white">
+      <div 
+        className="gap-6 hidden md:flex mx-auto
+        text-apple-text-light
+        dark:text-apple-text-dark"
+      >
         <a href="#">商店</a>
         <a href="#">电脑</a>
         <a href="#">手机</a>
@@ -27,21 +34,29 @@ const Header = () => {
       {isSearchEnable && (
         <div className="relative">
           <input
-            className="peer border border-gray-300 px-4 py-2 w-64 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            className="peer border 
+            border-apple-gray-200 px-4 py-2 w-64 rounded-lg focus:outline-none focus:ring-2 
+            focus:ring-apple-blue transition"
           />
           <label 
             className="absolute left-2 top-2
             peer-focus:-top-2
             peer-focus:text-xs
-            peer-focus:text-blue-500
+            peer-focus:text-apple-blue
             transition-all
-            dark:text-white
+            text-apple-text-light
+            dark:text-apple-text-dark
           ">
             搜索
           </label>
         </div>
       )}
-      <div className="gap-2 dark:text-white space-x-2">
+      <div 
+        className="gap-2
+        text-apple-text-light
+        dark:text-apple-text-dark 
+        space-x-2"
+      >
         <button onClick={() => setIsSearchEnable(!isSearchEnable)}>
           <AiOutlineSearch size={24} />
         </button>
@@ -53,7 +68,12 @@ const Header = () => {
       <div className={`md:hidden fixed top-0 right-0 h-full w-64 ${isOpen ? "block" : "hidden"}`}>
         <div 
           className="flex flex-col mt-17 space-y-6 
-          bg-white dark:bg-black/70 text-center p-6 rounded-lg dark:text-white"
+          bg-apple-light 
+          dark:bg-apple-dark
+          shadow-apple-md
+          text-center p-6 rounded-lg
+          text-apple-text-light
+          dark:text-apple-text-dark"
         >
           <a href="#">商店</a>
           <a href="#">电脑</a>
@@ -64,8 +84,12 @@ const Header = () => {
         </div>
       </div>
       {isOpen && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-md md:hidden z-40" 
-           onClick={() => setIsOpen(false)}
+        <div 
+          className="fixed inset-0 
+          bg-apple-black/50
+          dark:bg-apple-white/10
+          backdrop-blur-md" 
+          onClick={() => setIsOpen(false)}
         ></div>
       )}
     </nav>
