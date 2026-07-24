@@ -1,10 +1,11 @@
-import { NEW_ARRIVALS_LIST, OFFER_LIST } from "@/assets/data"; // 导入产品数据
+import { NEW_ARRIVALS_LIST, OFFER_LIST, SUGGESTED_PROUDCT } from "@/assets/data"; // 导入产品数据
 import ProductList from "@components/ProductList";
 import NewArrival from "@components/NewArrival";
 import Offer from "@components/Offer";
 import ImageHero from "@components/ImageHero";
 import withSoldOut from "../HOCs/withSoldOut";
 import withBanner from "../HOCs/withBanner";
+import ProductHero from "../components/ProductHero";
 
 const NewArrivalWithSoldOutCheck = withSoldOut((props) => {
   const { title } = props;
@@ -22,6 +23,10 @@ function Home() {
   return (
     <div>
       <ImageHero />
+      <ProductHero 
+        product={SUGGESTED_PROUDCT.product}
+        imageUrl={SUGGESTED_PROUDCT.imageSrc}
+      />
       <ProductList
         title={"上新品, 各个添新意。"}
         datalength={NEW_ARRIVALS_LIST.length}
