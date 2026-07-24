@@ -1,21 +1,40 @@
 import { FiSun } from "react-icons/fi";
+import { FiMoon } from "react-icons/fi";
+import { useState } from "react";
 
 function DarkToggle() {
-    const toggleDark = () => {
-        document.documentElement.classList.toggle("dark");
-    };
+  const [isDark, setIsDark] = useState(false);
 
-    return (
-      <button 
-        className="p-1 bg-gray-200 dark:bg-gray-600 rounded-full
+  const toggleDark = () => {
+    setIsDark(!isDark);
+  };
+
+  // TODO: useEffect，原因：DOM操作不应该写在组件主体内
+  const root = document.documentElement;
+  if (isDark) {
+    root.classList.add("dark");
+  } else {
+    root.classList.remove("dark");
+  }
+
+  return (
+    <button
+      className="p-1 bg-gray-200 dark:bg-gray-600 rounded-full
         hover:bg-gray-300 dark:hover:bg-gray-400 transition-all duration-300
         hover:rotate-12
       "
       onClick={toggleDark}
-      >
-        <FiSun size={24} className="text-yellow-400 animate-pulse" />
-      </button>
-    );
+    >
+      {!isDark ? (
+        <FiMoon
+          size={24}
+          className="text-gray-800 dark:text-gray-200 animate-pulse"
+        />
+      ) : (
+        <FiSun size={24} className="text-yellow-400 animate-pulse " />
+      )}
+    </button>
+  );
 }
 
 export default DarkToggle;
