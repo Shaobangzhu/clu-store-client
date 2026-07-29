@@ -1,6 +1,13 @@
 import SkuSelect from "./SkuSelect";
+import { useState } from "react";
 
 function ProductHero({ product, imageUrl }) {
+  const [selectedModel, setSelectedModel] = useState();
+  const [selectedColor, setSelectedColor] = useState();
+  const [selectedMemorySize, setSelectedMemorySize] = useState();
+
+  console.log("ProductHero", selectedModel, selectedColor, selectedMemorySize);
+
   return (
     <div
       className="flex flex-col lg:flex-row-reverse
@@ -24,11 +31,20 @@ function ProductHero({ product, imageUrl }) {
           <SkuSelect
             placeholder={"型号"}
             options={product.models.map((model) => model.name)}
+            onChange={setSelectedModel}
+            value={selectedModel}
           />
-          <SkuSelect placeholder={"颜色"} options={product.colors} />
+          <SkuSelect
+            placeholder={"颜色"}
+            options={product.colors}
+            onChange={setSelectedColor}
+            value={selectedColor}
+          />
           <SkuSelect
             placeholder={"存储容量"}
             options={product.memorySizes.map((size) => size.name)}
+            onChange={setSelectedMemorySize}
+            value={selectedMemorySize}
           />
           <button
             className="
@@ -38,6 +54,14 @@ function ProductHero({ product, imageUrl }) {
             hover:bg-apple-blue
             hover:text-apple-gray-100
             "
+            onClick={() => {
+              alert(
+                "加入购物车：" +
+                  selectedModel +
+                  selectedColor +
+                  selectedMemorySize,
+              );
+            }}
           >
             加入购物车
           </button>

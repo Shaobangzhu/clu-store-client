@@ -1,10 +1,6 @@
 import { IoIosArrowDropdown } from "react-icons/io";
-import { useState } from "react";
 
-function SkuSelect({ placeholder, options }) {
-  const [value, setValue] = useState("");
-  console.log("当前选项: ", value);
-
+function SkuSelect({ placeholder, options, onChange, value }) {
   return (
     <div className="w-24 relative">
       <select
@@ -18,7 +14,8 @@ function SkuSelect({ placeholder, options }) {
         text-apple-text-light
         dark:text-apple-text-dark 
         "
-        onChange={(e) => setValue(e.target.value)}
+        value={value || ""}
+        onChange={(e) => onChange(e.target.value)}
       >
         <option value="">{placeholder}</option>
         {options.map((option) => (
