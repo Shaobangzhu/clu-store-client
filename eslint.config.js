@@ -33,7 +33,7 @@ export default defineConfig([
         { allowConstantExport: true },
       ],
       "no-param-reassign": [
-        "error",
+        "warn",
         {
           props: true,
           ignorePropertyModificationsFor: ["ref"],

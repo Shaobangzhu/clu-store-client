@@ -1,5 +1,12 @@
 import SkuSelect from "./SkuSelect";
 import { useState } from "react";
+import { produce } from "immer";
+
+const updateItem = (key, value) => {
+  return produce((draft) => {
+    draft[key] = value;
+  });
+};
 
 function ProductHero({ product, imageUrl }) {
   const [cartItem, setCartItem] = useState({
@@ -34,7 +41,7 @@ function ProductHero({ product, imageUrl }) {
             placeholder={"型号"}
             options={product.models.map((model) => model.name)}
             onChange={(value) => {
-              setCartItem({ ...cartItem, model: value });
+              setCartItem(updateItem("model", value));
             }}
             value={cartItem.model}
           />
@@ -42,7 +49,7 @@ function ProductHero({ product, imageUrl }) {
             placeholder={"颜色"}
             options={product.colors}
             onChange={(value) => {
-              setCartItem({ ...cartItem, color: value });
+              setCartItem(updateItem("color", value));
             }}
             value={cartItem.color}
           />
@@ -50,7 +57,7 @@ function ProductHero({ product, imageUrl }) {
             placeholder={"存储容量"}
             options={product.memorySizes.map((size) => size.name)}
             onChange={(value) => {
-              setCartItem({ ...cartItem, memorySize: value });
+              setCartItem(updateItem("memorySize", value));
             }}
             value={cartItem.memorySize}
           />
