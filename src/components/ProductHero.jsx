@@ -2,11 +2,13 @@ import SkuSelect from "./SkuSelect";
 import { useState } from "react";
 
 function ProductHero({ product, imageUrl }) {
-  const [selectedModel, setSelectedModel] = useState();
-  const [selectedColor, setSelectedColor] = useState();
-  const [selectedMemorySize, setSelectedMemorySize] = useState();
-
-  console.log("ProductHero", selectedModel, selectedColor, selectedMemorySize);
+  const [cartItem, setCartItem] = useState({
+    productId: product.id,
+    imageSrc: product.image,
+    model: null,
+    color: null,
+    memorySize: null,
+  });
 
   return (
     <div
@@ -31,20 +33,26 @@ function ProductHero({ product, imageUrl }) {
           <SkuSelect
             placeholder={"型号"}
             options={product.models.map((model) => model.name)}
-            onChange={setSelectedModel}
-            value={selectedModel}
+            onChange={(value) => {
+              setCartItem({ ...cartItem, model: value });
+            }}
+            value={cartItem.model}
           />
           <SkuSelect
             placeholder={"颜色"}
             options={product.colors}
-            onChange={setSelectedColor}
-            value={selectedColor}
+            onChange={(value) => {
+              setCartItem({ ...cartItem, color: value });
+            }}
+            value={cartItem.color}
           />
           <SkuSelect
             placeholder={"存储容量"}
             options={product.memorySizes.map((size) => size.name)}
-            onChange={setSelectedMemorySize}
-            value={selectedMemorySize}
+            onChange={(value) => {
+              setCartItem({ ...cartItem, memorySize: value });
+            }}
+            value={cartItem.memorySize}
           />
           <button
             className="
@@ -57,9 +65,9 @@ function ProductHero({ product, imageUrl }) {
             onClick={() => {
               alert(
                 "加入购物车：" +
-                  selectedModel +
-                  selectedColor +
-                  selectedMemorySize,
+                  cartItem.model +
+                  cartItem.color +
+                  cartItem.memorySize,
               );
             }}
           >
