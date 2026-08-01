@@ -16,7 +16,7 @@ const ProductNotFound = () => (
   </div>
 );
 
-const ListTitle = ({ title }) => (
+const ListTitle = ({ title }: { title: string }) => (
   <div style={{ display: "flex", justifyContent: "center" }}>
     <h1
       style={{
@@ -32,7 +32,18 @@ const ListTitle = ({ title }) => (
   </div>
 );
 
-function ProductList({ title, datalength, children }) {
+type ProductListProps = {
+  title?: string;
+  datalength: number;
+  children: React.ReactNode;
+};
+// 这个组件是一个产品列表组件，它接收三个props: title, datalength 和 children
+
+const ProductList = ({ 
+  title, 
+  datalength, 
+  children 
+}: ProductListProps) => {
   const isReleased = new Date() <= new Date("2199-01-01T00:00:00");
   if (!isReleased) {
     return <ReleaseNote />;
@@ -50,7 +61,7 @@ function ProductList({ title, datalength, children }) {
         rowGap: "3rem",
       }}
     >
-      <ListTitle title={title} />
+      <ListTitle title={title!} />
       {children}
     </div>
   );
