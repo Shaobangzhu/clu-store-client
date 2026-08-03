@@ -1,5 +1,5 @@
-interface ButtonProps {
-  title?: string;
+export interface ButtonProps {
+  title?: React.ReactNode;
   variant?: "primary" | "outline";
   disabled?: boolean;
   onClick?: () => void;
