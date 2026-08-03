@@ -1,6 +1,5 @@
 // 主程序
 import React from "react";
-import NewArrival from "@components/NewArrival";
 
 const ReleaseNote = () => (
   <div>
