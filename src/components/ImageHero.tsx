@@ -1,6 +1,5 @@
 import hero_small_image from "../assets/images/hero_small.jpg";
 import hero_image from "../assets/images/hero.jpg";
-import Button from "./Button";
 import IconButton from "./IconButton";
 import { AiOutlineShoppingCart } from "react-icons/ai";
 import { MdOutlineNavigateNext } from "react-icons/md";
