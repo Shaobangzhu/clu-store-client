@@ -1,15 +1,20 @@
-// Sample offer data:
-// {
-//     type: "限时折扣",
-//     title: "春季大促销",
-//     details: "全场满100减20",
-//     image: "https://example.com/spring-sale.jpg",
-// }
 import styles from "./Offer.module.css";
 
-function Offer({ type, title, detail, image }) {
+export interface OfferProps {
+  type: string;
+  title: string;
+  detail: string;
+  image: string;
+}
+
+function Offer({ type, title, detail, image }: OfferProps) {
+  const handleClick: React.MouseEventHandler<HTMLDivElement> = (e) => {
+    console.log(e.target);
+    console.log(e.currentTarget);
+    alert("Offer clicked " + e.currentTarget.dataset.title);
+  };
   return (
-    <div className={styles.container}>
+    <div className={styles.container} onClick={handleClick} data-title={title}>
       <img src={image} className={styles.image} />
       <div className={styles.content}>
         <div className={styles.type}>{type}</div>
