@@ -2,19 +2,35 @@ import SkuSelect from "./SkuSelect";
 import { useState } from "react";
 import { produce } from "immer";
 
-const updateItem = (key, value) => {
+import type { Product, CartItem } from "@/types/custom";
+
+const updateItem = (updates: Partial<CartItem>) => {
   return produce((draft) => {
-    draft[key] = value;
+    // for (const key in updates) {
+    //   (draft as any)[key] = updates[key as keyof CartItem];
+    // }
+    Object.assign(draft, updates);
   });
 };
 
-function ProductHero({ product, imageUrl }) {
-  const [cartItem, setCartItem] = useState({
+type ProductHeroProps = {
+  product: Product;
+  imageUrl: string;
+};
+
+function ProductHero({ product, imageUrl }: ProductHeroProps) {
+  const [cartItem, setCartItem] = useState<CartItem>({
     productId: product.id,
+    name: product.name,
     imageSrc: product.image,
+    modelId: null,
+    modelPrice: null,
     model: null,
     color: null,
     memorySize: null,
+    memorySizeId: null,
+    memorySizePrice: null,
+    qty: 1,
   });
 
   return (
@@ -41,7 +57,17 @@ function ProductHero({ product, imageUrl }) {
             placeholder={"型号"}
             options={product.models.map((model) => model.name)}
             onChange={(value) => {
-              setCartItem(updateItem("model", value));
+              const selectedModel = product.models.find(
+                (model) => model.name === value,
+              );
+              if (selectedModel)
+                setCartItem(
+                  updateItem({
+                    model: selectedModel.name,
+                    modelId: selectedModel.id,
+                    modelPrice: selectedModel.price,
+                  }),
+                );
             }}
             value={cartItem.model}
           />
@@ -49,7 +75,7 @@ function ProductHero({ product, imageUrl }) {
             placeholder={"颜色"}
             options={product.colors}
             onChange={(value) => {
-              setCartItem(updateItem("color", value));
+              setCartItem(updateItem({ color: value as string })); // 确保类型安全
             }}
             value={cartItem.color}
           />
@@ -57,7 +83,17 @@ function ProductHero({ product, imageUrl }) {
             placeholder={"存储容量"}
             options={product.memorySizes.map((size) => size.name)}
             onChange={(value) => {
-              setCartItem(updateItem("memorySize", value));
+              const selectedMemorySize = product.memorySizes.find(
+                (size) => size.name === value,
+              );
+              if (selectedMemorySize)
+                setCartItem(
+                  updateItem({
+                    memorySize: selectedMemorySize.name,
+                    memorySizeId: selectedMemorySize.id,
+                    memorySizePrice: selectedMemorySize.price,
+                  }),
+                );
             }}
             value={cartItem.memorySize}
           />
@@ -70,12 +106,7 @@ function ProductHero({ product, imageUrl }) {
             hover:text-apple-gray-100
             "
             onClick={() => {
-              alert(
-                "加入购物车：" +
-                  cartItem.model +
-                  cartItem.color +
-                  cartItem.memorySize,
-              );
+              alert("加入购物车：" + JSON.stringify(cartItem));
             }}
           >
             加入购物车
