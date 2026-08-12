@@ -1,18 +1,20 @@
 import type { ReactNode } from "react";
+import { Outlet } from "react-router-dom";
 
-const MainLayout = ({ 
-  header, 
-  content, 
-  footer 
+const MainLayout = ({
+  header,
+  footer,
 }: {
   header?: ReactNode;
-  content?: ReactNode;
   footer?: ReactNode;
 }) => {
   return (
     <div className="bg-apple-light dark:bg-apple-dark">
       {header ?? <h1>默认标题</h1>}
-      {content ?? <p>默认内容</p>}
+      <div className="min-h-screen bg-apple-white dark:bg-apple-dark text-apple-text dark:text-apple-text-dark">
+        <Outlet />
+        {/* Outlet 用于渲染嵌套路由的内容 */}
+      </div>
       {footer ?? <p>默认页脚</p>}
     </div>
   );

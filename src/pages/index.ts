@@ -6,3 +6,5 @@ export { default as Computers } from "./Computers";
 export { default as SmartHome } from "./SmartHome";
 export { default as Entertainment } from "./Entertainment";
 export { default as Support } from "./Support";
+export { default as SignIn } from "./SignIn";
+export { default as Register } from "./Register";
