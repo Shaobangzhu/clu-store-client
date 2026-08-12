@@ -3,13 +3,15 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import { Route, Routes } from "react-router-dom";
-import About from "./pages/About";
-import Phones from "./pages/Phones";
-import Computers from "./pages/Computers";
-import IPad from "./pages/Ipad";
-import Entertainment from "./pages/Entertainment";
-import Support from "./pages/Support";
-import SmartHome from "./pages/SmartHome";
+import {
+  About,
+  Phones,
+  IPad,
+  Computers,
+  SmartHome,
+  Entertainment,
+  Support,
+} from "./pages"; // 使用 index.ts 导入所有页面组件
 
 function App() {
   return (
@@ -29,8 +31,8 @@ function App() {
       <Route path="/computers" element={<Computers />} />
       <Route path="/ipad" element={<IPad />} />
       <Route path="/entertainment" element={<Entertainment />} />
-      <Route path="/support" element={<Support />} />
       <Route path="/smarthome" element={<SmartHome />} />
+      <Route path="/support" element={<Support />} />
     </Routes>
   );
 }
