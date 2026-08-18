@@ -13,7 +13,7 @@ export interface MemorySize {
   price: number;
 }
 
-export type Color = "沙漠色钛金属" | "原色钛金属" | "白色钛金属" | "黑色钛金属";
+export type Color = string;
 
 // 定义 Phone 产品类型
 export interface Product {
@@ -21,7 +21,7 @@ export interface Product {
   name: string;
   title: string;
   image: string;
-  carouselImage: string[];
+  carouselImages: string[];
   startingPrice: number;
   installments: number;
   models: ProductModel[];

@@ -1,7 +1,7 @@
 import {
   NEW_ARRIVALS_LIST,
   OFFER_LIST,
-  SUGGESTED_PROUDCT,
+  SUGGESTED_PRODUCT,
 } from "../assets/data"; // 导入产品数据
 import ProductList from "@components/ProductList";
 import NewArrival, { type NewArrivalProps } from "@components/NewArrival";
@@ -28,8 +28,8 @@ function Home() {
     <div>
       <ImageHero />
       <ProductHero
-        product={SUGGESTED_PROUDCT.product}
-        imageUrl={SUGGESTED_PROUDCT.imageSrc}
+        product={SUGGESTED_PRODUCT.product}
+        imageUrl={SUGGESTED_PRODUCT.imageSrc}
       />
       <ProductList
         title={"上新品, 各个添新意。"}

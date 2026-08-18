@@ -1,14 +1,20 @@
 // fake product data
+import hero_image from "~img/hero.jpg";
+import hero_small_image from "~img/hero_small.jpg";
+import product_image from "~img/store-card-ipad-pro.jpeg";
+
+const phoneImage = product_image;
+const macImage = hero_image;
+const ipadImage = product_image;
+const carouselImages = [hero_small_image, hero_image];
+
 // phone
 export const IPHONE_16_PRO = {
   id: 1,
   name: "iPhone 16 Pro",
   title: "iPhone 巅峰之作",
-  image: "http://152.136.182.210:12231/images/phones/compare_iphone-16-pro.png",
-  carouselImages: [
-    "http://152.136.182.210:12231/images/phones/carousel_1.webp",
-    "http://152.136.182.210:12231/images/phones/carousel_2.webp",
-  ],
+  image: phoneImage,
+  carouselImages,
   startingPrice: 7999.0,
   installments: 250.0,
   models: [
@@ -50,11 +56,8 @@ export const IPHONE_16 = {
   id: 2,
   name: "iPhone 16",
   title: "实打实的实力",
-  image: "images/phones/compare_iphone-16.png",
-  carouselImages: [
-    "images/phones/carousel_1.webp",
-    "images/phones/carousel_2.webp",
-  ],
+  image: phoneImage,
+  carouselImages,
   startingPrice: 5999,
   installments: 250,
   models: [
@@ -93,11 +96,8 @@ export const IPHONE_15 = {
   id: 3,
   name: "iPhone 15",
   title: "浑身都出彩",
-  image: "images/phones/compare_iphone-15.png",
-  carouselImages: [
-    "images/phones/carousel_1.webp",
-    "images/phones/carousel_2.webp",
-  ],
+  image: phoneImage,
+  carouselImages,
   startingPrice: 5399,
   installments: 225,
   models: [
@@ -136,11 +136,8 @@ export const IPHONE_14 = {
   id: 4,
   name: "iPhone 14",
   title: "集齐各种赞",
-  image: "images/phones/compare_iphone_14.png",
-  carouselImages: [
-    "images/phones/carousel_1.webp",
-    "images/phones/carousel_2.webp",
-  ],
+  image: phoneImage,
+  carouselImages,
   startingPrice: 4699,
   installments: 196,
   models: [
@@ -179,11 +176,8 @@ export const IPHONE_SE = {
   id: 5,
   name: "iPhone SE",
   title: "够强够实惠",
-  image: "images/phones/compare_iphone-se.png",
-  carouselImages: [
-    "images/phones/carousel_1.webp",
-    "images/phones/carousel_2.webp",
-  ],
+  image: phoneImage,
+  carouselImages,
   startingPrice: 3499,
   installments: 146,
   models: [{ id: 2, name: "iPhone SE", spec: "5.7 英寸显示屏", price: 3499 }],
@@ -220,8 +214,8 @@ export const MacBook_Air = {
   id: 6,
   name: "MacBook Air",
   title: "轻薄便携，无所不能",
-  image: "images/mac/compare_mba.png",
-  carouselImages: ["images/mac/carousel_1.webp", "images/mac/carousel_2.webp"],
+  image: macImage,
+  carouselImages,
   startingPrice: 7999,
   installments: 333,
   models: [
@@ -249,8 +243,8 @@ export const MacBook_Pro_16 = {
   id: 4,
   name: "MacBook Pro 16",
   title: "动力，来势汹汹",
-  image: "images/mac/compare_mbp.png",
-  carouselImages: ["images/mac/carousel_1.webp", "images/mac/carousel_2.webp"],
+  image: macImage,
+  carouselImages,
   startingPrice: 19999,
   installments: 833,
   models: [
@@ -278,8 +272,8 @@ export const iMac = {
   id: 5,
   name: "iMac",
   title: "色彩斑斓，无所不能",
-  image: "images/mac/compare_imac.png",
-  carouselImages: ["images/mac/carousel_1.webp", "images/mac/carousel_2.webp"],
+  image: macImage,
+  carouselImages,
   startingPrice: 7999,
   installments: 333,
   models: [
@@ -308,11 +302,8 @@ export const iPad_Pro = {
   id: 9,
   name: "iPad Pro M3",
   title: "无所不能",
-  image: "images/ipad/compare_ipad_pro.png",
-  carouselImages: [
-    "images/ipad/carousel_1.webp",
-    "images/ipad/carousel_2.webp",
-  ],
+  image: ipadImage,
+  carouselImages,
   startingPrice: 7999,
   installments: 333,
   models: [
@@ -351,11 +342,8 @@ export const iPad_Air = {
   id: 10,
   name: "iPad Air M3",
   title: "轻薄便携，无所不能",
-  image: "images/ipad/compare_ipad_air.png",
-  carouselImages: [
-    "images/ipad/carousel_1.webp",
-    "images/ipad/carousel_2.webp",
-  ],
+  image: ipadImage,
+  carouselImages,
   startingPrice: 4999,
   installments: 208,
   models: [
@@ -394,11 +382,8 @@ export const iPad = {
   id: 11,
   name: "iPad M3",
   title: "轻薄便携，无所不能",
-  image: "images/ipad/compare_ipad.png",
-  carouselImages: [
-    "images/ipad/carousel_1.webp",
-    "images/ipad/carousel_2.webp",
-  ],
+  image: ipadImage,
+  carouselImages,
   startingPrice: 2999,
   installments: 125,
   models: [
@@ -437,11 +422,8 @@ export const ipad_mini = {
   id: 12,
   name: "iPad Mini M3",
   title: "轻薄便携，无所不能",
-  image: "images/ipad/compare_ipad_mini.png",
-  carouselImages: [
-    "images/ipad/carousel_1.webp",
-    "images/ipad/carousel_2.webp",
-  ],
+  image: ipadImage,
+  carouselImages,
   startingPrice: 3999,
   installments: 167,
   models: [

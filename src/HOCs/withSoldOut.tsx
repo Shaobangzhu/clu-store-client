@@ -1,13 +1,18 @@
+import type { ComponentType } from "react";
 import styles from "./withSoldOut.module.css";
 
-function withSoldOut(WrappedComponent) {
-  return ({ soldOut, ...props }) => {
+type SoldOutProps = {
+  soldOut?: boolean;
+};
+
+function withSoldOut<P extends object>(WrappedComponent: ComponentType<P>) {
+  return ({ soldOut = false, ...props }: P & SoldOutProps) => {
     return soldOut ? (
       <div className={styles.grayOverlay}>
-        <WrappedComponent {...props} />
+        <WrappedComponent {...(props as P)} />
       </div>
     ) : (
-      <WrappedComponent {...props} />
+      <WrappedComponent {...(props as P)} />
     );
   };
 }

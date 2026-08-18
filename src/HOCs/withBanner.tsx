@@ -1,11 +1,20 @@
-function withBanner(WrapperComponent, text) {
-  return ({ soldOut, ...props }) => {
+import type { ComponentType } from "react";
+
+type SoldOutProps = {
+  soldOut?: boolean;
+};
+
+function withBanner<P extends object>(
+  WrapperComponent: ComponentType<P & SoldOutProps>,
+  text: string,
+) {
+  return ({ soldOut = false, ...props }: P & SoldOutProps) => {
     if (!soldOut) {
-      return <WrapperComponent {...props} soldOut={soldOut} />;
+      return <WrapperComponent {...(props as P)} soldOut={soldOut} />;
     }
     return (
       <div style={{ position: "relative", display: "inline-block" }}>
-        <WrapperComponent {...props} soldOut={soldOut} />
+        <WrapperComponent {...(props as P)} soldOut={soldOut} />
         <div
           style={{
             position: "absolute",

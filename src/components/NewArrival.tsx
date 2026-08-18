@@ -36,7 +36,7 @@ export type NewArrivalProps = {
   detail: string;
   textColor?: string;
   scale?: number;
-  onProductClick: (title: string) => void;
+  onProductClick?: (title: string) => void;
 };
 
 function NewArrival({
@@ -45,7 +45,7 @@ function NewArrival({
   detail,
   textColor,
   scale = 1.05,
-  onProductClick,
+  onProductClick = () => {},
 }: NewArrivalProps) {
   const imgStyle = {
     height: "auto",
