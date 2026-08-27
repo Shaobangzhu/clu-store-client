@@ -1,8 +1,24 @@
 import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault(); // 阻止表单提交后的默认行为, 如自动刷新页面
+    if (email !== "clu@gmail.com" || password !== "123456") {
+      alert("邮箱或密码错误, 请重试");
+      return;
+    }
+    // 模拟登陆逻辑
+    navigate(
+      location.state.from || "/", // 优先跳转来源页面
+      { replace: true },
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-800 to-gray-900 flex items-center justify-center p-4">
@@ -35,7 +51,7 @@ function SignIn() {
           </h1>
 
           {/* 登录表单 */}
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleLogin}>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">
                 邮箱
