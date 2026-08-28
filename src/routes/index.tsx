@@ -13,6 +13,9 @@ import {
   Support,
   SignIn,
   Register,
+  ErrorPage,
+  NotFound,
+  ProductDetail,
 } from "../pages";
 
 const router = createBrowserRouter([
@@ -24,14 +27,33 @@ const router = createBrowserRouter([
       {
         index: true, // 默认子路由
         element: <Home />,
+        errorElement: <ErrorPage />,
       },
-      { path: "about", element: <About /> },
-      { path: "phones", element: <Phones /> },
-      { path: "ipad", element: <IPad /> },
-      { path: "computers", element: <Computers /> },
-      { path: "smarthome", element: <SmartHome /> },
-      { path: "entertainment", element: <Entertainment /> },
-      { path: "support", element: <Support /> },
+      { path: "about", element: <About />, errorElement: <ErrorPage /> },
+      { path: "phones", element: <Phones />, errorElement: <ErrorPage /> },
+      { path: "ipad", element: <IPad />, errorElement: <ErrorPage /> },
+      {
+        path: "computers",
+        element: <Computers />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "smarthome",
+        element: <SmartHome />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "entertainment",
+        element: <Entertainment />,
+        errorElement: <ErrorPage />,
+      },
+      { path: "support", element: <Support />, errorElement: <ErrorPage /> },
+      {
+        path: "product-detail/:id",
+        element: <ProductDetail />,
+        errorElement: <ErrorPage />,
+      },
+      { path: "*", element: <NotFound /> },
     ],
   },
   // 用户权限目录"/auth""

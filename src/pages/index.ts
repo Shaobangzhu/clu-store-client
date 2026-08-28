@@ -8,3 +8,6 @@ export { default as Entertainment } from "./Entertainment";
 export { default as Support } from "./Support";
 export { default as SignIn } from "./SignIn";
 export { default as Register } from "./Register";
+export { default as ErrorPage } from "./ErrorPage";
+export { default as NotFound } from "./NotFound";
+export { default as ProductDetail } from "./ProductDetail";

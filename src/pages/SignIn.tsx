@@ -15,7 +15,7 @@ function SignIn() {
     }
     // 模拟登陆逻辑
     navigate(
-      location.state.from || "/", // 优先跳转来源页面
+      location.state?.from || "/", // 优先跳转来源页面
       { replace: true },
     );
   };
