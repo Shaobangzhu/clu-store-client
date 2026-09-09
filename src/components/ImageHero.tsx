@@ -8,17 +8,18 @@ import { useNavigate } from "react-router-dom";
 const ImageHero = () => {
   const navigate = useNavigate();
 
-  function sleepSync(milliseconds: number) {
-    const start = Date.now();
-    while (Date.now() - start < milliseconds) {
-      // 空转，占用 CPU, 阻塞后续代码执行
-    }
+  function sleepASync(milliseconds: number) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, milliseconds);
+    });
   }
 
   const fakeFetchData = () => {
     // 模拟数据获取
-    sleepSync(10000); // 阻塞 10 秒
-    console.log("数据获取完毕");
+    sleepASync(10000).then(() => {
+      console.log("数据获取完成");
+      navigate("/product-detail/1");
+    }); // 阻塞 10秒
   };
 
   return (
@@ -43,7 +44,6 @@ const ImageHero = () => {
             variant="primary"
             onClick={() => {
               fakeFetchData(); // 模拟数据获取
-              navigate("/product-detail/1");
             }}
           />
           <IconButton
