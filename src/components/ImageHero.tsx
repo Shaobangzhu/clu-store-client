@@ -7,6 +7,20 @@ import { useNavigate } from "react-router-dom";
 
 const ImageHero = () => {
   const navigate = useNavigate();
+
+  function sleepSync(milliseconds: number) {
+    const start = Date.now();
+    while (Date.now() - start < milliseconds) {
+      // 空转，占用 CPU, 阻塞后续代码执行
+    }
+  }
+
+  const fakeFetchData = () => {
+    // 模拟数据获取
+    sleepSync(10000); // 阻塞 10 秒
+    console.log("数据获取完毕");
+  };
+
   return (
     <div className="relative bg-black text-white mb-2">
       {/* 图片区域 */}
@@ -27,7 +41,10 @@ const ImageHero = () => {
             iconPosition="right"
             title="进一步了解"
             variant="primary"
-            onClick={() => navigate("/product-detail/1")}
+            onClick={() => {
+              fakeFetchData(); // 模拟数据获取
+              navigate("/product-detail/1");
+            }}
           />
           <IconButton
             icon={<AiOutlineShoppingCart />}
