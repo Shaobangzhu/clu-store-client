@@ -16,10 +16,20 @@ const SearchResults = () => {
   useEffect(() => {
     // 副作用逻辑
     fetch(`http://152.136.182.210:12231/api/products?keyword=${query}`)
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("网络响应不是OK");
+        }
+        // 检查响应状态码是否为200
+        return response.json();
+      })
       .then((data) => {
         console.log("Fetched data: ", data);
         setSearchResults(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching search results: ", error);
+        setSearchResults([]); // 出错时清空结果
       });
   }, []); // 依赖数组
   // 空数组 []: 只在组件挂载 (mount) 时执行一次。
