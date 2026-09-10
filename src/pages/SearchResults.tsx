@@ -1,4 +1,6 @@
 import { useSearchParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import type { Product } from "@/types/custom";
 
 const SearchResults = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -9,6 +11,21 @@ const SearchResults = () => {
     setSearchParams({ query: query || "", page: newPage.toString() });
   };
 
+  const [searchResults, setSearchResults] = useState<Product[]>([]); // 假设这是从API获取的搜索结果
+
+  useEffect(() => {
+    // 副作用逻辑
+    fetch(`http://152.136.182.210:12231/api/products?keyword=${query}`)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Fetched data: ", data);
+        setSearchResults(data);
+      });
+  }, []); // 依赖数组
+  // 空数组 []: 只在组件挂载 (mount) 时执行一次。
+  // 有依赖: 依赖变化时重新执行
+  // 不写依赖: 每次渲染都会执行 (不推荐, 容易浪费性能)
+
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <h1 className="text-2xl font-bold mb-4">Search Results</h1>
@@ -16,6 +33,19 @@ const SearchResults = () => {
         搜索关键词
         {query ? `"${query}"` : "未指定"}
       </p>
+      {searchResults.length > 0 ? (
+        <ul>
+          {searchResults.map((product) => (
+            <li key={product.id} className="mb-2">
+              <h2 className="text-lg font-semibold">
+                {product.name} - {product.startingPrice}
+              </h2>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>暂无搜索结果</p>
+      )}
       <button onClick={() => handlePageChange(page - 1)}>上一页</button>
       <button onClick={() => handlePageChange(page + 1)}>下一页</button>
     </div>
