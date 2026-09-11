@@ -31,7 +31,7 @@ const SearchResults = () => {
         console.error("Error fetching search results: ", error);
         setSearchResults([]); // 出错时清空结果
       });
-  }, []); // 依赖数组
+  }, [query]); // 依赖数组
   // 空数组 []: 只在组件挂载 (mount) 时执行一次。
   // 有依赖: 依赖变化时重新执行
   // 不写依赖: 每次渲染都会执行 (不推荐, 容易浪费性能)
