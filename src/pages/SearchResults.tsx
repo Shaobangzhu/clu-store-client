@@ -1,9 +1,12 @@
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import type { Product } from "@/types/custom";
 import { useDebounce } from "@/helpers/useDebounce";
+import Button from "@/components/Button";
 
 const SearchResults = () => {
+  const navigate = useNavigate();
+
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get("query");
   const debouncedQuery = useDebounce(query, 500); // 使用自定义的防抖钩子
@@ -49,14 +52,14 @@ const SearchResults = () => {
       console.log("清理函数执行, 取消请求");
       controller.abort(); // 取消请求
     };
-  }, [query]); // 依赖数组
+  }, [debouncedQuery]); // 等待输入停止后再发起搜索请求
   // 空数组 []: 只在组件挂载 (mount) 时执行一次。
   // 有依赖: 依赖变化时重新执行
   // 不写依赖: 每次渲染都会执行 (不推荐, 容易浪费性能)
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <div className="max-w-4xl mx-auto mb-12">
+    <div className="flex min-h-screen w-full flex-col items-center px-4 py-8">
+      <div className="w-full max-w-4xl mx-auto mb-12">
         <input
           type="text"
           value={query ?? ""}
@@ -70,22 +73,58 @@ const SearchResults = () => {
           transition-all
           "
         />
+        <p className="mt-6">搜索关键词: {query}</p>
       </div>
-      {searchResults.length > 0 ? (
-        <ul>
-          {searchResults.map((product) => (
-            <li key={product.id} className="mb-2">
-              <h2 className="text-lg font-semibold">
-                {product.name} - {product.startingPrice}
-              </h2>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>暂无搜索结果</p>
-      )}
-      <button onClick={() => handlePageChange(page - 1)}>上一页</button>
-      <button onClick={() => handlePageChange(page + 1)}>下一页</button>
+      <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+        {searchResults.map((product) => (
+          <div
+            key={product.id}
+            className="bg-apple-gray-100 dark:bg-apple-gray-900 dark:border-apple-gray-500
+              rounded-2xl shadow-sm p-6
+              hover:transform hover:scale-105 transition-all duration-300
+            "
+          >
+            <div className="aspect-square object-contain rounded-xl">
+              <img
+                className="w-full h-full object-contain rounded-xl"
+                src={product.image}
+                alt={product.image}
+              />
+            </div>
+            <h3 className="text-2xl font-semibold mt-2">{product.name}</h3>
+            <p className="text-gray-400 mb-4">{product.title}</p>
+            <div className="flex items-center justify-between">
+              <span className="text-2xl font-medium">
+                {product.startingPrice}
+              </span>
+              <div className="flex gap-3">
+                <Button title="立刻购买" />
+                <Button
+                  title="了解更多"
+                  variant="outline"
+                  onClick={() => navigate(`/product-detail/${product.id}`)}
+                />
+              </div>
+            </div>
+            {!product.inStock && (
+              <div className="mt-4 text-red-400">暂时缺货</div>
+            )}
+          </div>
+        ))}
+      </div>
+      <div className="flex items-center justify-center mt-8 gap-6">
+        <h2 className="text-xl font-medium text-apple-text dark:text-apple-text-dark">
+          当前第 <span className="font-semibold">{page}</span> 页
+        </h2>
+        <Button
+          title="上一页"
+          onClick={() => handlePageChange(page - 1)}
+        ></Button>
+        <Button
+          title="下一页"
+          onClick={() => handlePageChange(page + 1)}
+        ></Button>
+      </div>
     </div>
   );
 };
