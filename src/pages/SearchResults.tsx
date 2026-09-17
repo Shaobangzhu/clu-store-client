@@ -16,32 +16,33 @@ const SearchResults = () => {
 
   const [searchResults, setSearchResults] = useState<Product[]>([]); // 假设这是从API获取的搜索结果
 
+  const search = async (signal: AbortSignal) => {
+    try {
+      const response = await fetch(
+        `http://152.136.182.210:12231/api/products?keyword=${debouncedQuery}`,
+        {
+          signal,
+        },
+      );
+      if (!response.ok) {
+        throw new Error("网络响应不是OK");
+      }
+      // 检查响应状态码是否为200
+      const data = await response.json();
+      console.log("Fetched data:", data);
+      setSearchResults(data);
+    } catch (error) {
+      console.error("Error fetching search results: ", error);
+      setSearchResults([]); // 出错时清空结果
+    }
+  };
+
   useEffect(() => {
     // 副作用逻辑
     const controller = new AbortController();
     // 创建一个新的AbortController实例, 用于取消请求
     const signal = controller.signal;
-    fetch(
-      `http://152.136.182.210:12231/api/products?keyword=${debouncedQuery}`,
-      {
-        signal,
-      },
-    )
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("网络响应不是OK");
-        }
-        // 检查响应状态码是否为200
-        return response.json();
-      })
-      .then((data) => {
-        console.log("Fetched data: ", data);
-        setSearchResults(data);
-      })
-      .catch((error) => {
-        console.error("Error fetching search results: ", error);
-        setSearchResults([]); // 出错时清空结果
-      });
+    search(signal); // 调用搜索函数
 
     return () => {
       // 清理函数
