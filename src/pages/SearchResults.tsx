@@ -1,10 +1,13 @@
 import { useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import type { Product } from "@/types/custom";
+import { useDebounce } from "@/helpers/useDebounce";
 
 const SearchResults = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get("query");
+  const debouncedQuery = useDebounce(query, 500); // 使用自定义的防抖钩子
+
   const page = parseInt(searchParams.get("page") || "1"); // 获取页码 默认为1
 
   const handlePageChange = (newPage: number) => {
@@ -18,34 +21,32 @@ const SearchResults = () => {
     const controller = new AbortController();
     // 创建一个新的AbortController实例, 用于取消请求
     const signal = controller.signal;
-    const timer = setTimeout(() => {
-      console.log("延时执行逻辑");
-      fetch(`http://152.136.182.210:12231/api/products?keyword=${query}`, {
+    fetch(
+      `http://152.136.182.210:12231/api/products?keyword=${debouncedQuery}`,
+      {
         signal,
+      },
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("网络响应不是OK");
+        }
+        // 检查响应状态码是否为200
+        return response.json();
       })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("网络响应不是OK");
-          }
-          // 检查响应状态码是否为200
-          return response.json();
-        })
-        .then((data) => {
-          console.log("Fetched data: ", data);
-          setSearchResults(data);
-        })
-        .catch((error) => {
-          console.error("Error fetching search results: ", error);
-          setSearchResults([]); // 出错时清空结果
-        });
-    }, 500);
+      .then((data) => {
+        console.log("Fetched data: ", data);
+        setSearchResults(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching search results: ", error);
+        setSearchResults([]); // 出错时清空结果
+      });
 
     return () => {
       // 清理函数
       console.log("清理函数执行, 取消请求");
       controller.abort(); // 取消请求
-      clearTimeout(timer); // 清除定时器
-      console.log("定时器已清除, 搜索请求已取消");
     };
   }, [query]); // 依赖数组
   // 空数组 []: 只在组件挂载 (mount) 时执行一次。
