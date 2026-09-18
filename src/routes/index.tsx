@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, type LoaderFunctionArgs } from "react-router-dom";
 import { Header, Footer } from "@/components";
 import MainLayout from "@/layouts/MainLayout";
 import BlankLayout from "@/layouts/BlankLayout";
@@ -21,6 +21,7 @@ import {
   UserCenter,
 } from "../pages";
 import RequireAuth from "@/HOCs/RequireAuth";
+import { loadProducts } from "@/helpers/loaders";
 
 const router = createBrowserRouter([
   // 根目录 "/"
@@ -56,6 +57,16 @@ const router = createBrowserRouter([
         path: "product-detail/:id",
         element: <ProductDetail />,
         errorElement: <ErrorPage />,
+        loader: async ({ params, request }: LoaderFunctionArgs) => {
+          const productId = params.id;
+          if (!productId) {
+            throw new Response("未提供产品ID", {
+              status: 400,
+              statusText: "Bad Request",
+            });
+          }
+          return await loadProducts(productId, request.signal);
+        },
       },
       {
         path: "search",

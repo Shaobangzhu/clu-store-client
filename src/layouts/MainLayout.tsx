@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigation } from "react-router-dom";
 
 const MainLayout = ({
   header,
@@ -8,11 +8,13 @@ const MainLayout = ({
   header?: ReactNode;
   footer?: ReactNode;
 }) => {
+  const navigation = useNavigation();
+
   return (
     <div className="bg-apple-light dark:bg-apple-dark">
       {header ?? <h1>默认标题</h1>}
       <div className="min-h-screen bg-apple-white dark:bg-apple-dark text-apple-text dark:text-apple-text-dark">
-        <Outlet />
+        {navigation.state === "loading" ? <div>页面加载中</div> : <Outlet />}
         {/* Outlet 用于渲染嵌套路由的内容 */}
       </div>
       {footer ?? <p>默认页脚</p>}
