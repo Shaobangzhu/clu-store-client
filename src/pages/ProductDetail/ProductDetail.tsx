@@ -31,8 +31,7 @@ const ProductDetail = () => {
 
   useEffect(() => {
     const total =
-      product.startingPrice ??
-      0 + (selectedModel?.price ?? 0) + (selectedMemorySize?.price ?? 0);
+      (product.startingPrice ?? 0) + (selectedMemorySize?.price ?? 0);
     setTotalAmount(total);
   }, [product, selectedModel, selectedMemorySize, selectedColor]);
 

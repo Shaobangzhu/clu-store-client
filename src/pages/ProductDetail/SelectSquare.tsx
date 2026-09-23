@@ -16,7 +16,7 @@ const SelectSquare = ({
   return (
     <div className="w-full flex justify-center">
       <div
-        className={`w-[370px] h-20 rounded-xl cursor-pointer
+        className={`w-[370px] h-25 rounded-xl cursor-pointer
         ${
           isSelected
             ? "border-3 border-apple-blue"

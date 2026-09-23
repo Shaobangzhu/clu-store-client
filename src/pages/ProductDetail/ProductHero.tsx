@@ -1,15 +1,34 @@
-interface ProductTitleProps {
+interface ProductHeroProps {
   imageSrc: string;
 }
 
-const ProductHero = ({ imageSrc }: ProductTitleProps) => (
-  <div className="w-full lg:w-2/3 h-[80vh] flex items-center justify-center">
-    <img
-      className="w-full h-full object-cover rounded-3xl"
-      src={imageSrc}
-      alt=""
-    />
-  </div>
-);
+const ProductHero = ({ imageSrc }: ProductHeroProps) => {
+  return (
+    <div
+      className="
+        w-full
+        overflow-hidden
+        rounded-3xl
+        bg-[#f5f5f7]
+        aspect-[4/3]
+        flex
+        items-center
+        justify-center
+        lg:sticky
+        lg:top-28
+      "
+    >
+      <img
+        src={imageSrc}
+        alt=""
+        className="
+          w-full
+          h-full
+          object-contain
+        "
+      />
+    </div>
+  );
+};
 
 export default ProductHero;
