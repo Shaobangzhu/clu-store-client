@@ -1,6 +1,10 @@
 import Logo from "../assets/apple.svg?react";
 // 不加 ?react 需要使用 <img src={Logo} alt="logo" />
-import { AiOutlineMenu, AiOutlineSearch } from "react-icons/ai";
+import {
+  AiOutlineMenu,
+  AiOutlineSearch,
+  AiOutlineShopping,
+} from "react-icons/ai";
 import { useState } from "react";
 import DarkToggle from "./DarkToggle";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -88,6 +92,9 @@ const Header = () => {
           <AiOutlineSearch size={24} />
         </button>
         <DarkToggle />
+        <button onClick={() => navigate("/cart")}>
+          <AiOutlineShopping size={24} />
+        </button>
         <button className="md:hidden" onClick={() => setIsOpen(true)}>
           <AiOutlineMenu size={24} />
         </button>

@@ -1,8 +1,8 @@
 import SkuSelect from "./SkuSelect";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { produce } from "immer";
-
 import type { Product, CartItem } from "@/types/custom";
+import { ShoppingCartContext } from "@/contexts/shoppingCart";
 
 const updateItem = (updates: Partial<CartItem>) => {
   return produce((draft) => {
@@ -19,6 +19,8 @@ type ProductHeroProps = {
 };
 
 function ProductHero({ product, imageUrl }: ProductHeroProps) {
+  const { addToCart } = useContext(ShoppingCartContext);
+
   const [cartItem, setCartItem] = useState<CartItem>({
     productId: product.id,
     name: product.name,
@@ -32,6 +34,21 @@ function ProductHero({ product, imageUrl }: ProductHeroProps) {
     memorySizePrice: null,
     qty: 1,
   });
+
+  const handleAddToCart = () => {
+    if (
+      !cartItem.model ||
+      !cartItem.color ||
+      !cartItem.memorySize ||
+      !cartItem.modelId ||
+      !cartItem.memorySizeId
+    ) {
+      alert("请先选择型号, 颜色和储存容量");
+      return;
+    }
+    addToCart(cartItem);
+    console.log("已加入购物车:", cartItem);
+  };
 
   return (
     <div
@@ -106,7 +123,7 @@ function ProductHero({ product, imageUrl }: ProductHeroProps) {
             hover:text-apple-gray-100
             "
             onClick={() => {
-              alert("加入购物车：" + JSON.stringify(cartItem));
+              handleAddToCart();
             }}
           >
             加入购物车

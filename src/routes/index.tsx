@@ -19,6 +19,7 @@ import {
   ProductDetail,
   SearchResults,
   UserCenter,
+  ShoppingCart,
 } from "../pages";
 import RequireAuth from "@/HOCs/RequireAuth";
 import { loadProducts } from "@/helpers/loaders";
@@ -73,6 +74,7 @@ const router = createBrowserRouter([
         element: <SearchResults />,
         errorElement: <ErrorPage />,
       },
+      { path: "cart", element: <ShoppingCart /> },
       { path: "*", element: <NotFound /> },
     ],
   },
