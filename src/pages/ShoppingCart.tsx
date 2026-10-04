@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import ShoppingCartContext from "@/contexts/shoppingCart/shoppingCartContext";
-import { Button } from "@/components";
+import { Button, CartItem } from "@/components";
 
 const shoppingCart = () => {
   const { cartItems } = useContext(ShoppingCartContext);
@@ -20,20 +20,40 @@ const shoppingCart = () => {
   const shippingFee = 150; // 假设运费为hard coded ¥150, 实际应用中可以根据条件计算
 
   return (
-    <div className="min-h-screen p-6 pt-30">
-      <h2>购物车总价 ¥{(total + shippingFee).toLocaleString()}</h2>
+    <div
+      className="
+        min-h-screen p-6 pt-30
+        max-w-4xl mx-auto
+        bg-apple-light dark:bg-apple-dark
+        font-light
+      "
+    >
+      <h2 className="text-4xl">
+        购物车总价 ¥{(total + shippingFee).toLocaleString()}
+      </h2>
       {/* 商品列表 */}
-      <div className="mb-6">{/* todo */}</div>
+      <div className="mb-6">
+        {cartItems.map((item) => (
+          <CartItem item={item} />
+        ))}
+      </div>
       {/* 结算区域 */}
-      <div>
-        <div>
-          <p>小计: RMB {total.toLocaleString()}</p>
-          <p>运费: RMB {shippingFee.toLocaleString()}</p>
+      <div className="ml-12 pt-2 space-y-4">
+        <div className="grid grid-cols-2 items-center">
+          <p className="text-center">小计: </p>
+          <p className="text-right">RMB {total.toLocaleString()}</p>
+          <p className="text-center">运费: </p>
+          <p className="text-right">RMB {shippingFee.toLocaleString()}</p>
         </div>
-        <hr />
-        <div>
-          <p>总计: RMB {(total + shippingFee).toLocaleString()}</p>
-          <Button title="结账"></Button>
+        <hr className="ml-8 border-t border-apple-gray-200 dark:border-apple-gray-800" />
+        <div className="grid grid-cols-2 items-center">
+          <p className="text-center text-2xl">总计: </p>
+          <p className="text-right text-2xl">
+            RMB {(total + shippingFee).toLocaleString()}
+          </p>
+          <div className="col-span-2 flex justify-end mt-12">
+            <Button title="结账"></Button>
+          </div>
         </div>
       </div>
     </div>
