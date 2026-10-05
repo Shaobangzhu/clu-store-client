@@ -1,12 +1,14 @@
 import type { CartItem as CartItemType } from "@/types/custom";
 import ToggleButtons from "./ToggleButtons";
+import { FiTrash2 } from "react-icons/fi";
 
 interface CartItemProps {
   item: CartItemType;
   onItemUpdate: (qty: number) => void;
+  onItemRemove: () => void;
 }
 
-const CartItem = ({ item, onItemUpdate }: CartItemProps) => {
+const CartItem = ({ item, onItemUpdate, onItemRemove }: CartItemProps) => {
   const setQty = (qty: number) => onItemUpdate(qty);
   const addQty = () => onItemUpdate((item.qty ?? 0) + 1);
   const removeQty = () => {
@@ -51,6 +53,14 @@ const CartItem = ({ item, onItemUpdate }: CartItemProps) => {
               onRemove={removeQty}
               onReset={() => setQty(1)}
             />
+            <button
+              type="button"
+              onClick={onItemRemove}
+              aria-label="Remove item from cart"
+              className="hover:text-red-500 transition-colors"
+            >
+              <FiTrash2 size={20} />
+            </button>
           </div>
         </div>
       </div>

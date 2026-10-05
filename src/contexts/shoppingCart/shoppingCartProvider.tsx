@@ -30,10 +30,9 @@ const ShoppingCartProvider = ({ children }: ShoppingCartProviderProps) => {
     });
   };
   const removeFromCart = (index: number) => {
-    setCartItems((prevItems) => [
-      ...prevItems.slice(0, index),
-      ...prevItems.slice(index + 1),
-    ]);
+    setCartItems((prevItems) =>
+      prevItems.filter((_, itemIndex) => itemIndex !== index),
+    );
   };
 
   const updateItem = (index: number, newItem: CartItem) => {

@@ -3,7 +3,8 @@ import ShoppingCartContext from "@/contexts/shoppingCart/shoppingCartContext";
 import { Button, CartItem } from "@/components";
 
 const shoppingCart = () => {
-  const { cartItems, updateItem } = useContext(ShoppingCartContext);
+  const { cartItems, updateItem, removeFromCart } =
+    useContext(ShoppingCartContext);
 
   const [total, setTotal] = useState(0);
   useEffect(() => {
@@ -17,7 +18,7 @@ const shoppingCart = () => {
     setTotal(total);
   }, [cartItems]);
 
-  const shippingFee = 150; // 假设运费为hard coded ¥150, 实际应用中可以根据条件计算
+  const shippingFee = cartItems.length > 0 ? 150 : 0;
 
   return (
     <div
@@ -41,6 +42,7 @@ const shoppingCart = () => {
               const newItem = { ...item, qty };
               updateItem(index, newItem);
             }}
+            onItemRemove={() => removeFromCart(index)}
           />
         ))}
       </div>
