@@ -3,7 +3,7 @@ import ShoppingCartContext from "@/contexts/shoppingCart/shoppingCartContext";
 import { Button, CartItem } from "@/components";
 
 const shoppingCart = () => {
-  const { cartItems } = useContext(ShoppingCartContext);
+  const { cartItems, updateItem } = useContext(ShoppingCartContext);
 
   const [total, setTotal] = useState(0);
   useEffect(() => {
@@ -33,8 +33,15 @@ const shoppingCart = () => {
       </h2>
       {/* 商品列表 */}
       <div className="mb-6">
-        {cartItems.map((item) => (
-          <CartItem item={item} />
+        {cartItems.map((item, index) => (
+          <CartItem
+            item={item}
+            key={item.productId}
+            onItemUpdate={(qty) => {
+              const newItem = { ...item, qty };
+              updateItem(index, newItem);
+            }}
+          />
         ))}
       </div>
       {/* 结算区域 */}

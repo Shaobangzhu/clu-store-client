@@ -36,9 +36,23 @@ const ShoppingCartProvider = ({ children }: ShoppingCartProviderProps) => {
     ]);
   };
 
+  const updateItem = (index: number, newItem: CartItem) => {
+    setCartItems((prevItems) => {
+      if (index < 0 || index >= prevItems.length) {
+        console.error("Index out of bounds");
+        return prevItems;
+      }
+      return [
+        ...prevItems.slice(0, index),
+        newItem,
+        ...prevItems.slice(index + 1),
+      ];
+    });
+  };
+
   return (
     <ShoppingCartContext.Provider
-      value={{ cartItems, addToCart, removeFromCart }}
+      value={{ cartItems, addToCart, removeFromCart, updateItem }}
     >
       {children}
     </ShoppingCartContext.Provider>
