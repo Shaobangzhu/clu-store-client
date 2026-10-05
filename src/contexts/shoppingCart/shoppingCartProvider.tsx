@@ -1,5 +1,5 @@
 import ShoppingCartContext from "./shoppingCartContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { CartItem } from "@/types/custom";
 
 interface ShoppingCartProviderProps {
@@ -7,7 +7,19 @@ interface ShoppingCartProviderProps {
 }
 
 const ShoppingCartProvider = ({ children }: ShoppingCartProviderProps) => {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
+    // 从localStorage 中加载购物车数据, 如果没有则返回空数组
+    const savedCart = localStorage.getItem("cart");
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
+
+  useEffect(() => {
+    if (cartItems.length > 0) {
+      localStorage.setItem("cart", JSON.stringify(cartItems));
+    } else {
+      localStorage.removeItem("cart");
+    }
+  }, [cartItems]);
 
   const addToCart = (item: CartItem) => {
     setCartItems((prevItems) => {
