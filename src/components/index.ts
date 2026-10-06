@@ -24,3 +24,5 @@ export { default as CartItem } from "./CartItem";
 export * from "./CartItem";
 export { default as ToggleButtons } from "./ToggleButtons";
 export * from "./ToggleButtons";
+export { default as Skeleton } from "./Skeleton";
+export * from "./Skeleton";
