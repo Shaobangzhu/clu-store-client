@@ -6,16 +6,17 @@ function DarkToggle() {
   const [isDark, setIsDark] = useState(false);
 
   const toggleDark = () => {
-    setIsDark(!isDark);
+    setIsDark((prev) => {
+      const newDarkMode = !prev;
+      const root = document.documentElement;
+      if (isDark) {
+        root.classList.add("dark");
+      } else {
+        root.classList.remove("dark");
+      }
+      return newDarkMode;
+    });
   };
-
-  // TODO: useEffect，原因：DOM操作不应该写在组件主体内
-  const root = document.documentElement;
-  if (isDark) {
-    root.classList.add("dark");
-  } else {
-    root.classList.remove("dark");
-  }
 
   return (
     <button

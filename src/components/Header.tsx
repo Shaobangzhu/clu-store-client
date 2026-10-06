@@ -92,7 +92,7 @@ const Header = () => {
         dark:text-apple-text-dark 
         space-x-2"
       >
-        <button onClick={() => setIsSearchEnable(!isSearchEnable)}>
+        <button onClick={() => setIsSearchEnable((prev) => !prev)}>
           <AiOutlineSearch size={24} />
         </button>
         <DarkToggle />
