@@ -1,9 +1,9 @@
-import type { CartItem } from "@/types/custom";
+import type { CartItem, AddCartItemInput } from "@/types/custom";
 import { createContext } from "react";
 
 interface ShoppingCartContextType {
   cartItems: CartItem[];
-  addToCart: (item: CartItem) => void;
+  addToCart: (item: AddCartItemInput) => void;
   removeFromCart: (index: number) => void;
   updateItem: (index: number, newItem: CartItem) => void;
 }

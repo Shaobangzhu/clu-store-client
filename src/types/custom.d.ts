@@ -49,20 +49,27 @@ export interface Order {
   orderItems: CartItem[];
 }
 
-export interface CartItem {
+interface CartItem {
   id: number;
   productId: string | number;
   name: string;
   imageSrc: string;
+
   modelId: string | number | null;
   model: string | null;
   modelPrice: number | null;
+
   color: string | null;
+
   memorySizeId: string | number | null;
   memorySize: string | null;
   memorySizePrice: number | null;
-  qty: number | null;
+
+  price: number;
+  qty: number;
 }
+
+type AddCartItemInput = Omit<CartItem, "id">;
 
 export interface SupportData {
   data: string;

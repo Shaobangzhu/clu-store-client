@@ -26,3 +26,5 @@ export { default as ToggleButtons } from "./ToggleButtons";
 export * from "./ToggleButtons";
 export { default as Skeleton } from "./Skeleton";
 export * from "./Skeleton";
+export { default as SearchResultCard } from "./SearchResultCard";
+export * from "./SearchResultCard";
