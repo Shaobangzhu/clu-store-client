@@ -1,10 +1,12 @@
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { useEffect, useState, useContext, useCallback } from "react";
+import { useEffect, useState, useContext, useCallback, useMemo } from "react";
 import type { Product, AddCartItemInput } from "@/types/custom";
 import { useDebounce } from "@/helpers/useDebounce";
 import Button from "@/components/Button";
-import { SearchResultCard } from "@/components";
+import { SearchResultCard, FilterButton } from "@/components";
 import { ShoppingCartContext } from "@/contexts/shoppingCart";
+
+const filters = ["全部", "电脑", "手机", "平板", "其他"];
 
 const SearchResults = () => {
   const navigate = useNavigate();
@@ -102,6 +104,17 @@ const SearchResults = () => {
     addToCart(cartItem);
   }, []);
 
+  const [selectedCategory, setSelectedCategory] = useState<string>("全部");
+
+  const filteredProducts = useMemo(() => {
+    return searchResults.filter((product) => {
+      const matchesCategory =
+        selectedCategory === "全部" || product.category === selectedCategory;
+      console.log("过滤后的产品: ", product);
+      return matchesCategory;
+    });
+  }, [selectedCategory, searchResults]);
+
   return (
     <div className="flex min-h-screen w-full flex-col items-center px-4 py-8">
       <div className="w-full max-w-4xl mx-auto mb-12">
@@ -120,8 +133,20 @@ const SearchResults = () => {
         />
         <p className="mt-6">搜索关键词: {query}</p>
       </div>
+      <div className="max-w-4xl mx-auto mb-8 flex gap-4">
+        {filters.map((filter) => (
+          <FilterButton
+            key={filter}
+            filter={filter}
+            isSelected={filter == selectedCategory}
+            onClick={() => {
+              setSelectedCategory(filter);
+            }}
+          />
+        ))}
+      </div>
       <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
-        {searchResults.map((product) => (
+        {filteredProducts.map((product) => (
           <SearchResultCard
             key={product.id}
             product={product}

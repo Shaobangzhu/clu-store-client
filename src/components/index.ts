@@ -28,3 +28,5 @@ export { default as Skeleton } from "./Skeleton";
 export * from "./Skeleton";
 export { default as SearchResultCard } from "./SearchResultCard";
 export * from "./SearchResultCard";
+export { default as FilterButton } from "./FilterButton";
+export * from "./FilterButton";
