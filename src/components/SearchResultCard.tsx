@@ -1,6 +1,7 @@
 import type { Product } from "@/types/custom";
 import Button from "./Button";
 import { useNavigate } from "react-router-dom";
+import React from "react";
 
 interface SearchResultCardProps {
   product: Product;
@@ -43,5 +44,7 @@ const SearchResultCard = ({ product, onAddToCart }: SearchResultCardProps) => {
     </div>
   );
 };
+
+const SearchResultCardComponent = React.memo(SearchResultCard);
 
 export default SearchResultCard;

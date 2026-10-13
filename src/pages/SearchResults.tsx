@@ -1,5 +1,5 @@
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useCallback } from "react";
 import type { Product, AddCartItemInput } from "@/types/custom";
 import { useDebounce } from "@/helpers/useDebounce";
 import Button from "@/components/Button";
@@ -75,7 +75,7 @@ const SearchResults = () => {
 
   const { addToCart } = useContext(ShoppingCartContext);
 
-  const handleAddToCart = (product: Product) => {
+  const handleAddToCart = useCallback((product: Product) => {
     const cartItem: AddCartItemInput = {
       productId: product.id,
       name: product.name,
@@ -100,7 +100,7 @@ const SearchResults = () => {
     };
 
     addToCart(cartItem);
-  };
+  }, []);
 
   return (
     <div className="flex min-h-screen w-full flex-col items-center px-4 py-8">
