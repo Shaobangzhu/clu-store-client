@@ -1,6 +1,6 @@
 import ShoppingCartContext from "./shoppingCartContext";
 import { useState, useEffect } from "react";
-import type { CartItem } from "@/types/custom";
+import type { CartItem, AddCartItemInput } from "@/types/custom";
 
 interface ShoppingCartProviderProps {
   children: React.ReactNode;
@@ -21,21 +21,30 @@ const ShoppingCartProvider = ({ children }: ShoppingCartProviderProps) => {
     }
   }, [cartItems]);
 
-  const addToCart = (item: CartItem) => {
+  const addToCart = (item: AddCartItemInput) => {
     setCartItems((prevItems) => {
       const existingItemIndex = prevItems.findIndex(
-        (cartItem) => cartItem.productId === item.productId,
+        (cartItem) =>
+          cartItem.productId === item.productId &&
+          cartItem.modelId === item.modelId &&
+          cartItem.color === item.color &&
+          cartItem.memorySizeId === item.memorySizeId,
       );
 
       if (existingItemIndex === -1) {
-        return [...prevItems, item];
+        const newItem: CartItem = {
+          ...item,
+          id: Math.max(0, ...prevItems.map((x) => x.id)) + 1,
+        };
+
+        return [...prevItems, newItem];
       }
 
       return prevItems.map((cartItem, index) =>
         index === existingItemIndex
           ? {
               ...cartItem,
-              quantity: (cartItem.qty ?? 0) + 1,
+              qty: (cartItem.qty ?? 0) + (item.qty ?? 1),
             }
           : cartItem,
       );
