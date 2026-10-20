@@ -1,61 +1,25 @@
+import { useReducer } from "react";
 import ShoppingCartContext from "./shoppingCartContext";
-import type { CartItem, AddCartItemInput } from "@/types/custom";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import type { CartItem } from "@/types/custom";
+import shoppingCartReducer from "../../reducers/shoppingCartReducer";
 
 interface ShoppingCartProviderProps {
   children: React.ReactNode;
 }
 
 const ShoppingCartProvider = ({ children }: ShoppingCartProviderProps) => {
-  const [cartItems, setCartItems] = useLocalStorage<CartItem[]>("cart", []);
+  const [cartItems, dispatch] = useReducer(shoppingCartReducer, []);
 
-  const addToCart = (item: AddCartItemInput) => {
-    setCartItems((prevItems) => {
-      const existingItemIndex = prevItems.findIndex(
-        (cartItem) =>
-          cartItem.productId === item.productId &&
-          cartItem.modelId === item.modelId &&
-          cartItem.color === item.color &&
-          cartItem.memorySizeId === item.memorySizeId,
-      );
-
-      if (existingItemIndex === -1) {
-        const newItem: CartItem = {
-          ...item,
-          id: Math.max(0, ...prevItems.map((x) => x.id)) + 1,
-        };
-
-        return [...prevItems, newItem];
-      }
-
-      return prevItems.map((cartItem, index) =>
-        index === existingItemIndex
-          ? {
-              ...cartItem,
-              qty: (cartItem.qty ?? 0) + (item.qty ?? 1),
-            }
-          : cartItem,
-      );
-    });
+  const addToCart = (item: CartItem) => {
+    dispatch({ type: "ADD_ITEM", payload: item });
   };
+
   const removeFromCart = (index: number) => {
-    setCartItems((prevItems) =>
-      prevItems.filter((_, itemIndex) => itemIndex !== index),
-    );
+    dispatch({ type: "REMOVE_ITEM", payload: index });
   };
 
   const updateItem = (index: number, newItem: CartItem) => {
-    setCartItems((prevItems) => {
-      if (index < 0 || index >= prevItems.length) {
-        console.error("Index out of bounds");
-        return prevItems;
-      }
-      return [
-        ...prevItems.slice(0, index),
-        newItem,
-        ...prevItems.slice(index + 1),
-      ];
-    });
+    dispatch({ type: "UPDATE_ITEM", payload: { index, newItem } });
   };
 
   return (
