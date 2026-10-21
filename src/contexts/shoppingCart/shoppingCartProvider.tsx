@@ -2,13 +2,18 @@ import { useReducer } from "react";
 import ShoppingCartContext from "./shoppingCartContext";
 import type { CartItem } from "@/types/custom";
 import shoppingCartReducer from "../../reducers/shoppingCartReducer";
+import usePersistedReducer from "@/hooks/usePersistedReducer";
 
 interface ShoppingCartProviderProps {
   children: React.ReactNode;
 }
 
 const ShoppingCartProvider = ({ children }: ShoppingCartProviderProps) => {
-  const [cartItems, dispatch] = useReducer(shoppingCartReducer, []);
+  const [cartItems, dispatch] = usePersistedReducer(
+    shoppingCartReducer,
+    "shoppingCart",
+    [],
+  );
 
   const addToCart = (item: CartItem) => {
     dispatch({ type: "ADD_ITEM", payload: item });
