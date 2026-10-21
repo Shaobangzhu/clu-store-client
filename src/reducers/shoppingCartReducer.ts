@@ -1,5 +1,5 @@
 import type { CartItem } from "../types/custom";
-import type { Reducer } from "react";
+import type { ImmerReducer } from "use-immer";
 
 export const addItem = (item: CartItem) => ({
   type: "ADD_ITEM" as const,
@@ -27,37 +27,38 @@ export type CartAction =
   | ReturnType<typeof clearCart>;
 
 // reducer function
-const shoppingCartReducer: Reducer<CartItem[], CartAction> = (
-  state,
+const shoppingCartReducer: ImmerReducer<CartItem[], CartAction> = (
+  draft,
   action,
 ) => {
   switch (action.type) {
     case "ADD_ITEM": {
-      const existingItemIndex = state.findIndex(
+      const existingItemIndex = draft.findIndex(
         (item) => item.productId === action.payload.productId,
       );
       if (existingItemIndex !== -1) {
-        return state.map((item, index) =>
-          index === existingItemIndex
-            ? { ...item, qty: (item.qty ?? 0) + 1 }
-            : item,
-        );
+        draft[existingItemIndex]!.qty += 1;
+      } else {
+        draft.push(action.payload);
       }
-      return [...state, action.payload];
+      break;
     }
     case "REMOVE_ITEM":
-      return state.filter((_, index) => index !== action.payload);
+      draft.splice(action.payload, 1);
+      break;
     case "UPDATE_ITEM":
       const { index, newItem } = action.payload;
-      if (index < 0 || index >= state.length) {
+      if (index < 0 || index >= draft.length) {
         console.error("Index out of bounds");
-        return state;
+      } else {
+        Object.assign(draft[index]!, newItem);
       }
-      return [...state.slice(0, index), newItem, ...state.slice(index + 1)];
+      break;
     case "CLEAR_CART":
-      return [];
+      draft.length = 0; // Clear the cart
+      break;
     default:
-      return state;
+      break;
   }
 };
 
