@@ -1,12 +1,30 @@
 import type { CartItem } from "../types/custom";
 import type { Reducer } from "react";
 
-// actions
-type CartAction =
-  | { type: "ADD_ITEM"; payload: CartItem }
-  | { type: "REMOVE_ITEM"; payload: number }
-  | { type: "UPDATE_ITEM"; payload: { index: number; newItem: CartItem } }
-  | { type: "CLEAR_CART" };
+export const addItem = (item: CartItem) => ({
+  type: "ADD_ITEM" as const,
+  payload: item,
+});
+
+export const removeItem = (index: number) => ({
+  type: "REMOVE_ITEM" as const,
+  payload: index,
+});
+
+export const updateItem = (index: number, newItem: CartItem) => ({
+  type: "UPDATE_ITEM" as const,
+  payload: { index, newItem },
+});
+
+export const clearCart = () => ({
+  type: "CLEAR_CART" as const,
+});
+
+export type CartAction =
+  | ReturnType<typeof addItem>
+  | ReturnType<typeof removeItem>
+  | ReturnType<typeof updateItem>
+  | ReturnType<typeof clearCart>;
 
 // reducer function
 const shoppingCartReducer: Reducer<CartItem[], CartAction> = (
