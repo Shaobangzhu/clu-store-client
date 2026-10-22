@@ -1,5 +1,4 @@
 import { useParams } from "react-router-dom";
-import useApiData from "@/hooks/useApiData";
 import type { Category as CategoryType } from "@/types/custom";
 import {
   Skeleton,
@@ -8,6 +7,7 @@ import {
   ImageSlider,
   CompareTable,
 } from "@/components";
+import useApiWithReducer from "@/hooks/useApiWithReducer";
 
 type CategoryParams = {
   category: string;
@@ -24,11 +24,11 @@ const Category = () => {
     data: productCategory,
     loading,
     error,
-  } = useApiData<CategoryType>(
+  } = useApiWithReducer<CategoryType>(
     `http://152.136.182.210:12231/api/categories/${category}`,
   );
 
-  if (loading) {
+  if (loading || productCategory == null) {
     return <Skeleton />;
   }
 
