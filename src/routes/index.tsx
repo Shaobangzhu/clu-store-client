@@ -6,10 +6,6 @@ import UserLayout from "@/layouts/UserLayout";
 import {
   Home,
   About,
-  Phones,
-  IPad,
-  Computers,
-  SmartHome,
   Entertainment,
   Support,
   SignIn,
@@ -20,6 +16,7 @@ import {
   SearchResults,
   UserCenter,
   ShoppingCart,
+  Category,
 } from "../pages";
 import RequireAuth from "@/HOCs/RequireAuth";
 import { loadProducts } from "@/helpers/loaders";
@@ -35,19 +32,12 @@ const router = createBrowserRouter([
         element: <Home />,
         errorElement: <ErrorPage />,
       },
+      {
+        path: "categories/:category",
+        element: <Category />,
+        errorElement: <ErrorPage />,
+      },
       { path: "about", element: <About />, errorElement: <ErrorPage /> },
-      { path: "phones", element: <Phones />, errorElement: <ErrorPage /> },
-      { path: "ipad", element: <IPad />, errorElement: <ErrorPage /> },
-      {
-        path: "computers",
-        element: <Computers />,
-        errorElement: <ErrorPage />,
-      },
-      {
-        path: "smarthome",
-        element: <SmartHome />,
-        errorElement: <ErrorPage />,
-      },
       {
         path: "entertainment",
         element: <Entertainment />,
