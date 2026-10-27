@@ -1,8 +1,9 @@
 // 主程序
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "./main.css";
-import App from "./App";
+import "./main.css"; // 引入 CSS 文件
+import App from "./App"; // 引入 App 组件
+import "./redux/store";
 
 // JSX 是 JavaScript 的语法扩展，允许我们在 JavaScript 代码中编写类似 HTML 的代码.
 // JSX = HTML语法 + JavaScript的能力
