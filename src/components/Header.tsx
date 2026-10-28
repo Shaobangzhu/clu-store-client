@@ -11,8 +11,14 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { SHOPPING_PAGES } from "@/assets/data/path";
 import { ShoppingCartContext } from "@/contexts/shoppingCart";
 import { AnimatePresence, motion } from "framer-motion";
+import { IoLanguageOutline } from "react-icons/io5";
+import store from "../redux/store";
+import { languageSet, setCulture } from "@/redux/i18nReducer";
 
 const Header = () => {
+  const [currentLanguage, setCurrentLanguage] = useState(store.getState());
+  // console.log("currentLanguage:", currentLanguage);
+
   const { cartItems } = useContext(ShoppingCartContext);
 
   const [isOpen, setIsOpen] = useState(false);
@@ -39,6 +45,26 @@ const Header = () => {
       inputRef.current.focus();
     }
   }, [isSearchEnable]);
+
+  useEffect(() => {
+    const unsubscribe = store.subscribe(() => {
+      const newLanguage = store.getState();
+      setCurrentLanguage(newLanguage);
+      console.log("Language changed to:", newLanguage);
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  const handleLanguageChange = () => {
+    const currentIndex = languageSet.indexOf(currentLanguage.currentLanguage);
+    console.log("currentIndex: ", currentIndex);
+    const nextIndex = (currentIndex + 1) % languageSet.length;
+    const nextLanguage = languageSet[nextIndex] ?? languageSet[0];
+    store.dispatch(setCulture(nextLanguage));
+    console.log("Dispatched language change to:", nextLanguage);
+  };
 
   return (
     <nav
@@ -108,6 +134,9 @@ const Header = () => {
           <AiOutlineSearch size={24} />
         </button>
         <DarkToggle />
+        <button onClick={handleLanguageChange}>
+          <IoLanguageOutline size={24} />
+        </button>
         <button onClick={() => navigate("/cart")} className="relative">
           <AiOutlineShopping size={24} />
           <AnimatePresence>
