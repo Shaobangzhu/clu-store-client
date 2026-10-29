@@ -50,6 +50,7 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true, /* Disable emitting files from a compilation */
+    "resolveJsonModule": true,
 
     // JavaScript Support
     "allowJs": true,
