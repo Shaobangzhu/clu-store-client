@@ -1,6 +1,6 @@
 export const languageSet = ["zh-CN", "zh-TW", "en-US", "fr-FR"] as const;
 
-type CultureCode = (typeof languageSet)[number];
+export type CultureCode = (typeof languageSet)[number];
 
 export const setCulture = (cultureCode: CultureCode) => ({
   type: "SET_CULTURE" as const,

@@ -12,14 +12,18 @@ import { SHOPPING_PAGES } from "@/assets/data/path";
 import { ShoppingCartContext } from "@/contexts/shoppingCart";
 import { AnimatePresence, motion } from "framer-motion";
 import { IoLanguageOutline } from "react-icons/io5";
-import store from "../redux/store";
-import { languageSet, setCulture } from "@/redux/i18nReducer";
+import { type RootState } from "../redux/store";
+import { languageSet, setCulture, type CultureCode } from "@/redux/i18nReducer";
 import { useTranslation } from "react-i18next";
+import { useSelector, useDispatch } from "react-redux";
 
 const Header = () => {
   const { t } = useTranslation();
-  const [currentLanguage, setCurrentLanguage] = useState(store.getState());
-  // console.log("currentLanguage:", currentLanguage);
+  const currentLanguage = useSelector<RootState, CultureCode>(
+    (state) => state.currentLanguage,
+  );
+  console.log("currentLanguage: ", currentLanguage);
+  const dispatch = useDispatch();
 
   const { cartItems } = useContext(ShoppingCartContext);
 
@@ -28,7 +32,7 @@ const Header = () => {
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
 
-  const handleKeyDown = (e: any) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
       if (query.trim()) {
@@ -39,7 +43,7 @@ const Header = () => {
   };
 
   // HTMLInputElement | null
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   // ref
   useEffect(() => {
     console.log("inputRef.current:", inputRef.current);
@@ -48,23 +52,12 @@ const Header = () => {
     }
   }, [isSearchEnable]);
 
-  useEffect(() => {
-    const unsubscribe = store.subscribe(() => {
-      const newLanguage = store.getState();
-      setCurrentLanguage(newLanguage);
-      console.log("Language changed to:", newLanguage);
-    });
-    return () => {
-      unsubscribe();
-    };
-  }, []);
-
   const handleLanguageChange = () => {
-    const currentIndex = languageSet.indexOf(currentLanguage.currentLanguage);
+    const currentIndex = languageSet.indexOf(currentLanguage);
     console.log("currentIndex: ", currentIndex);
     const nextIndex = (currentIndex + 1) % languageSet.length;
     const nextLanguage = languageSet[nextIndex] ?? languageSet[0];
-    store.dispatch(setCulture(nextLanguage));
+    dispatch(setCulture(nextLanguage));
     console.log("Dispatched language change to:", nextLanguage);
   };
 
