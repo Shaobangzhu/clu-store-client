@@ -3,6 +3,7 @@ import { useState, useContext } from "react";
 import { produce } from "immer";
 import type { Product, CartItem } from "@/types/custom";
 import { ShoppingCartContext } from "@/contexts/shoppingCart";
+import { useTranslation } from "react-i18next";
 
 const updateItem = (updates: Partial<CartItem>) => {
   return produce((draft) => {
@@ -20,7 +21,7 @@ type ProductHeroProps = {
 
 function ProductHero({ product, imageUrl }: ProductHeroProps) {
   const { addToCart } = useContext(ShoppingCartContext);
-
+  const { t } = useTranslation();
   const [cartItem, setCartItem] = useState<CartItem>({
     productId: product.id,
     name: product.name,
@@ -89,7 +90,7 @@ function ProductHero({ product, imageUrl }: ProductHeroProps) {
             value={cartItem.model}
           />
           <SkuSelect
-            placeholder={"颜色"}
+            placeholder={t(`home_page.product_hero.color`)}
             options={product.colors}
             onChange={(value) => {
               setCartItem(updateItem({ color: value as string })); // 确保类型安全
@@ -97,7 +98,7 @@ function ProductHero({ product, imageUrl }: ProductHeroProps) {
             value={cartItem.color}
           />
           <SkuSelect
-            placeholder={"存储容量"}
+            placeholder={t(`home_page.product_hero.memory`)}
             options={product.memorySizes.map((size) => size.name)}
             onChange={(value) => {
               const selectedMemorySize = product.memorySizes.find(
@@ -126,7 +127,7 @@ function ProductHero({ product, imageUrl }: ProductHeroProps) {
               handleAddToCart();
             }}
           >
-            加入购物车
+            {t(`home_page.product_hero.add_cart`)}
           </button>
         </div>
       </div>

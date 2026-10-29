@@ -14,8 +14,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import { IoLanguageOutline } from "react-icons/io5";
 import store from "../redux/store";
 import { languageSet, setCulture } from "@/redux/i18nReducer";
+import { useTranslation } from "react-i18next";
 
 const Header = () => {
+  const { t } = useTranslation();
   const [currentLanguage, setCurrentLanguage] = useState(store.getState());
   // console.log("currentLanguage:", currentLanguage);
 
@@ -94,7 +96,7 @@ const Header = () => {
             }
           `}
           >
-            {page.title}
+            {t(`routes.$(page.id)`)}
           </NavLink>
         ))}
       </div>
@@ -120,7 +122,7 @@ const Header = () => {
             dark:text-apple-text-dark
           "
           >
-            搜索
+            {t("header.search")}
           </label>
         </div>
       )}
@@ -188,7 +190,7 @@ const Header = () => {
               `}
               onClick={() => setIsOpen(false)}
             >
-              {page.title}
+              {t(`routes.${page.id}`)}
             </NavLink>
           ))}
         </div>

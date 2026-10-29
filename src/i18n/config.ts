@@ -4,6 +4,7 @@ import translation_zh_CN from "../assets/languages/zh-CN.json";
 import translation_zh_TW from "../assets/languages/zh-TW.json";
 import translation_en_US from "../assets/languages/en-US.json";
 import translation_fr_FR from "../assets/languages/fr-FR.json";
+import store from "@/redux/store";
 
 const resources = {
   "zh-CN": {
@@ -27,12 +28,19 @@ i18n
     // (tip move them in a JSON file and import them,
     // or even better, manage them via a UI: https://react.i18next.com/guides/multiple-translation-files#manage-your-translations-with-a-management-gui)
     resources,
-    lng: "zh-CN", // if you're using a language detector, do not define the lng option
+    lng: store.getState().currentLanguage, // if you're using a language detector, do not define the lng option
     fallbackLng: "zh-CN",
 
     interpolation: {
       escapeValue: false, // react already safes from xss => https://www.i18next.com/translation-function/interpolation#unescape
     },
   });
+
+// 订阅 Redux store 以监听语言的变化
+store.subscribe(() => {
+  const language = store.getState().currentLanguage;
+  console.log("Language changed to: ", language);
+  i18n.changeLanguage(language);
+});
 
 export default i18n;
