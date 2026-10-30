@@ -13,14 +13,15 @@ import { ShoppingCartContext } from "@/contexts/shoppingCart";
 import { AnimatePresence, motion } from "framer-motion";
 import { IoLanguageOutline } from "react-icons/io5";
 import { type RootState } from "../redux/store";
-import { languageSet, setCulture, type CultureCode } from "@/redux/i18nReducer";
+import { languageSet, type CultureCode } from "@/redux/i18nReducer";
+import { setCulture } from "@/redux/i18nReducer";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
 
 const Header = () => {
   const { t } = useTranslation();
   const currentLanguage = useSelector<RootState, CultureCode>(
-    (state) => state.currentLanguage,
+    (state) => state.i18n.currentLanguage,
   );
   console.log("currentLanguage: ", currentLanguage);
   const dispatch = useDispatch();

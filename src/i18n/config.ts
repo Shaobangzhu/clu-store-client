@@ -28,7 +28,7 @@ i18n
     // (tip move them in a JSON file and import them,
     // or even better, manage them via a UI: https://react.i18next.com/guides/multiple-translation-files#manage-your-translations-with-a-management-gui)
     resources,
-    lng: store.getState().currentLanguage, // if you're using a language detector, do not define the lng option
+    lng: store.getState().i18n.currentLanguage, // if you're using a language detector, do not define the lng option
     fallbackLng: "zh-CN",
 
     interpolation: {
@@ -38,7 +38,7 @@ i18n
 
 // 订阅 Redux store 以监听语言的变化
 store.subscribe(() => {
-  const language = store.getState().currentLanguage;
+  const language = store.getState().i18n.currentLanguage;
   console.log("Language changed to: ", language);
   i18n.changeLanguage(language);
 });
