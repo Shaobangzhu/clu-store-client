@@ -5,6 +5,9 @@ import { useDebounce } from "@/helpers/useDebounce";
 import Button from "@/components/Button";
 import { SearchResultCard, FilterButton } from "@/components";
 import { ShoppingCartContext } from "@/contexts/shoppingCart";
+import { useSelector, useDispatch } from "react-redux";
+import type { RootState, StoreDispatch } from "../redux/store";
+import { fetchSearchResults } from "@/redux/searchSlice";
 
 const filters = ["全部", "电脑", "手机", "平板", "其他"];
 
@@ -21,59 +24,29 @@ const SearchResults = () => {
     setSearchParams({ query: query || "", page: newPage.toString() });
   };
 
-  const [searchResults, setSearchResults] = useState<Product[]>([]); // 假设这是从API获取的搜索结果
-
-  const search = async (signal: AbortSignal) => {
-    try {
-      const response = await fetch(
-        `http://152.136.182.210:12231/api/products?keyword=${debouncedQuery}`,
-        {
-          signal,
-        },
-      );
-      if (!response.ok) {
-        throw new Error("网络响应不是OK");
-      }
-      // 检查响应状态码是否为200
-      const data = await response.json();
-      console.log("Fetched data:", data);
-      setSearchResults(data);
-    } catch (error) {
-      console.error("Error fetching search results: ", error);
-      setSearchResults([]); // 出错时清空结果
-    }
-  };
+  const {
+    items: searchResults,
+    isLoading,
+    error,
+  } = useSelector((state: RootState) => state.search);
+  const dispatch = useDispatch<StoreDispatch>();
 
   useEffect(() => {
-    // 副作用逻辑
-    const controller = new AbortController();
-    // 创建一个新的AbortController实例, 用于取消请求
-    const signal = controller.signal;
-    search(signal); // 调用搜索函数
+    if (!debouncedQuery) {
+      return;
+    }
+    const thunkPromise = dispatch(
+      fetchSearchResults({ keyword: debouncedQuery }),
+    );
 
     return () => {
-      // 清理函数
-      console.log("清理函数执行, 取消请求");
-      controller.abort(); // 取消请求
+      // 组件卸载或关键词变化时, 取消未完成的请求
+      thunkPromise.abort();
     };
-  }, [debouncedQuery]); // 等待输入停止后再发起搜索请求
+  }, [debouncedQuery, dispatch]); // 等待输入停止后再发起搜索请求
   // 空数组 []: 只在组件挂载 (mount) 时执行一次。
   // 有依赖: 依赖变化时重新执行
   // 不写依赖: 每次渲染都会执行 (不推荐, 容易浪费性能)
-
-  useEffect(() => {
-    console.log("我执行了！！！！");
-    let timer = setInterval(() => {
-      console.log("每隔一秒执行一次的逻辑");
-    }, 1000);
-
-    return () => {
-      // 清理函数
-      console.log("组件卸载时执行的清理逻辑");
-      clearInterval(timer); // 清除定时器
-      console.log("定时器已清除");
-    };
-  }, [query]); // 只在组件挂载时执行一次
 
   const { addToCart } = useContext(ShoppingCartContext);
 
@@ -133,6 +106,20 @@ const SearchResults = () => {
         />
         <p className="mt-6">搜索关键词: {query}</p>
       </div>
+      {error && (
+        <div className="max-w-4xl mx-auto mb-6">
+          <p className="text-red-500 text-lg">{error}</p>
+        </div>
+      )}
+      {error == null && (
+        <div className="max-w-4xl mx-auto mb-6">
+          <p className="text-lg">
+            找到{" "}
+            <span className="font-semibold">{filteredProducts.length}</span>{" "}
+            个与“{debouncedQuery}”相关的产品
+          </p>
+        </div>
+      )}
       <div className="max-w-4xl mx-auto mb-8 flex gap-4">
         {filters.map((filter) => (
           <FilterButton
