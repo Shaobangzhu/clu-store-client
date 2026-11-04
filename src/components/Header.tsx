@@ -17,6 +17,7 @@ import { languageSet, type CultureCode } from "@/redux/i18nReducer";
 import { setCulture } from "@/redux/i18nReducer";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
+// import { AUTH_PAGES } from "@/assets/data/path";
 
 const Header = () => {
   const { t } = useTranslation();
@@ -155,6 +156,21 @@ const Header = () => {
             )}
           </AnimatePresence>
         </button>
+        {/* {AUTH_PAGES.map((page) => (
+          <NavLink
+            key={page.id}
+            to={page.path}
+            className={({ isActive }) =>
+              `hover:text-apple-blue hidden md:block ${
+                isActive
+                  ? "text-apple-blue font-extrabold"
+                  : "text-apple-text dark:text-apple-text-dark"
+              }`
+            }
+          >
+            {page.title}
+          </NavLink>
+        ))} */}
         <button className="md:hidden" onClick={() => setIsOpen(true)}>
           <AiOutlineMenu size={24} />
         </button>

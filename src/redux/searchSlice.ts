@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { type Product } from "../types/custom";
+import type { Product } from "../types/custom";
 
 export const fetchSearchResults = createAsyncThunk<
   Product[],
