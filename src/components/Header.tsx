@@ -18,8 +18,11 @@ import { setCulture } from "@/redux/i18nReducer";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
 import { AUTH_PAGES } from "@/assets/data/path";
+import { parseJwt } from "@/helpers/jwtHelper";
 
 const Header = () => {
+  const [username, setUsername] = useState<string | null>(null);
+
   const { t } = useTranslation();
   const currentLanguage = useSelector<RootState, CultureCode>(
     (state) => state.i18n.currentLanguage,
@@ -61,6 +64,24 @@ const Header = () => {
     const nextLanguage = languageSet[nextIndex] ?? languageSet[0];
     dispatch(setCulture(nextLanguage));
     console.log("Dispatched language change to:", nextLanguage);
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      // 解析 token
+      const decode = parseJwt(token);
+      console.log("decode jwt: ", decode);
+      if (decode && decode.name) {
+        setUsername(decode.name);
+      }
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setUsername(null);
+    navigate("/auth/signin");
   };
 
   return (
@@ -159,21 +180,30 @@ const Header = () => {
             )}
           </AnimatePresence>
         </button>
-        {AUTH_PAGES.map((page) => (
-          <NavLink
-            key={page.id}
-            to={page.path}
-            className={({ isActive }) =>
-              `hover:text-apple-blue hidden md:block ${
-                isActive
-                  ? "text-apple-blue font-extrabold"
-                  : "text-apple-text dark:text-apple-text-dark"
-              }`
-            }
-          >
-            {page.title}
-          </NavLink>
-        ))}
+        {username ? (
+          <>
+            <span>{username}</span>
+            <button className="hover: text-apple-blue" onClick={handleLogout}>
+              登出
+            </button>
+          </>
+        ) : (
+          AUTH_PAGES.map((page) => (
+            <NavLink
+              key={page.id}
+              to={page.path}
+              className={({ isActive }) =>
+                `hover:text-apple-blue hidden md:block ${
+                  isActive
+                    ? "text-apple-blue font-extrabold"
+                    : "text-apple-text dark:text-apple-text-dark"
+                }`
+              }
+            >
+              {page.title}
+            </NavLink>
+          ))
+        )}
         <button className="md:hidden" onClick={() => setIsOpen(true)}>
           <AiOutlineMenu size={24} />
         </button>
@@ -207,21 +237,30 @@ const Header = () => {
             </NavLink>
           ))}
           <hr className="border-t border-gray-300" />
-          {AUTH_PAGES.map((page) => (
-            <NavLink
-              key={page.id}
-              to={page.path}
-              className={({ isActive }) =>
-                `hover:text-apple-blue ${
-                  isActive
-                    ? "text-apple-blue font-extrabold"
-                    : "text-apple-text dark:text-apple-text-dark"
-                }`
-              }
-            >
-              {page.title}
-            </NavLink>
-          ))}
+          {username ? (
+            <>
+              <span>{username}</span>
+              <button className="hover: text-apple-blue" onClick={handleLogout}>
+                登出
+              </button>
+            </>
+          ) : (
+            AUTH_PAGES.map((page) => (
+              <NavLink
+                key={page.id}
+                to={page.path}
+                className={({ isActive }) =>
+                  `hover:text-apple-blue ${
+                    isActive
+                      ? "text-apple-blue font-extrabold"
+                      : "text-apple-text dark:text-apple-text-dark"
+                  }`
+                }
+              >
+                {page.title}
+              </NavLink>
+            ))
+          )}
         </div>
       </div>
       {isOpen && (
