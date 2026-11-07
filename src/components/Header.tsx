@@ -12,16 +12,18 @@ import { SHOPPING_PAGES } from "@/assets/data/path";
 import { ShoppingCartContext } from "@/contexts/shoppingCart";
 import { AnimatePresence, motion } from "framer-motion";
 import { IoLanguageOutline } from "react-icons/io5";
-import { type RootState } from "../redux/store";
+import store, { type RootState } from "../redux/store";
 import { languageSet, type CultureCode } from "@/redux/i18nReducer";
 import { setCulture } from "@/redux/i18nReducer";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
 import { AUTH_PAGES } from "@/assets/data/path";
 import { parseJwt } from "@/helpers/jwtHelper";
+import { logout } from "@/redux/userSlice";
 
 const Header = () => {
   const [username, setUsername] = useState<string | null>(null);
+  const { token } = useSelector((state: RootState) => state.user);
 
   const { t } = useTranslation();
   const currentLanguage = useSelector<RootState, CultureCode>(
@@ -67,7 +69,6 @@ const Header = () => {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
     if (token) {
       // 解析 token
       const decode = parseJwt(token);
@@ -76,10 +77,10 @@ const Header = () => {
         setUsername(decode.name);
       }
     }
-  }, []);
+  }, [token]);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    dispatch(logout());
     setUsername(null);
     navigate("/auth/signin");
   };

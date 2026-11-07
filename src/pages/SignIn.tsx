@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import useApiData from "@/hooks/useApiData";
+import { useDispatch, type UseDispatch, useSelector } from "react-redux";
+import type { RootState, StoreDispatch } from "../redux/store";
+import { login } from "../redux/userSlice";
 
 function SignIn() {
-  const { data, loading, error, fetchData } = useApiData<any>(
-    "http://152.136.182.210:12231/api/auth/login",
-    {
-      method: "POST",
-      autoFetch: false,
-    },
+  const dispatch = useDispatch<StoreDispatch>();
+  const { token, loading, error } = useSelector(
+    (state: RootState) => state.user,
   );
 
   const [email, setEmail] = useState("");
@@ -19,26 +19,20 @@ function SignIn() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault(); // 阻止表单提交后的默认行为, 如自动刷新页面
 
-    await fetchData({
-      overrideBody: {
-        username: email,
-        password,
-      },
-    });
+    dispatch(login({ username: email, password }));
   };
 
   useEffect(() => {
     if (loading) return;
     if (!loading && error) alert(error);
-    if (!loading && data) {
-      const token = data.token;
+    if (!loading && token) {
       localStorage.setItem("token", token);
       navigate(
         location.state?.from || "/", // 优先跳转来源页面
         { replace: true },
       );
     }
-  }, [data, error, loading]);
+  }, [token, error, loading]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-800 to-gray-900 flex items-center justify-center p-4">
