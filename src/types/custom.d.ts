@@ -50,7 +50,7 @@ export interface Order {
 }
 
 interface CartItem {
-  id: number;
+  id?: number;
   productId: string | number;
   name: string;
   imageSrc: string;
@@ -68,8 +68,6 @@ interface CartItem {
   price: number;
   qty: number;
 }
-
-type AddCartItemInput = Omit<CartItem, "id">;
 
 export interface SupportData {
   data: string;

@@ -1,6 +1,6 @@
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useEffect, useState, useContext, useCallback, useMemo } from "react";
-import type { Product, AddCartItemInput } from "@/types/custom";
+import type { Product, CartItem } from "@/types/custom";
 import { useDebounce } from "@/helpers/useDebounce";
 import Button from "@/components/Button";
 import { SearchResultCard, FilterButton } from "@/components";
@@ -51,7 +51,7 @@ const SearchResults = () => {
   const { addToCart } = useContext(ShoppingCartContext);
 
   const handleAddToCart = useCallback((product: Product) => {
-    const cartItem: AddCartItemInput = {
+    const cartItem: CartItem = {
       productId: product.id,
       name: product.name,
       imageSrc: product.image,

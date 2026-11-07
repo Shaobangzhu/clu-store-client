@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import Skeleton from "@components/Skeleton";
 import type { SupportData } from "../types/custom";
 import useApiData from "@/hooks/useApiData";
