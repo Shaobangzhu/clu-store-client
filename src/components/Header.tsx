@@ -17,7 +17,7 @@ import { languageSet, type CultureCode } from "@/redux/i18nReducer";
 import { setCulture } from "@/redux/i18nReducer";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
-// import { AUTH_PAGES } from "@/assets/data/path";
+import { AUTH_PAGES } from "@/assets/data/path";
 
 const Header = () => {
   const { t } = useTranslation();
@@ -122,10 +122,13 @@ const Header = () => {
         </div>
       )}
       <div
-        className="gap-2
+        className="
+        flex items-center
+        gap-2
         text-apple-text-light
         dark:text-apple-text-dark 
-        space-x-2"
+        space-x-2
+        "
       >
         <button onClick={() => setIsSearchEnable((prev) => !prev)}>
           <AiOutlineSearch size={24} />
@@ -156,7 +159,7 @@ const Header = () => {
             )}
           </AnimatePresence>
         </button>
-        {/* {AUTH_PAGES.map((page) => (
+        {AUTH_PAGES.map((page) => (
           <NavLink
             key={page.id}
             to={page.path}
@@ -170,7 +173,7 @@ const Header = () => {
           >
             {page.title}
           </NavLink>
-        ))} */}
+        ))}
         <button className="md:hidden" onClick={() => setIsOpen(true)}>
           <AiOutlineMenu size={24} />
         </button>
@@ -201,6 +204,22 @@ const Header = () => {
               onClick={() => setIsOpen(false)}
             >
               {t(`routes.${page.id}`)}
+            </NavLink>
+          ))}
+          <hr className="border-t border-gray-300" />
+          {AUTH_PAGES.map((page) => (
+            <NavLink
+              key={page.id}
+              to={page.path}
+              className={({ isActive }) =>
+                `hover:text-apple-blue ${
+                  isActive
+                    ? "text-apple-blue font-extrabold"
+                    : "text-apple-text dark:text-apple-text-dark"
+                }`
+              }
+            >
+              {page.title}
             </NavLink>
           ))}
         </div>
