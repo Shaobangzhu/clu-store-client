@@ -1,4 +1,6 @@
 import ShoppingCartContext from "./shoppingCartContext";
+import { useState, useEffect, useReducer } from "react";
+import type { CartItem } from "@/types/custom";
 import shoppingCartReducer from "../../reducers/shoppingCartReducer";
 import usePersistedReducer from "@/hooks/usePersistedReducer";
 import useShoppingCartAction from "@/hooks/useShoppingCartAction";
@@ -19,7 +21,7 @@ const ShoppingCartProvider = ({ children }: ShoppingCartProviderProps) => {
 
   return (
     <ShoppingCartContext.Provider
-      value={{ cartItems, addToCart, removeFromCart, updateItem }}
+      value={{ cartItems, addToCart, removeFromCart, updateItem, clearCart }}
     >
       {children}
     </ShoppingCartContext.Provider>
