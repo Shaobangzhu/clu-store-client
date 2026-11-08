@@ -5,6 +5,7 @@ import {
   addItem,
   removeItem,
   updateItem,
+  syncCart,
 } from "@/reducers/shoppingCartReducer";
 import type { CartItem } from "@/types/custom";
 
@@ -15,6 +16,7 @@ const useShoppingCartAction = (dispatch: Dispatch<CartAction>) => {
     updateItem: (index: number, newItem: CartItem) =>
       dispatch(updateItem(index, newItem)),
     clearCart: () => dispatch(clearCart()),
+    syncCart: (items: CartItem[]) => dispatch(syncCart(items)),
   };
 };
 
