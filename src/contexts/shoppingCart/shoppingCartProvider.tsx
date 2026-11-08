@@ -4,7 +4,6 @@ import usePersistedReducer from "@/hooks/usePersistedReducer";
 import useShoppingCartAction from "@/hooks/useShoppingCartAction";
 import type { ShoppingCart } from "@/types/custom";
 import { useState, useEffect } from "react";
-import useLocalStorage from "@/hooks/useLocalStorage";
 import useApiData from "@/hooks/useApiData";
 
 interface ShoppingCartProviderProps {
