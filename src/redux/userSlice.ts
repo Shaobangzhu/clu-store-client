@@ -50,6 +50,9 @@ const userSlice = createSlice({
       localStorage.removeItem("token");
       return { ...initialState, token: null };
     },
+    setToken: (state, action: PayloadAction<string>) => {
+      state.token = action.payload;
+    },
   }, // 只能处理同步操作
   extraReducers: (builder) => {
     builder.addCase(login.pending, (state) => {
@@ -69,5 +72,5 @@ const userSlice = createSlice({
   }, // 处理异步操作
 });
 
-export const { logout } = userSlice.actions;
+export const { logout, setToken } = userSlice.actions;
 export default userSlice.reducer;
