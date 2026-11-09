@@ -38,3 +38,5 @@ export { default as TextHeader } from "./TextHeader";
 export * from "./TextHeader";
 export { default as VideoHero } from "./VideoHero";
 export * from "./VideoHero";
+export { default as SquareInput } from "./SquareInput";
+export * from "./SquareInput";
