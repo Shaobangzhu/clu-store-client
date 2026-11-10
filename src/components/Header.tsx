@@ -12,9 +12,9 @@ import { SHOPPING_PAGES } from "@/assets/data/path";
 import { ShoppingCartContext } from "@/contexts/shoppingCart";
 import { AnimatePresence, motion } from "framer-motion";
 import { IoLanguageOutline } from "react-icons/io5";
-import store, { type RootState } from "../redux/store";
+import { type RootState } from "../redux/store";
 import { languageSet, type CultureCode } from "@/redux/i18nReducer";
-import { setCulture } from "@/redux/i18nReducer";
+import { setCulture } from "@/redux/i18nSlice";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
 import { AUTH_PAGES } from "@/assets/data/path";
@@ -113,7 +113,7 @@ const Header = () => {
             }
           `}
           >
-            {t(`routes.$(page.id)`)}
+            {t(`routes.${page.id}`)}
           </NavLink>
         ))}
       </div>

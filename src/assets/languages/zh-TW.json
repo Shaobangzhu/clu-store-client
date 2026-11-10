@@ -1,8 +1,8 @@
 {
   "routes": {
     "store": "商店",
-    "mac": "電腦",
-    "phone": "手機",
+    "computers": "電腦",
+    "phones": "手機",
     "ipad": "iPad",
     "entertainment": "娛樂",
     "support": "技術支援",

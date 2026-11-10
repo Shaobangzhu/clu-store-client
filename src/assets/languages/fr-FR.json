@@ -1,8 +1,8 @@
 {
   "routes": {
     "store": "Boutique",
-    "mac": "Mac",
-    "phone": "iPhone",
+    "computers": "Mac",
+    "phones": "iPhone",
     "ipad": "iPad",
     "entertainment": "Divertissement",
     "support": "Assistance",
