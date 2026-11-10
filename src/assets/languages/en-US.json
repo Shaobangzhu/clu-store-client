@@ -1,8 +1,8 @@
 {
   "routes": {
     "store": "Store",
-    "mac": "Mac",
-    "phone": "iPhone",
+    "computers": "Mac",
+    "phones": "iPhone",
     "ipad": "iPad",
     "entertainment": "Entertainment",
     "support": "Support",
