@@ -24,7 +24,10 @@ export default defineConfig({
     svgr(),
   ],
   server: {
-    port: 3000,
+    host: "127.0.0.1",
+    port: 5178,
+    strictPort: true,
+    proxy: { "/api": "http://127.0.0.1:3008" },
   },
   resolve: {
     alias: {

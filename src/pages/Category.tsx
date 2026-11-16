@@ -1,3 +1,4 @@
+import { apiUrl } from "@/helpers/api";
 import { useParams } from "react-router-dom";
 import type { Category as CategoryType } from "@/types/custom";
 import {
@@ -25,7 +26,7 @@ const Category = () => {
     loading,
     error,
   } = useApiWithReducer<CategoryType>(
-    `http://152.136.182.210:12231/api/categories/${category}`,
+    apiUrl(`categories/${category}`),
   );
 
   if (loading || productCategory == null) {

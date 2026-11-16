@@ -1,3 +1,4 @@
+import { apiUrl } from "@/helpers/api";
 import { useState, useEffect } from "react";
 import useApiData from "@/hooks/useApiData";
 import { useNavigate } from "react-router-dom";
@@ -6,7 +7,7 @@ function SignUp() {
   const navigate = useNavigate();
 
   const { data, loading, error, fetchData } = useApiData(
-    "http://152.136.182.210:12231/api/auth/register",
+    apiUrl("auth/register"),
     {
       method: "POST",
       autoFetch: false,

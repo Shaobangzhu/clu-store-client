@@ -1,3 +1,4 @@
+import { apiUrl } from "@/helpers/api";
 import ShoppingCartContext from "./shoppingCartContext";
 import shoppingCartReducer from "../../reducers/shoppingCartReducer";
 import usePersistedReducer from "@/hooks/usePersistedReducer";
@@ -12,7 +13,7 @@ interface ShoppingCartProviderProps {
 
 const ShoppingCartProvider = ({ children }: ShoppingCartProviderProps) => {
   const { data: shoppingCartData, fetchData } = useApiData<ShoppingCart>(
-    "http://152.136.182.210:12231/api/ShoppingCart",
+    apiUrl("ShoppingCart"),
     { autoFetch: false },
   );
 

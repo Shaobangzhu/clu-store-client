@@ -1,3 +1,4 @@
+import { apiUrl } from "@/helpers/api";
 import type { Dispatch } from "react";
 import {
   clearCart,
@@ -12,7 +13,7 @@ import useApiData from "./useApiData";
 
 const useShoppingCartAction = (dispatch: Dispatch<CartAction>) => {
   const { data, fetchData: callApi } = useApiData(
-    "http://152.136.182.210:12231/api/ShoppingCart/items",
+    apiUrl("ShoppingCart/items"),
     { autoFetch: false },
   );
 

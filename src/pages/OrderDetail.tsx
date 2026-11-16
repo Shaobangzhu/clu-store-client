@@ -1,3 +1,4 @@
+import { apiUrl } from "@/helpers/api";
 import { useParams } from "react-router-dom";
 import SquareInput from "../components/SquareInput";
 import useApiData from "@/hooks/useApiData";
@@ -36,7 +37,7 @@ const OrderDetail = () => {
   const { token } = useSelector((s: RootState) => s.user);
 
   const { data, loading, error, fetchData } = useApiData<any>(
-    `http://localhost:5293/api/orders/${id}`,
+    apiUrl(`orders/${id}`),
     {
       method: "GET",
       autoFetch: false,

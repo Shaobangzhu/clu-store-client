@@ -1,10 +1,11 @@
+import { apiUrl } from "@/helpers/api";
 export const loadProducts = async (
   productId: string | number,
   signal?: AbortSignal,
 ) => {
   try {
     const response = await fetch(
-      `http://152.136.182.210:12231/api/products/${productId}`,
+      apiUrl(`products/${productId}`),
       {
         method: "GET",
         signal: signal ?? null,

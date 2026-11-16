@@ -1,3 +1,4 @@
+import { apiUrl } from "@/helpers/api";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { Product } from "../types/custom";
 
@@ -11,7 +12,7 @@ export const fetchSearchResults = createAsyncThunk<
   });
 
   const response = await fetch(
-    `http://152.136.182.210:12231/api/products?keyword=${encodeURIComponent(keyword)}`,
+    apiUrl(`products?keyword=${encodeURIComponent(keyword)}`),
     { signal: controller.signal },
   );
   if (response.status == 404) {

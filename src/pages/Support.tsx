@@ -1,10 +1,11 @@
+import { apiUrl } from "@/helpers/api";
 import Skeleton from "@components/Skeleton";
 import type { SupportData } from "../types/custom";
 import useApiData from "@/hooks/useApiData";
 
 const Support = () => {
   const { data, loading, error } = useApiData<SupportData>(
-    "http://152.136.182.210:12231/api/information/support",
+    apiUrl("information/support"),
   );
 
   if (loading) {

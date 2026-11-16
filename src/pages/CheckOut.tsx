@@ -1,3 +1,4 @@
+import { apiUrl } from "@/helpers/api";
 import { useState, useEffect, useContext } from "react";
 import SquareInput from "@/components/SquareInput";
 import PaymentSelector from "@/components/PaymentSelector";
@@ -14,7 +15,7 @@ const CheckOut = () => {
 
   const { token } = useSelector((s: RootState) => s.user);
   const { data, loading, error, fetchData } = useApiData<Order>(
-    "http://152.136.182.210:12231/api/orders/place",
+    apiUrl("orders/place"),
     {
       method: "POST",
       autoFetch: false,
@@ -60,8 +61,9 @@ const CheckOut = () => {
     if (data) {
       // 清空购物车
       clearCart();
-      const { id, paymentUri } = data;
-      window.location.href = `${paymentUri}?orderId=${id}&redirect=http://152.136.182.210:12231/api/orders/${id}`;
+      // Payment integration is unavailable in the local preparation profile.
+      // Never follow an unreviewed payment URI returned by an API.
+      alert("本地环境暂不支持支付跳转");
     }
   }, [data, loading, error]);
 
