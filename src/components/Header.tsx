@@ -18,14 +18,14 @@ import { setCulture } from "@/redux/i18nSlice";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
 import { AUTH_PAGES } from "@/assets/data/path";
-import { parseJwt } from "@/helpers/jwtHelper";
+
 import { logout } from "@/redux/userSlice";
 import useApiData from '@/hooks/useApiData';
 import { catalogService } from '@/api/services';
 
 const Header = () => {
-  const [username, setUsername] = useState<string | null>(null);
-  const { token } = useSelector((state: RootState) => state.user);
+  const { user } = useSelector((state: RootState) => state.user);
+  const username = user?.username;
 
   const { t } = useTranslation();
   const categories = useApiData('navigation:categories', async signal => (await catalogService.categories({ signal })).data);
@@ -76,19 +76,10 @@ const Header = () => {
     dispatch(setCulture(nextLanguage));
   };
 
-  useEffect(() => {
-    if (token) {
-      // 解析 token
-      const decode = parseJwt(token);
-      if (decode && decode.name) {
-        setUsername(decode.name);
-      }
-    }
-  }, [token]);
+
 
   const handleLogout = () => {
     dispatch(logout());
-    setUsername(null);
     navigate("/auth/signin");
   };
 

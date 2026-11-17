@@ -58,5 +58,23 @@
     "selectMemory": "你需要多大的空间？",
     "total": "总计",
     "from": "{{price}} 起"
+  },
+  "auth": {
+    "welcome": "欢迎回来",
+    "identifier": "用户名或邮箱",
+    "password": "密码",
+    "signIn": "登录",
+    "createAccount": "创建新账户",
+    "forgotPassword": "忘记密码？",
+    "username": "用户名",
+    "email": "邮箱",
+    "confirmPassword": "确认密码",
+    "hasAccount": "已经有账户了？",
+    "register": "注册",
+    "passwordMismatch": "两次输入的密码不一致。",
+    "duplicate": "用户名或邮箱已注册。",
+    "rateLimit": "尝试过于频繁，请稍后重试。",
+    "invalidCredentials": "凭据无效或会话已过期，请重新登录。",
+    "serverError": "认证失败，请重试。"
   }
 }

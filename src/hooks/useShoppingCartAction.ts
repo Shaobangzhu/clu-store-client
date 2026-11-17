@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Dispatch } from 'react';
 import { clearCart, addItem, removeItem, updateItem, syncCart } from '../reducers/shoppingCartReducer';
 import type { CartAction } from '../reducers/shoppingCartReducer';
@@ -11,16 +11,19 @@ const useShoppingCartAction = (dispatch: Dispatch<CartAction>, items: CartItem[]
   const queue = useRef<Promise<void>>(Promise.resolve());
   const currentToken = useRef(token);
   currentToken.current = token;
+  const alive = useRef(true);
+  useEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
   const run = (mutation: () => Promise<unknown>) => {
     const owner = token;
     queue.current = queue.current.then(async () => {
-      if (currentToken.current !== owner) return;
+      if (!alive.current || currentToken.current !== owner) return;
       setError(null);
       await mutation();
+      if (!alive.current || currentToken.current !== owner) return;
       const result = await cartService.get({ token: owner });
-      if (currentToken.current === owner) dispatch(syncCart(result.data.items.map(toCartItem)));
+      if (alive.current && currentToken.current === owner) dispatch(syncCart(result.data.items.map(toCartItem)));
     }).catch(failure => {
-      if (currentToken.current === owner) setError(failure instanceof Error ? failure.message : 'Cart request failed');
+      if (alive.current && currentToken.current === owner) setError(failure instanceof Error ? failure.message : 'Cart request failed');
     });
     return queue.current;
   };

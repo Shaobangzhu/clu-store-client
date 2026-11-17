@@ -58,5 +58,23 @@
     "selectMemory": "Choisissez votre stockage",
     "total": "Total",
     "from": "À partir de {{price}}"
+  },
+  "auth": {
+    "welcome": "Bon retour",
+    "identifier": "Identifiant ou e-mail",
+    "password": "Mot de passe",
+    "signIn": "Se connecter",
+    "createAccount": "Créer un compte",
+    "forgotPassword": "Mot de passe oublié ?",
+    "username": "Identifiant",
+    "email": "E-mail",
+    "confirmPassword": "Confirmer le mot de passe",
+    "hasAccount": "Déjà un compte ?",
+    "register": "S’inscrire",
+    "passwordMismatch": "Les mots de passe diffèrent.",
+    "duplicate": "Cet identifiant ou e-mail est déjà enregistré.",
+    "rateLimit": "Trop de tentatives. Veuillez patienter.",
+    "invalidCredentials": "Identifiants invalides ou session expirée. Reconnectez-vous.",
+    "serverError": "Authentification impossible. Réessayez."
   }
 }

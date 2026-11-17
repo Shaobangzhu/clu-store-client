@@ -1,4 +1,4 @@
-import { useRef, useState, useContext } from 'react';
+import { useEffect, useRef, useState, useContext } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import type { RootState } from '../redux/store';
@@ -6,11 +6,22 @@ import { orderService } from '../api/services';
 import { ShoppingCartContext } from '../contexts/shoppingCart';
 import Button from '../components/Button';
 
+function readIntent() {
+  try { return sessionStorage.getItem('clu.checkout.intent'); } catch { return null; }
+}
+function writeIntent(value: string | null) {
+  try {
+    if (value) sessionStorage.setItem('clu.checkout.intent', value);
+    else sessionStorage.removeItem('clu.checkout.intent');
+  } catch { /* Memory-only intent when browser storage is unavailable. */ }
+}
 const CheckOut = () => {
   const { token } = useSelector((s: RootState) => s.user);
   const { cartItems, refreshCart } = useContext(ShoppingCartContext);
   const navigate = useNavigate();
-  const key = useRef<string | null>(sessionStorage.getItem('clu.checkout.intent'));
+  const key = useRef<string | null>(readIntent());
+  const alive = useRef(true);
+  useEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
   const submitting = useRef(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -20,13 +31,15 @@ const CheckOut = () => {
     setLoading(true);
     setError(null);
     key.current ??= crypto.randomUUID();
-    sessionStorage.setItem('clu.checkout.intent', key.current);
+    writeIntent(key.current);
     try {
       const { data } = await orderService.place({}, key.current, { token });
+      if (!alive.current) return;
       // Checkout consumes selected persisted lines atomically. Do not DELETE the cart here.
-      sessionStorage.removeItem('clu.checkout.intent');
+      writeIntent(null);
       key.current = null;
       await refreshCart();
+      if (!alive.current) return;
       navigate(`/orders/${data.id}`);
     } catch (failure) {
       setError(failure instanceof Error ? failure.message : '订单提交失败');

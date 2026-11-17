@@ -72,3 +72,19 @@ describe('authenticated cart reconciliation', () => {
     expect(result.current.error).toBe('Denied');
   });
 });
+
+it('does not reconcile an old cart mutation after its account provider unmounts', async () => {
+  let finish!: () => void;
+  vi.spyOn(cartService, 'clear').mockImplementation(() => new Promise(resolve => {
+    finish = () => resolve({ data: undefined, meta: null, status: 204, requestId: null });
+  }));
+  const get = vi.spyOn(cartService, 'get');
+  const dispatch = vi.fn();
+  const { result, unmount } = renderHook(() => useShoppingCartAction(dispatch, [], 'old-account'));
+  let pending: Promise<void> | void;
+  act(() => { pending = result.current.clearCart(); });
+  await waitFor(() => expect(finish).toBeTypeOf('function'));
+  unmount();
+  await act(async () => { finish(); await pending; });
+  expect(get).not.toHaveBeenCalled(); expect(dispatch).not.toHaveBeenCalled();
+});
