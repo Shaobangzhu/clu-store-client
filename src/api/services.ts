@@ -36,6 +36,12 @@ export const cartService = {
   clear: (options: RequestOptions) => emptyResponse(client.DELETE('/api/shopping-cart/items', requestOptions(options))),
 };
 export const orderService = {
+  adminList: (query: operations['adminOrders']['parameters']['query'], options: RequestOptions) =>
+    readResponse(client.GET('/api/admin/orders', { params: { query }, ...requestOptions(options) })),
+  approve: (id: number, body: Schemas['approveRequest'], options: RequestOptions) =>
+    readResponse(client.POST('/api/orders/{id}/approve', { params: { path: { id: String(id) } }, body, ...requestOptions(options) })),
+  reject: (id: number, body: Schemas['rejectRequest'], options: RequestOptions) =>
+    readResponse(client.POST('/api/orders/{id}/reject', { params: { path: { id: String(id) } }, body, ...requestOptions(options) })),
   place: (body: Schemas['placeRequest'], idempotencyKey: string, options: RequestOptions) => {
     const init = requestOptions(options);
     return readResponse(client.POST('/api/orders/place', { body, ...init,

@@ -24,7 +24,7 @@ import useApiData from '@/hooks/useApiData';
 import { catalogService } from '@/api/services';
 
 const Header = () => {
-  const { user } = useSelector((state: RootState) => state.user);
+  const { user, status } = useSelector((state: RootState) => state.user);
   const username = user?.username;
 
   const { t } = useTranslation();
@@ -35,6 +35,8 @@ const Header = () => {
       path: `/categories/${encodeURIComponent(category.slug)}`,
       label: t(`routes.${category.slug === 'tablets' ? 'ipad' : category.slug}`, { defaultValue: category.title }),
     })),
+    ...(status === 'authenticated' ? [{ path: '/user', label: t('orders.title') }] : []),
+    ...(status === 'authenticated' && user?.role === 'ADMIN' ? [{ path: '/admin/orders', label: t('orders.admin') }] : []),
     ...SHOPPING_PAGES.filter(page => page.id === 'entertainment' || page.id === 'support')
       .map(page => ({ path: page.path, label: t(`routes.${page.id}`) })),
   ];
