@@ -33,5 +33,30 @@
     },
     "newarrivals": "新品上市",
     "offers": "福利活动"
+  },
+  "catalog": {
+    "loading": "正在加载商品…",
+    "failed": "商品加载失败。",
+    "retry": "重试",
+    "empty": "暂无商品。",
+    "noImage": "暂无图片",
+    "searchPlaceholder": "输入搜索关键词",
+    "results": "找到 {{count}} 个商品",
+    "all": "全部",
+    "previous": "上一页",
+    "next": "下一页",
+    "page": "第 {{page}} 页，共 {{total}} 页",
+    "chooseOptions": "选择配置",
+    "learnMore": "进一步了解",
+    "unavailable": "暂时缺货",
+    "viewAll": "查看全部商品",
+    "compare": "全系产品细细看",
+    "installment": "{{price}} /月起或",
+    "buy": "购买 {{name}}",
+    "selectModel": "请选择您想要的型号",
+    "selectColor": "请选择您喜欢的颜色",
+    "selectMemory": "你需要多大的空间？",
+    "total": "总计",
+    "from": "{{price}} 起"
   }
 }

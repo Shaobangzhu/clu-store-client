@@ -33,5 +33,30 @@
     },
     "newarrivals": "Nouveautés",
     "offers": "Offres spéciales"
+  },
+  "catalog": {
+    "loading": "Chargement des produits…",
+    "failed": "Impossible de charger les produits.",
+    "retry": "Réessayer",
+    "empty": "Aucun produit disponible.",
+    "noImage": "Image indisponible",
+    "searchPlaceholder": "Rechercher des produits",
+    "results": "Produits trouvés : {{count}}",
+    "all": "Tout",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "page": "Page {{page}} sur {{total}}",
+    "chooseOptions": "Choisir les options",
+    "learnMore": "En savoir plus",
+    "unavailable": "Actuellement indisponible",
+    "viewAll": "Voir tous les produits",
+    "compare": "Comparer la gamme",
+    "installment": "Dès {{price}}/mois ou",
+    "buy": "Acheter {{name}}",
+    "selectModel": "Choisissez votre modèle",
+    "selectColor": "Choisissez votre finition",
+    "selectMemory": "Choisissez votre stockage",
+    "total": "Total",
+    "from": "À partir de {{price}}"
   }
 }

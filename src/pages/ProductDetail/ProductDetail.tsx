@@ -1,133 +1,64 @@
-import { useLoaderData } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import type { Product, Color, ProductModel, MemorySize } from "@/types/custom";
-import { Button } from "@/components";
-import { useState, useEffect, useContext } from "react";
-import ProductTitle from "./ProductTitle";
-import ProductHero from "./ProductHero";
-import SelectTitle from "./SelectTitle";
-import SelectSquare from "./SelectSquare";
-import SelectCircle from "./SelectCircle";
-import PriceTag from "./PriceTag";
-import { ShoppingCartContext } from "@/contexts/shoppingCart";
-import type { CartItem } from "@/types/custom";
+import { useLoaderData } from 'react-router-dom';
+import type { Product } from '@/types/custom';
+import { Button } from '@/components';
+import { useContext } from 'react';
+import { useTranslation } from 'react-i18next';
+import ProductTitle from './ProductTitle';
+import ProductHero from './ProductHero';
+import SelectTitle from './SelectTitle';
+import SelectSquare from './SelectSquare';
+import SelectCircle from './SelectCircle';
+import PriceTag from './PriceTag';
+import { ShoppingCartContext } from '@/contexts/shoppingCart';
+import { canPurchase, formatMoney } from '@/api/catalog';
+import useProductSelection from '@/hooks/useProductSelection';
 
-type ParamsType = {
-  id: string;
-};
-
-const ProductDetail = () => {
-  const { addToCart } = useContext(ShoppingCartContext);
-
-  const [selectedModel, setSelectedModel] = useState<ProductModel>();
-  const [selectedColor, setSelectedColor] = useState<Color>();
-  const [selectedMemorySize, setSelectedMemorySize] = useState<MemorySize>();
-  const [totalAmount, setTotalAmount] = useState<number>(0);
-
-  const navigate = useNavigate();
+export default function ProductDetail() {
   const product = useLoaderData<Product>();
-  if (!product) {
-    // return <div>Product not found</div>
-    // 可以使用一个更友好的错误处理方式, 比如重定向到404页面
-    navigate("/404", { replace: true });
-    return; // 这里返回 undefined 或者 null, 避免渲染错误
-  }
-
-  useEffect(() => {
-    const total =
-      (selectedModel?.price ?? product.startingPrice) + (selectedMemorySize?.price ?? 0);
-    setTotalAmount(total);
-  }, [product, selectedModel, selectedMemorySize, selectedColor]);
-
-  const handleAddToCart = () => {
-    if (!product || !selectedModel || !selectedColor || !selectedMemorySize) {
-      return;
-    }
-    const cartItem: CartItem = {
-      productId: product.id,
-      name: product.name,
-      imageSrc: product.image,
-      modelId: selectedModel.id,
-      modelPrice: selectedModel.price,
-      model: selectedModel.name,
-      color: selectedColor,
-      memorySize: selectedMemorySize.name,
-      memorySizeId: selectedMemorySize.id,
-      memorySizePrice: selectedMemorySize.price,
-      qty: 1,
-      price: selectedModel.price + selectedMemorySize.price,
-    };
-    addToCart(cartItem);
-  };
-
-  return (
-    <div className="min-h-screen px-4 lg:px-32 mt-4 mb-40 text-apple-text-light dark:text-apple-text-dark">
-      <ProductTitle
-        name={product.name}
-        startingPrice={product.startingPrice}
-        installment={product.installments}
-      />
-      <div className="flex flex-col lg:flex-row gap-6 mt-12">
-        <ProductHero
-          imageSrc={product.carouselImages[0] ?? "/placeholder.png"}
-        />
-        <div className="flex flex-col items-center justify-center">
-          <div className="w-full">
-            <SelectTitle text1="选择型号" text2="请选择您想要的型号" />
-            <div className="mt-4 space-y-2">
-              {product.models.map((model) => (
-                <SelectSquare
-                  key={model.name}
-                  name={model.name}
-                  spec={model.specification}
-                  price={`RMB ${model.price} 起`}
-                  isSelected={selectedModel?.id === model.id}
-                  onClick={() => setSelectedModel(model)}
-                />
-              ))}
-            </div>
+  return <ProductConfiguration key={product.id} product={product} />;
+}
+function ProductConfiguration({ product }: { product: Product }) {
+  const { addToCart } = useContext(ShoppingCartContext);
+  const { t } = useTranslation();
+  const selection = useProductSelection(product);
+  const model = product.models.find(item => item.id === selection.modelId);
+  const memory = product.memorySizes.find(item => item.id === selection.memorySizeId);
+  return <div className="min-h-screen px-4 lg:px-32 mt-4 mb-40 text-apple-text-light dark:text-apple-text-dark">
+    <ProductTitle name={product.name} startingPrice={product.startingPrice} installment={product.installments} />
+    <p className="mt-4">{product.title}</p>
+    {!canPurchase(product) && <p role="status" className="mt-4">{t('catalog.unavailable')}</p>}
+    <div className="flex flex-col lg:flex-row gap-6 mt-12">
+      <ProductHero imageSrc={product.carouselImages[0] || product.image} name={product.name} />
+      <div className="flex flex-col items-center justify-center">
+        <div className="w-full">
+          <SelectTitle text1={t('home_page.product_hero.model')} text2={t('catalog.selectModel')} />
+          <div className="mt-4 space-y-2">
+            {product.models.map(item => <SelectSquare key={item.id} name={item.name} spec={item.specification}
+              price={formatMoney(item.price)} disabled={!item.inStock}
+              isSelected={selection.modelId === item.id} onClick={() => selection.select({ modelId: item.id })} />)}
           </div>
-          <div className="w-full mt-10">
-            <SelectTitle text1="外观" text2="请选择您喜欢的颜色" />
-            <div className="flex gap-4 mt-6 ml-6">
-              {product.colors.map((colors) => (
-                <SelectCircle
-                  key={colors}
-                  color={colors}
-                  isSelected={selectedColor === colors}
-                  onClick={() => setSelectedColor(colors)}
-                />
-              ))}
-            </div>
+        </div>
+        <div className="w-full mt-10">
+          <SelectTitle text1={t('home_page.product_hero.color')} text2={t('catalog.selectColor')} />
+          <div className="flex gap-4 mt-6 ml-6">
+            {product.colors.map(color => <SelectCircle key={color} color={color}
+              isSelected={selection.color === color} onClick={() => selection.select({ color })} />)}
           </div>
-          <div className="w-full mt-10">
-            <SelectTitle text1="储存容量" text2="你需要多大的空间?" />
-            <div className="mt-4 space-y-2">
-              {product.memorySizes.map((size) => (
-                <SelectSquare
-                  key={size.name}
-                  name={size.name}
-                  price={`RMB ${size.price} 起`}
-                  isSelected={selectedMemorySize?.id === size.id}
-                  onClick={() => setSelectedMemorySize(size)}
-                />
-              ))}
-            </div>
+        </div>
+        <div className="w-full mt-10">
+          <SelectTitle text1={t('home_page.product_hero.memory')} text2={t('catalog.selectMemory')} />
+          <div className="mt-4 space-y-2">
+            {product.memorySizes.map(item => <SelectSquare key={item.id} name={item.name}
+              price={`+ ${formatMoney(item.price)}`} disabled={!item.inStock}
+              isSelected={selection.memorySizeId === item.id} onClick={() => selection.select({ memorySizeId: item.id })} />)}
           </div>
         </div>
       </div>
-
-      <PriceTag
-        modelAmount={selectedModel?.price ?? 0}
-        colorAmount={0} // 假设颜色不额外收费
-        sizeAmount={selectedMemorySize?.price ?? 0}
-        totalAmount={totalAmount}
-      />
-      <div className="flex justify-end mt-12 mr-8">
-        <Button title="加入购物车" onClick={handleAddToCart} />
-      </div>
     </div>
-  );
-};
-
-export default ProductDetail;
+    <PriceTag modelAmount={model?.price} sizeAmount={memory?.price} totalAmount={selection.price} />
+    <div className="flex justify-end mt-12 mr-8">
+      <Button title={t('home_page.product_hero.add_cart')} disabled={!selection.cartItem}
+        onClick={() => { if (selection.cartItem) void addToCart(selection.cartItem); }} />
+    </div>
+  </div>;
+}

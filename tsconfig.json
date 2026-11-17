@@ -54,5 +54,6 @@
 
     // JavaScript Support
     "allowJs": true
-  }
+  },
+  "exclude": ["node_modules", "dist"]
 }

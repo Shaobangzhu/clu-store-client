@@ -86,8 +86,8 @@ describe('media and display adapters', () => {
   it('maps real product, category and cart examples to existing display models', () => {
     const product = contract.paths['/api/products/{id}'].get.responses['200'].content['application/json'].example.data;
     const adapted = toProduct(product);
-    expect(adapted.startingPrice).toBe(Number(product.startingPrice));
-    expect(adapted.models[0]?.price).toBe(Number(product.models[0]?.price));
+    expect(adapted.startingPrice).toBe(product.startingPrice);
+    expect(adapted.models[0]?.price).toBe(product.models[0]?.price);
     expect(adapted.colors).toEqual(product.colors);
     const cart = contract.paths['/api/shopping-cart'].get.responses['200'].content['application/json'].example.data;
     const first = cart.items[0];

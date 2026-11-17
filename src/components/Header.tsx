@@ -20,16 +20,27 @@ import { useSelector, useDispatch } from "react-redux";
 import { AUTH_PAGES } from "@/assets/data/path";
 import { parseJwt } from "@/helpers/jwtHelper";
 import { logout } from "@/redux/userSlice";
+import useApiData from '@/hooks/useApiData';
+import { catalogService } from '@/api/services';
 
 const Header = () => {
   const [username, setUsername] = useState<string | null>(null);
   const { token } = useSelector((state: RootState) => state.user);
 
   const { t } = useTranslation();
+  const categories = useApiData('navigation:categories', async signal => (await catalogService.categories({ signal })).data);
+  const shoppingPages = [
+    { path: '/', label: t('routes.store') },
+    ...(categories.data ?? []).map(category => ({
+      path: `/categories/${encodeURIComponent(category.slug)}`,
+      label: t(`routes.${category.slug === 'tablets' ? 'ipad' : category.slug}`, { defaultValue: category.title }),
+    })),
+    ...SHOPPING_PAGES.filter(page => page.id === 'entertainment' || page.id === 'support')
+      .map(page => ({ path: page.path, label: t(`routes.${page.id}`) })),
+  ];
   const currentLanguage = useSelector<RootState, CultureCode>(
     (state) => state.i18n.currentLanguage,
   );
-  console.log("currentLanguage: ", currentLanguage);
   const dispatch = useDispatch();
 
   const { cartItems } = useContext(ShoppingCartContext);
@@ -53,7 +64,6 @@ const Header = () => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   // ref
   useEffect(() => {
-    console.log("inputRef.current:", inputRef.current);
     if (inputRef.current) {
       inputRef.current.focus();
     }
@@ -61,11 +71,9 @@ const Header = () => {
 
   const handleLanguageChange = () => {
     const currentIndex = languageSet.indexOf(currentLanguage);
-    console.log("currentIndex: ", currentIndex);
     const nextIndex = (currentIndex + 1) % languageSet.length;
     const nextLanguage = languageSet[nextIndex] ?? languageSet[0];
     dispatch(setCulture(nextLanguage));
-    console.log("Dispatched language change to:", nextLanguage);
   };
 
   useEffect(() => {
@@ -100,7 +108,7 @@ const Header = () => {
         text-apple-text-light
         dark:text-apple-text-dark"
       >
-        {SHOPPING_PAGES.map((page) => (
+        {shoppingPages.map((page) => (
           <NavLink
             key={page.path}
             to={page.path}
@@ -112,9 +120,12 @@ const Header = () => {
             }
           `}
           >
-            {t(`routes.${page.id}`)}
+            {page.label}
           </NavLink>
         ))}
+        {categories.error && <button onClick={() => { void categories.fetchData().catch(() => {}); }}>
+          {t('catalog.retry')}
+        </button>}
       </div>
       {isSearchEnable && (
         <div className="relative">
@@ -220,7 +231,7 @@ const Header = () => {
           text-apple-text-light
           dark:text-apple-text-dark"
         >
-          {SHOPPING_PAGES.map((page) => (
+          {shoppingPages.map((page) => (
             <NavLink
               key={page.path}
               to={page.path}
@@ -233,9 +244,12 @@ const Header = () => {
               `}
               onClick={() => setIsOpen(false)}
             >
-              {t(`routes.${page.id}`)}
+              {page.label}
             </NavLink>
           ))}
+          {categories.error && <button onClick={() => { void categories.fetchData().catch(() => {}); }}>
+            {t('catalog.retry')}
+          </button>}
           <hr className="border-t border-gray-300" />
           {username ? (
             <>

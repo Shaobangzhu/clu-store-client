@@ -3,14 +3,9 @@ import type { CartDto, ProductDto } from './services';
 import type { CartItem, Product, Category } from '../types/custom';
 import type { components } from './schema';
 
-// These numeric values are for the existing display model only. Requests never send prices.
+// Catalog money remains decimal strings. Only the legacy cart display uses numbers.
 export function toProduct(dto: ProductDto): Product {
-  return { ...dto, image: mediaUrl(dto.image), carouselImages: dto.carouselImages.map(mediaUrl),
-    startingPrice: Number(dto.startingPrice), installments: dto.installments === null ? null : Number(dto.installments),
-    category: dto.category ?? undefined,
-    models: dto.models.map(model => ({ ...model, price: Number(model.price) })),
-    memorySizes: dto.memorySizes.map(size => ({ ...size, price: Number(size.price) })),
-  };
+  return { ...dto, image: mediaUrl(dto.image), carouselImages: (dto.carouselImages ?? []).map(mediaUrl).filter(Boolean) };
 }
 export function toCartItem(dto: CartDto['items'][number]): CartItem {
   return { id: dto.id, productId: dto.product.id, name: dto.product.name, imageSrc: mediaUrl(dto.product.image),
@@ -22,8 +17,7 @@ export function toCategory(dto: components['schemas']['categoryResponse200']['da
   return { ...dto, subTitle: dto.subTitle ?? '',
     videos: { id: dto.videos?.id ?? 0, regularSrc: mediaUrl(dto.videos?.regularSrc), smallSrc: mediaUrl(dto.videos?.smallSrc) },
     features: dto.features.map(feature => ({ ...feature, image: mediaUrl(feature.image) })),
-    products: dto.products.map(product => ({ ...product, image: mediaUrl(product.image),
-      startingPrice: Number(product.startingPrice), installments: product.installments === null ? null : Number(product.installments) })),
+    products: dto.products.map(product => ({ ...product, image: mediaUrl(product.image) })),
   };
 }
 export function positiveId(value: string | number | null): number {

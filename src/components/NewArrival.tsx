@@ -1,5 +1,6 @@
 import styles from "./Product.module.css";
 import styled from "styled-components";
+import ProductImage from './ProductImage';
 
 type StyledProductTextContainerProps = {
   $textColor?: string | undefined;
@@ -59,7 +60,7 @@ function NewArrival({
       $transition="0.5s"
       onClick={() => onProductClick(title)}
     >
-      <img style={imgStyle} src={image} alt="iPad Pro" />
+      <ProductImage style={imgStyle} src={image} alt={title} />
       <StyledProductTextContainer $textColor={textColor}>
         <div className={styles.productTitle}>{title}</div>
         <div className={styles.productDetail}>{detail}</div>
