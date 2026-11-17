@@ -1,17 +1,11 @@
 import { mediaUrl } from '../helpers/api';
-import type { CartDto, ProductDto } from './services';
-import type { CartItem, Product, Category } from '../types/custom';
+import type { ProductDto } from './services';
+import type { Product, Category } from '../types/custom';
 import type { components } from './schema';
 
-// Catalog money remains decimal strings. Only the legacy cart display uses numbers.
+// Catalog money remains decimal strings.
 export function toProduct(dto: ProductDto): Product {
   return { ...dto, image: mediaUrl(dto.image), carouselImages: (dto.carouselImages ?? []).map(mediaUrl).filter(Boolean) };
-}
-export function toCartItem(dto: CartDto['items'][number]): CartItem {
-  return { id: dto.id, productId: dto.product.id, name: dto.product.name, imageSrc: mediaUrl(dto.product.image),
-    modelId: dto.model.id, model: dto.model.name, modelPrice: Number(dto.model.price),
-    memorySizeId: dto.memorySize.id, memorySize: dto.memorySize.name, memorySizePrice: Number(dto.memorySize.price),
-    color: dto.color, qty: dto.qty, price: Number(dto.unitPrice) };
 }
 export function toCategory(dto: components['schemas']['categoryResponse200']['data']): Category {
   return { ...dto, subTitle: dto.subTitle ?? '',

@@ -12,26 +12,6 @@ export type Color = string;
 // 定义 Phone 产品的类型
 export type Product = Schemas['productResponse200']['data'];
 
-interface CartItem {
-  id?: number;
-  productId: string | number;
-  name: string;
-  imageSrc: string;
-
-  modelId: string | number | null;
-  model: string | null;
-  modelPrice: number | null;
-
-  color: string | null;
-
-  memorySizeId: string | number | null;
-  memorySize: string | null;
-  memorySizePrice: number | null;
-
-  price: number;
-  qty: number;
-}
-
 export interface Video {
   id: number;
   regularSrc: string;

@@ -1,36 +1,26 @@
 import ShoppingCartContext from './shoppingCartContext';
-import shoppingCartReducer, { syncCart } from '../../reducers/shoppingCartReducer';
-import { useImmerReducer } from 'use-immer';
 import useShoppingCartAction from '../../hooks/useShoppingCartAction';
-import { useEffect, useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import type { RootState } from '../../redux/store';
-import { cartService } from '../../api/services';
-import { toCartItem } from '../../api/adapters';
 
 const ShoppingCartProvider = ({ children }: { children: React.ReactNode }) => {
-  const [cartItems, dispatch] = useImmerReducer(shoppingCartReducer, []);
-  const { token } = useSelector((state: RootState) => state.user);
-  const [loadError, setLoadError] = useState<string | null>(null);
-  const previousToken = useRef(token);
-  const actions = useShoppingCartAction(dispatch, cartItems, token);
-  useEffect(() => {
-    const controller = new AbortController();
-    setLoadError(null);
-    if (token || previousToken.current !== token) dispatch(syncCart([]));
-    previousToken.current = token;
-    if (token) {
-      void cartService.get({ token, signal: controller.signal }).then(({ data }) => {
-        if (!controller.signal.aborted) dispatch(syncCart(data.items.map(toCartItem)));
-      }).catch(failure => {
-        if (!controller.signal.aborted) setLoadError(failure instanceof Error ? failure.message : 'Cart request failed');
-      });
-    }
-    return () => controller.abort();
-  }, [token, dispatch]);
-  return <ShoppingCartContext.Provider value={{ cartItems, ...actions }}>
-    {(loadError || actions.error) && <p role="alert">{loadError || actions.error}</p>}
+  const { token, status, generation, user } = useSelector((state: RootState) => state.user);
+  // Reset synchronously at the account boundary, even when mounted outside App's keyed subtree.
+  return <AccountCart key={JSON.stringify([generation, user?.id, token, status])}
+    token={status === 'authenticated' ? token : null}>{children}</AccountCart>;
+};
+function AccountCart({ token, children }: { token: string | null; children: React.ReactNode }) {
+  const actions = useShoppingCartAction(token);
+  const { t } = useTranslation();
+  return <ShoppingCartContext.Provider value={actions}>
+    {actions.error && <div role="alert" className="p-4">
+      <p>{t(actions.error)}</p>
+      {token && <button type="button" disabled={actions.busy} onClick={() => { void actions.refreshCart(); }}>
+        {t('cart.reload')}
+      </button>}
+    </div>}
     {children}
   </ShoppingCartContext.Provider>;
-};
+}
 export default ShoppingCartProvider;

@@ -1,73 +1,34 @@
-import { useContext, useEffect, useState } from "react";
-import ShoppingCartContext from "@/contexts/shoppingCart/shoppingCartContext";
-import { Button, CartItem } from "@/components";
-import { useNavigate } from "react-router-dom";
+import { useContext } from 'react';
+import ShoppingCartContext from '@/contexts/shoppingCart/shoppingCartContext';
+import { Button, CartItem } from '@/components';
+import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { formatMoney } from '@/api/catalog';
+import { CART_LIMITS } from '@/api/cart';
 
-const shoppingCart = () => {
+export default function ShoppingCart() {
   const navigate = useNavigate();
-  const { cartItems, updateItem, removeFromCart } =
-    useContext(ShoppingCartContext);
-
-  const [total, setTotal] = useState(0);
-  useEffect(() => {
-    const total = cartItems.reduce(
-      (acc, item) => acc +
-        (item.price ?? ((item.modelPrice ?? 0) + (item.memorySizePrice ?? 0))) * item.qty,
-      0,
-    );
-    setTotal(total);
-  }, [cartItems]);
-
-  return (
-    <div
-      className="
-        min-h-screen p-6 pt-30
-        max-w-4xl mx-auto
-        bg-apple-light dark:bg-apple-dark
-        font-light
-      "
-    >
-      <h2 className="text-4xl">
-        购物车总价 ¥{total.toLocaleString()}
-      </h2>
-      {/* 商品列表 */}
-      <div className="mb-6">
-        {cartItems.map((item, index) => (
-          <CartItem
-            item={item}
-            key={item.id ?? `${item.productId}:${item.modelId}:${item.memorySizeId}:${item.color}`}
-            onItemUpdate={(qty) => {
-              const newItem = { ...item, qty };
-              updateItem(index, newItem);
-            }}
-            onItemRemove={() => removeFromCart(index)}
-          />
-        ))}
+  const { t } = useTranslation();
+  const { cart, cartItems, authenticated, busy, ready, error, updateItem, removeFromCart, clearCart, refreshCart } = useContext(ShoppingCartContext);
+  const canCheckout = ready && cartItems.length > 0 && cartItems.every(item => item.available);
+  return <div className="min-h-screen p-6 pt-30 max-w-4xl mx-auto bg-apple-light dark:bg-apple-dark font-light">
+    <h1 className="text-4xl">{t('cart.title')}</h1>
+    {!authenticated ? <Link to="/auth/signin" state={{ from: { pathname: '/cart' } }}>{t('cart.signIn')}</Link> : <>
+      {busy && <p role="status">{t('cart.loading')}</p>}
+      {error && cart && <p>{t('cart.lastConfirmed')}</p>}
+      {ready && cartItems.length === 0 && <p>{t('cart.empty')}</p>}
+      <div className="mb-6" aria-busy={busy}>
+        {cartItems.map(item => <CartItem key={item.id} item={item} disabled={!ready}
+          maxQuantity={CART_LIMITS.total - (cart?.totalQty ?? 0) + item.qty}
+          onItemUpdate={qty => { void updateItem(item.id, qty); }}
+          onItemRemove={() => { void removeFromCart(item.id); }} />)}
       </div>
-      {/* 结算区域 */}
-      <div className="ml-12 pt-2 space-y-4">
-        <div className="grid grid-cols-2 items-center">
-          <p className="text-center">小计: </p>
-          <p className="text-right">RMB {total.toLocaleString()}</p>
-        </div>
-        <hr className="ml-8 border-t border-apple-gray-200 dark:border-apple-gray-800" />
-        <div className="grid grid-cols-2 items-center">
-          <p className="text-center text-2xl">总计: </p>
-          <p className="text-right text-2xl">
-            RMB {total.toLocaleString()}
-          </p>
-          <div className="col-span-2 flex justify-end mt-12">
-            <Button
-              title="结账"
-              onClick={() => {
-                navigate("/checkout");
-              }}
-            ></Button>
-          </div>
-        </div>
+      {cart && <p className="text-right text-2xl">{t('cart.total')}: {formatMoney(cart.totalAmount)}</p>}
+      <div className="flex justify-end gap-4 mt-12">
+        <Button title={t('cart.reload')} disabled={busy} onClick={() => { void refreshCart(); }} />
+        <Button title={t('cart.clear')} disabled={!ready || cartItems.length === 0} onClick={() => { void clearCart(); }} />
+        <Button title={t('cart.checkout')} disabled={!canCheckout} onClick={() => navigate('/checkout')} />
       </div>
-    </div>
-  );
-};
-
-export default shoppingCart;
+    </>}
+  </div>;
+}

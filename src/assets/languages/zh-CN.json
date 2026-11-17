@@ -76,5 +76,29 @@
     "rateLimit": "尝试过于频繁，请稍后重试。",
     "invalidCredentials": "凭据无效或会话已过期，请重新登录。",
     "serverError": "认证失败，请重试。"
+  },
+  "cart": {
+    "title": "购物车",
+    "signIn": "请登录后使用购物车",
+    "loading": "正在更新购物车…",
+    "empty": "购物车为空。",
+    "unitPrice": "单价",
+    "lineTotal": "商品小计",
+    "total": "总计",
+    "quantity": "数量",
+    "decrease": "减少数量",
+    "increase": "增加数量",
+    "remove": "移除商品",
+    "clear": "清空购物车",
+    "checkout": "结账",
+    "reload": "重新加载购物车",
+    "unavailable": "商品不可用，请移除后再结账。",
+    "lastConfirmed": "当前显示上次确认的购物车。请重新加载后再修改。",
+    "failed": "购物车请求失败，结果可能不确定。请重新加载后再尝试。",
+    "reconcileFailed": "修改已保存，但购物车刷新失败。请重新加载，不要重复修改。",
+    "limit": "购物车限制：每项最多99件、50种配置，总共500件。",
+    "unavailableError": "商品或配置不可用。请重新加载购物车并检查选择。",
+    "missing": "该购物车商品已不存在，请重新加载。",
+    "rateLimited": "请求过于频繁，请稍后重新加载购物车。"
   }
 }
