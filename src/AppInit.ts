@@ -1,17 +1,10 @@
-import { useEffect } from "react";
-import { useDispatch, type UseDispatch } from "react-redux";
-import { setToken } from "./redux/userSlice";
-
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { restoreSession } from './redux/userSlice';
+import type { StoreDispatch } from './redux/store';
 const AppInit = () => {
-  const dispatch = useDispatch();
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      dispatch(setToken(token));
-    }
-  }, []);
-
+  const dispatch = useDispatch<StoreDispatch>();
+  useEffect(() => { void dispatch(restoreSession()); }, [dispatch]);
   return null;
 };
-
 export default AppInit;

@@ -1,16 +1,19 @@
+import { useSelector } from 'react-redux';
+import type { RootState } from './redux/store';
 import { ShoppingCartProvider } from "./contexts/shoppingCart";
 import router from "./routes";
 import { RouterProvider } from "react-router-dom";
 import AppInit from "./AppInit";
 
 function App() {
-  // 单根节点原则
+  const generation = useSelector((state: RootState) => state.user.generation);
   return (
-    <ShoppingCartProvider>
+    <>
       <AppInit />
-      {/* 用于程序初始化, 如:设置token */}
-      <RouterProvider router={router} />
-    </ShoppingCartProvider>
+      <ShoppingCartProvider key={generation}>
+        <RouterProvider router={router} />
+      </ShoppingCartProvider>
+    </>
   );
 }
 

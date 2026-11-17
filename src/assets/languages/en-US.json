@@ -58,5 +58,23 @@
     "selectMemory": "Choose your storage",
     "total": "Total",
     "from": "From {{price}}"
+  },
+  "auth": {
+    "welcome": "Welcome back",
+    "identifier": "Username or email",
+    "password": "Password",
+    "signIn": "Sign in",
+    "createAccount": "Create account",
+    "forgotPassword": "Forgot password?",
+    "username": "Username",
+    "email": "Email",
+    "confirmPassword": "Confirm password",
+    "hasAccount": "Already have an account?",
+    "register": "Register",
+    "passwordMismatch": "Passwords do not match.",
+    "duplicate": "That username or email is already registered.",
+    "rateLimit": "Too many attempts. Please wait before trying again.",
+    "invalidCredentials": "Invalid credentials or expired session. Please sign in again.",
+    "serverError": "Unable to authenticate. Please try again."
   }
 }

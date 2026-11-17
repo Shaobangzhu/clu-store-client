@@ -1,13 +1,18 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import useApiData from "@/hooks/useApiData";
-import { useDispatch, type UseDispatch, useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
 import type { RootState, StoreDispatch } from "../redux/store";
 import { login } from "../redux/userSlice";
 
+export function safeReturnPath(value: unknown): string {
+  return typeof value === 'string' && /^\/(?![\/\\])/.test(value)
+    && !/[\\\x00-\x20]/.test(value) && !value.startsWith('/auth') ? value : '/';
+}
 function SignIn() {
+  const { t } = useTranslation();
   const dispatch = useDispatch<StoreDispatch>();
-  const { token, loading, error } = useSelector(
+  const { token, loading, error, status } = useSelector(
     (state: RootState) => state.user,
   );
 
@@ -19,20 +24,19 @@ function SignIn() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault(); // 阻止表单提交后的默认行为, 如自动刷新页面
 
-    dispatch(login({ username: email, password }));
+    if (loading) return;
+    dispatch(login({ identifier: email, password }));
   };
 
   useEffect(() => {
     if (loading) return;
-    if (!loading && error) alert(error);
-    if (!loading && token) {
-      localStorage.setItem("token", token);
+    if (!loading && token && status === "authenticated") {
       navigate(
-        location.state?.from || "/", // 优先跳转来源页面
+        safeReturnPath(location.state?.from), // 优先跳转来源页面
         { replace: true },
       );
     }
-  }, [token, error, loading]);
+  }, [token, loading, status, navigate, location.state]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-800 to-gray-900 flex items-center justify-center p-4">
@@ -61,17 +65,20 @@ function SignIn() {
 
           {/* 表单标题 */}
           <h1 className="text-3xl font-semibold text-center text-white mb-8">
-            欢迎回来
+            {t("auth.welcome")}
           </h1>
 
           {/* 登录表单 */}
+          {error && <p role="alert" className="text-white">{t(error)}</p>}
           <form className="space-y-6" onSubmit={handleLogin}>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">
-                邮箱
+                {t("auth.identifier")}
               </label>
               <input
-                type="email"
+                type="text"
+                autoComplete="username"
+                aria-label={t("auth.identifier")}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-3 bg-white/10 backdrop-blur-md rounded-lg border border-white/20 focus:border-white focus:ring-2 focus:ring-white/40 text-white placeholder-gray-400 transition-all duration-200"
@@ -82,10 +89,12 @@ function SignIn() {
 
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">
-                密码
+                {t("auth.password")}
               </label>
               <input
                 type="password"
+                autoComplete="current-password"
+                aria-label={t("auth.password")}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3 bg-white/10 backdrop-blur-md rounded-lg border border-white/20 focus:border-white focus:ring-2 focus:ring-white/40 text-white placeholder-gray-400 transition-all duration-200"
@@ -96,25 +105,26 @@ function SignIn() {
 
             <button
               type="submit"
+              disabled={loading}
               className="w-full py-3 px-4 bg-white/20 backdrop-blur-md rounded-lg border border-white/30 hover:bg-white/40 hover:border-white/50 active:scale-95 text-white font-medium transition-all duration-200"
             >
-              登录
+              {t("auth.signIn")}
             </button>
           </form>
 
           {/* 辅助链接 */}
           <div className="mt-8 flex justify-between text-sm">
             <a
-              href="#"
+              href="/auth/register"
               className="text-gray-400 hover:text-white transition-colors duration-200"
             >
-              创建账户
+              {t("auth.createAccount")}
             </a>
             <a
               href="#"
               className="text-gray-400 hover:text-white transition-colors duration-200"
             >
-              忘记密码?
+              {t("auth.forgotPassword")}
             </a>
           </div>
         </div>

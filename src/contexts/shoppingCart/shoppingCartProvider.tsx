@@ -1,6 +1,6 @@
 import ShoppingCartContext from './shoppingCartContext';
 import shoppingCartReducer, { syncCart } from '../../reducers/shoppingCartReducer';
-import usePersistedReducer from '../../hooks/usePersistedReducer';
+import { useImmerReducer } from 'use-immer';
 import useShoppingCartAction from '../../hooks/useShoppingCartAction';
 import { useEffect, useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
@@ -9,7 +9,7 @@ import { cartService } from '../../api/services';
 import { toCartItem } from '../../api/adapters';
 
 const ShoppingCartProvider = ({ children }: { children: React.ReactNode }) => {
-  const [cartItems, dispatch] = usePersistedReducer(shoppingCartReducer, 'shoppingCart', []);
+  const [cartItems, dispatch] = useImmerReducer(shoppingCartReducer, []);
   const { token } = useSelector((state: RootState) => state.user);
   const [loadError, setLoadError] = useState<string | null>(null);
   const previousToken = useRef(token);

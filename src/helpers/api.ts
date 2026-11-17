@@ -1,3 +1,4 @@
+import { sessionTransport } from '../auth/session';
 import createClient from 'openapi-fetch';
 import type { components, paths } from '../api/schema';
 
@@ -48,6 +49,11 @@ export const apiClient = createClient<paths>({
 // Keep non-JSON failures (for example a proxy's HTML 502) inside the error boundary.
 apiClient.use({
   async onRequest({ request }) {
+    const token = request.headers.get('Authorization')?.replace(/^Bearer /, '');
+    if (token && !sessionTransport.allowed(token)) {
+      sessionTransport.invalid(token);
+      throw new ApiError(401, 'TOKEN_EXPIRED', 'Session expired', null, null, null);
+    }
     if (API_BASE_URL === '/api') return request;
     const url = new URL(request.url);
     url.pathname = API_BASE_URL + url.pathname.slice(4);
@@ -55,7 +61,9 @@ apiClient.use({
       signal: request.signal, credentials: request.credentials,
       body: request.body ? await request.arrayBuffer() : undefined });
   },
-  async onResponse({ response }) {
+  async onResponse({ response, request }) {
+    const token = request.headers.get('Authorization')?.replace(/^Bearer /, '');
+    if (response.status === 401 && token) sessionTransport.invalid(token);
     if (response.status === 204) return response;
     let body: unknown;
     try { body = await response.clone().json(); }

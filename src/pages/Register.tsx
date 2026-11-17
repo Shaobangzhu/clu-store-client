@@ -1,9 +1,13 @@
+import { useTranslation } from "react-i18next";
+import { authError } from "../auth/errors";
 import { authService } from "@/api/services";
 import { useState, useEffect } from "react";
 import useApiData from "@/hooks/useApiData";
 import { useNavigate } from "react-router-dom";
 
 function SignUp() {
+  const { t } = useTranslation();
+  const [message, setMessage] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const [username, setUsername] = useState("");
@@ -13,14 +17,19 @@ function SignUp() {
 
   const { data, loading, error, fetchData } = useApiData(
     "register",
-    async signal => (await authService.register({ username, email, password, confirmPassword }, { signal })).data,
+    async signal => {
+      try { return (await authService.register({ username, email, password, confirmPassword }, { signal })).data; }
+      catch (error) { throw new Error(authError(error)); }
+    },
     { autoFetch: false },
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setMessage(null);
+    if (loading) return;
     if (password != confirmPassword) {
-      alert("两次输入的密码不对");
+      setMessage("auth.passwordMismatch");
       return;
     }
 
@@ -29,9 +38,8 @@ function SignUp() {
 
   useEffect(() => {
     if (loading) return;
-    if (!loading && error) alert(error);
     if (!loading && data) navigate("/auth/signin"); // 注册成功后跳转到登录页
-  }, [loading, error, data]);
+  }, [loading, data, navigate]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-800 to-gray-900 flex items-center justify-center p-4">
@@ -60,14 +68,15 @@ function SignUp() {
 
           {/* 表单标题 */}
           <h1 className="text-3xl font-semibold text-center text-white mb-8">
-            创建新账户
+            {t("auth.createAccount")}
           </h1>
 
           {/* 注册表单 */}
+          {(message || error) && <p role="alert" className="text-white">{t(message || error || "auth.serverError")}</p>}
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">
-                用户名
+                {t("auth.username")}
               </label>
               <input
                 type="text"
@@ -81,7 +90,7 @@ function SignUp() {
 
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">
-                邮箱
+                {t("auth.email")}
               </label>
               <input
                 type="email"
@@ -95,7 +104,7 @@ function SignUp() {
 
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">
-                密码
+                {t("auth.password")}
               </label>
               <input
                 type="password"
@@ -109,7 +118,7 @@ function SignUp() {
 
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">
-                确认密码
+                {t("auth.confirmPassword")}
               </label>
               <input
                 type="password"
@@ -123,20 +132,21 @@ function SignUp() {
 
             <button
               type="submit"
+              disabled={loading}
               className="w-full py-3 px-4 bg-white/20 backdrop-blur-md rounded-lg border border-white/30 hover:bg-white/40 hover:border-white/50 active:scale-95 text-white font-medium transition-all duration-200"
             >
-              注册
+              {t("auth.register")}
             </button>
           </form>
 
           {/* 辅助链接 */}
           <div className="mt-8 text-center text-sm">
-            <span className="text-gray-400">已经有账户了？</span>{" "}
+            <span className="text-gray-400">{t("auth.hasAccount")}</span>{" "}
             <a
-              href="#"
+              href="/auth/signin"
               className="text-white underline hover:text-gray-300 transition-colors duration-200"
             >
-              去登录
+              {t("auth.signIn")}
             </a>
           </div>
         </div>
