@@ -1,82 +1,69 @@
-import type { OrderDto } from "@/api/services";
-import { orderService } from "@/api/services";
-import { positiveId } from "@/api/adapters";
-import { useParams } from "react-router-dom";
-import SquareInput from "../components/SquareInput";
-import useApiData from "@/hooks/useApiData";
-import Skeleton from "@/components/Skeleton";
-import { useSelector } from "react-redux";
-import { type RootState } from "../redux/store";
+import { useContext } from 'react';
+import { useSelector } from 'react-redux';
+import { Link, useLocation, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { orderService } from '../api/services';
+import { formatMoney } from '../api/catalog';
+import { validOrderId } from '../checkout/intent';
+import { ApiError } from '../helpers/api';
+import useApiData from '../hooks/useApiData';
+import OrderItems from '../components/OrderItems';
+import Button from '../components/Button';
+import { ShoppingCartContext } from '../contexts/shoppingCart';
+import type { RootState } from '../redux/store';
 
-type OrderDetailParams = {
-  id: string;
-};
-
-const getStatusMessage = (state: OrderDto['status']) => {
-  switch (state) {
-    case "approved":
-      return "下单成功";
-    case "pending":
-      return "订单处理中";
-    case "rejected":
-      return "订单被拒绝";
-    default:
-      return "未知状态";
-  }
-};
-
-const OrderDetail = () => {
-  const { id } = useParams<OrderDetailParams>();
-  if (id == null) {
-    throw new Error("order not found");
-  }
-
-  const { token } = useSelector((s: RootState) => s.user);
-
-  const { data, loading, error } = useApiData(
-    `order:${id}`,
-    async signal => (await orderService.get(positiveId(id), { token, signal })).data,
-    { autoFetch: Boolean(token), scope: token },
-  );
-  if (!token) return <p role="alert">请先登录</p>;
-  if (error) return <p role="alert">{error}</p>;
-
-  if (loading || !data) {
-    return <Skeleton />;
-  }
-
-  return (
-    <div className="min-h-screen pt-6 p-4">
-      <p className="text-4xl mt-2">{getStatusMessage(data.status)}</p>
-      <div className="flex flex-col gap-6 mt-12">
-        {error ? (
-          <p className="text-2xl">订单错误：{error}</p>
-        ) : (
-          <>
-            <p className="text-2xl">订单详情：</p>
-            <SquareInput
-              subTitle="订单 ID"
-              title={id}
-              value=""
-              onChange={() => {}}
-            />
-            <SquareInput
-              subTitle="订单状态"
-              title={data.status}
-              value=""
-              onChange={() => {}}
-            />
-            <SquareInput
-              value=""
-              onChange={() => {}}
-              subTitle="下单时间"
-              title={data.createdAt}
-            />
-          </>
-        )}
-      </div>
+export default function OrderDetail() {
+  const { id } = useParams();
+  const { token, user, generation } = useSelector((s: RootState) => s.user);
+  // Prevent a previous order/account flashing during a route change.
+  return <OrderReceipt key={JSON.stringify([id, token, user?.id, generation])} id={id} token={token} />;
+}
+function OrderReceipt({ id, token }: { id: string | undefined; token: string | null }) {
+  const { t } = useTranslation();
+  const location = useLocation();
+  const { ready, busy, refreshCart } = useContext(ShoppingCartContext);
+  const orderId = id && /^[1-9]\d*$/.test(id) ? Number(id) : 0;
+  const valid = validOrderId(orderId);
+  const { data, loading, error, fetchData } = useApiData(`order:${id}`, async signal => {
+    try { return (await orderService.get(orderId, { token, signal })).data; }
+    catch (failure) {
+      throw new Error(failure instanceof ApiError && failure.status === 404 ? 'order.notFound'
+        : failure instanceof ApiError && failure.status === 401 ? 'checkout.sessionExpired' : 'order.failed');
+    }
+  }, { autoFetch: !!token && valid, scope: token });
+  if (!token) return <p role="alert">{t('cart.signIn')}</p>;
+  if (!valid) return <p role="alert">{t('order.notFound')}</p>;
+  return <div className="min-h-screen p-6 pt-30 max-w-4xl mx-auto space-y-6">
+    <h1 className="text-4xl">{t('order.title')}</h1>
+    <p>{t('checkout.demo')}</p>
+    {location.state?.cartRefreshFailed && !ready && <div role="alert">
+      <p>{t('checkout.cartRefreshFailed')}</p>
+      <Button title={t('cart.reload')} disabled={busy} onClick={() => { void refreshCart(); }} />
+    </div>}
+    {loading && <p role="status">{t('order.loading')}</p>}
+    {error && <p role="alert">{t(error)}</p>}
+    {data && <>
+      <dl className="space-y-2">
+        <div><dt>{t('order.id')}</dt><dd>{data.id}</dd></div>
+        <div><dt>{t('order.status')}</dt><dd>{t(`order.${data.status}`)}</dd></div>
+        <div><dt>{t('order.created')}</dt><dd><time dateTime={data.createdAt}>{data.createdAt}</time></dd></div>
+        <div><dt>{t('order.updated')}</dt><dd><time dateTime={data.updatedAt}>{data.updatedAt}</time></dd></div>
+        <div><dt>{t('cart.total')}</dt><dd>{formatMoney(data.totalAmount)} ({data.currency})</dd></div>
+      </dl>
+      <section><h2 className="text-2xl">{t('order.items')}</h2><OrderItems items={data.items} /></section>
+      <section className="space-y-3">
+        <h2 className="text-2xl">{t('order.history')}</h2>
+        {data.statusHistory.length === 0 && <p>{t('order.noHistory')}</p>}
+        <ol className="space-y-4">{data.statusHistory.map(entry => <li key={entry.id}>
+          <p>{entry.fromStatus ? t(`order.${entry.fromStatus}`) : t('order.createdStatus')} → {t(`order.${entry.toStatus}`)}</p>
+          <time dateTime={entry.createdAt}>{entry.createdAt}</time>
+          {entry.metadata?.note && <p>{entry.metadata.note}</p>}
+        </li>)}</ol>
+      </section>
+    </>}
+    <div className="flex flex-wrap gap-4 items-center">
+      <Button title={t('order.reload')} disabled={loading} onClick={() => { void fetchData().catch(() => {}); }} />
+      <Link to="/cart" className="text-apple-blue underline">{t('checkout.reviewCart')}</Link>
     </div>
-  );
-};
-
-export default OrderDetail;
+  </div>;
+}

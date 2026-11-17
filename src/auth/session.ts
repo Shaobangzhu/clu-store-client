@@ -19,6 +19,8 @@ export function validSession(value: unknown): value is Session {
     && value.expiresAt <= Date.now() + DEMO_TTL && jwtDeadline(value.token) >= value.expiresAt;
 }
 export function clearSession(preserveCheckout = false) {
+  // Only the legacy unscoped key follows session cleanup. P12.6 account-scoped
+  // intents survive expiry/logout so the same user can recover an uncertain order.
   try { sessionStorage.removeItem(SESSION_KEY);
     if (!preserveCheckout) sessionStorage.removeItem('clu.checkout.intent'); } catch { /* Memory-only mode. */ }
   try { localStorage.removeItem('token'); localStorage.removeItem('shoppingCart'); } catch { /* Storage may be disabled. */ }
