@@ -142,5 +142,25 @@
     "reload": "Refresh order",
     "notFound": "Order not found or unavailable to this account.",
     "failed": "Could not load the order. Try refreshing it."
+  },
+  "orders": {
+    "title": "Order history",
+    "admin": "Admin order review",
+    "empty": "No orders on this page.",
+    "details": "View details",
+    "owner": "Order owner",
+    "next": "Next page",
+    "first": "First page",
+    "forbidden": "You do not have permission to access these orders.",
+    "conflict": "This order has already been decided or changed. Reload its current status.",
+    "invalid": "The request is invalid. Reload and review before trying again.",
+    "note": "Decision note (optional, up to 500 characters)",
+    "approve": "Approve",
+    "reject": "Reject",
+    "saved": "Decision saved.",
+    "reconcile": "Reload the current order before another decision. A failed request may already have been applied.",
+    "reconcileButton": "Reload current status",
+    "invalidNote": "Use up to 500 characters without control characters.",
+    "toggleMenu": "Toggle navigation"
   }
 }

@@ -20,6 +20,7 @@ import {
   CheckOut,
   OrderDetail,
 } from "../pages";
+import AdminOrders from '../pages/AdminOrders';
 import RequireAuth from "@/HOCs/RequireAuth";
 import { loadProducts } from "@/helpers/loaders";
 import ProductError from '@/pages/ProductDetail/ProductError';
@@ -69,6 +70,7 @@ const router = createBrowserRouter([
       },
       { path: "/cart", element: <ShoppingCart /> },
       { path: "/checkout", element: <RequireAuth><CheckOut /></RequireAuth> },
+      { path: "/admin/orders", element: <RequireAuth><AdminOrders /></RequireAuth> },
       { path: "/orders/:id", element: <RequireAuth><OrderDetail /></RequireAuth> },
       { path: "*", element: <NotFound /> },
     ],

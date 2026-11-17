@@ -142,5 +142,25 @@
     "reload": "Actualiser la commande",
     "notFound": "Commande introuvable ou inaccessible à ce compte.",
     "failed": "Impossible de charger la commande. Essayez de l’actualiser."
+  },
+  "orders": {
+    "title": "Historique des commandes",
+    "admin": "Examen des commandes administrateur",
+    "empty": "Aucune commande sur cette page.",
+    "details": "Voir les détails",
+    "owner": "Propriétaire de la commande",
+    "next": "Page suivante",
+    "first": "Première page",
+    "forbidden": "Vous n’avez pas accès à ces commandes.",
+    "conflict": "Cette commande a déjà été traitée ou modifiée. Rechargez son état actuel.",
+    "invalid": "Requête invalide. Rechargez et vérifiez avant de réessayer.",
+    "note": "Note de décision (facultative, 500 caractères maximum)",
+    "approve": "Approuver",
+    "reject": "Rejeter",
+    "saved": "Décision enregistrée.",
+    "reconcile": "Rechargez la commande avant une nouvelle décision. Une requête échouée peut avoir été appliquée.",
+    "reconcileButton": "Recharger l’état actuel",
+    "invalidNote": "Utilisez au maximum 500 caractères sans caractères de contrôle.",
+    "toggleMenu": "Afficher ou masquer la navigation"
   }
 }

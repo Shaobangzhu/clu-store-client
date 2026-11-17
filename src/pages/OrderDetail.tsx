@@ -1,11 +1,12 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { orderService } from '../api/services';
 import { formatMoney } from '../api/catalog';
 import { validOrderId } from '../checkout/intent';
-import { ApiError } from '../helpers/api';
+import { orderError } from '../orders/errors';
+import AdminDecision from '../components/AdminDecision';
 import useApiData from '../hooks/useApiData';
 import OrderItems from '../components/OrderItems';
 import Button from '../components/Button';
@@ -16,9 +17,10 @@ export default function OrderDetail() {
   const { id } = useParams();
   const { token, user, generation } = useSelector((s: RootState) => s.user);
   // Prevent a previous order/account flashing during a route change.
-  return <OrderReceipt key={JSON.stringify([id, token, user?.id, generation])} id={id} token={token} />;
+  return <OrderReceipt key={JSON.stringify([id, token, user?.id, user?.role, generation])} id={id} token={token} admin={user?.role === 'ADMIN'} />;
 }
-function OrderReceipt({ id, token }: { id: string | undefined; token: string | null }) {
+function OrderReceipt({ id, token, admin }: { id: string | undefined; token: string | null; admin: boolean }) {
+  const [decisionBusy, setDecisionBusy] = useState(false);
   const { t } = useTranslation();
   const location = useLocation();
   const { ready, busy, refreshCart } = useContext(ShoppingCartContext);
@@ -27,8 +29,7 @@ function OrderReceipt({ id, token }: { id: string | undefined; token: string | n
   const { data, loading, error, fetchData } = useApiData(`order:${id}`, async signal => {
     try { return (await orderService.get(orderId, { token, signal })).data; }
     catch (failure) {
-      throw new Error(failure instanceof ApiError && failure.status === 404 ? 'order.notFound'
-        : failure instanceof ApiError && failure.status === 401 ? 'checkout.sessionExpired' : 'order.failed');
+      throw new Error(orderError(failure));
     }
   }, { autoFetch: !!token && valid, scope: token });
   if (!token) return <p role="alert">{t('cart.signIn')}</p>;
@@ -43,6 +44,8 @@ function OrderReceipt({ id, token }: { id: string | undefined; token: string | n
     {loading && <p role="status">{t('order.loading')}</p>}
     {error && <p role="alert">{t(error)}</p>}
     {data && <>
+      {admin && <AdminDecision order={data} token={token} loading={loading} setBusy={setDecisionBusy}
+        refresh={async () => { try { return await fetchData(); } finally { setDecisionBusy(false); } }} />}
       <dl className="space-y-2">
         <div><dt>{t('order.id')}</dt><dd>{data.id}</dd></div>
         <div><dt>{t('order.status')}</dt><dd>{t(`order.${data.status}`)}</dd></div>
@@ -62,7 +65,9 @@ function OrderReceipt({ id, token }: { id: string | undefined; token: string | n
       </section>
     </>}
     <div className="flex flex-wrap gap-4 items-center">
-      <Button title={t('order.reload')} disabled={loading} onClick={() => { void fetchData().catch(() => {}); }} />
+      <Button title={t('order.reload')} disabled={loading || decisionBusy} onClick={() => { void fetchData().catch(() => {}); }} />
+      <Link to="/user" className="text-apple-blue underline">{t('orders.title')}</Link>
+      {admin && <Link to="/admin/orders" className="text-apple-blue underline">{t('orders.admin')}</Link>}
       <Link to="/cart" className="text-apple-blue underline">{t('checkout.reviewCart')}</Link>
     </div>
   </div>;
