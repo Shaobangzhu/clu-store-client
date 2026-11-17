@@ -1,28 +1,25 @@
-import { apiUrl } from "@/helpers/api";
+import type { OrderDto } from "@/api/services";
+import { orderService } from "@/api/services";
+import { positiveId } from "@/api/adapters";
 import { useParams } from "react-router-dom";
 import SquareInput from "../components/SquareInput";
 import useApiData from "@/hooks/useApiData";
 import Skeleton from "@/components/Skeleton";
 import { useSelector } from "react-redux";
 import { type RootState } from "../redux/store";
-import { useEffect } from "react";
 
 type OrderDetailParams = {
   id: string;
 };
 
-const getStatusMessage = (state: string) => {
+const getStatusMessage = (state: OrderDto['status']) => {
   switch (state) {
-    case "Completed":
+    case "approved":
       return "下单成功";
-    case "Processing":
+    case "pending":
       return "订单处理中";
-    case "Declined":
-      return "支付失败";
-    case "Cancelled":
-      return "订单取消";
-    case "Refund":
-      return "订单退款";
+    case "rejected":
+      return "订单被拒绝";
     default:
       return "未知状态";
   }
@@ -36,21 +33,13 @@ const OrderDetail = () => {
 
   const { token } = useSelector((s: RootState) => s.user);
 
-  const { data, loading, error, fetchData } = useApiData<any>(
-    apiUrl(`orders/${id}`),
-    {
-      method: "GET",
-      autoFetch: false,
-    },
+  const { data, loading, error } = useApiData(
+    `order:${id}`,
+    async signal => (await orderService.get(positiveId(id), { token, signal })).data,
+    { autoFetch: Boolean(token), scope: token },
   );
-
-  useEffect(() => {
-    if (token) {
-      fetchData({
-        overrideHeaders: { Authorization: `Bearer ${token}` },
-      });
-    }
-  }, [token]);
+  if (!token) return <p role="alert">请先登录</p>;
+  if (error) return <p role="alert">{error}</p>;
 
   if (loading || !data) {
     return <Skeleton />;
@@ -58,7 +47,7 @@ const OrderDetail = () => {
 
   return (
     <div className="min-h-screen pt-6 p-4">
-      <p className="text-4xl mt-2">{getStatusMessage(data.state)}</p>
+      <p className="text-4xl mt-2">{getStatusMessage(data.status)}</p>
       <div className="flex flex-col gap-6 mt-12">
         {error ? (
           <p className="text-2xl">订单错误：{error}</p>
@@ -73,7 +62,7 @@ const OrderDetail = () => {
             />
             <SquareInput
               subTitle="订单状态"
-              title={data.state}
+              title={data.status}
               value=""
               onChange={() => {}}
             />
@@ -81,7 +70,7 @@ const OrderDetail = () => {
               value=""
               onChange={() => {}}
               subTitle="下单时间"
-              title="2025-09-13T07:29:50.325127Z"
+              title={data.createdAt}
             />
           </>
         )}

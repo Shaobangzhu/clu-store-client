@@ -1,4 +1,4 @@
-import { apiUrl } from "@/helpers/api";
+import { authService } from "@/api/services";
 import { useState, useEffect } from "react";
 import useApiData from "@/hooks/useApiData";
 import { useNavigate } from "react-router-dom";
@@ -6,18 +6,16 @@ import { useNavigate } from "react-router-dom";
 function SignUp() {
   const navigate = useNavigate();
 
-  const { data, loading, error, fetchData } = useApiData(
-    apiUrl("auth/register"),
-    {
-      method: "POST",
-      autoFetch: false,
-    },
-  );
-
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  const { data, loading, error, fetchData } = useApiData(
+    "register",
+    async signal => (await authService.register({ username, email, password, confirmPassword }, { signal })).data,
+    { autoFetch: false },
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,13 +24,7 @@ function SignUp() {
       return;
     }
 
-    const body = {
-      username: email,
-      password,
-      confirmPassword,
-    };
-
-    await fetchData({ overrideBody: body });
+    try { await fetchData(); } catch { /* The hook displays the error. */ }
   };
 
   useEffect(() => {

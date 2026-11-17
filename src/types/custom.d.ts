@@ -1,3 +1,4 @@
+// Display models only. Transport DTOs are generated in api/schema.d.ts.
 // 定义模型信息
 export interface ProductModel {
   id: string | number;
@@ -13,7 +14,7 @@ export interface MemorySize {
   price: number;
 }
 
-export type Color = "沙漠色钛金属" | "原色钛金属" | "白色钛金属" | "黑色钛金属";
+export type Color = string;
 
 // 定义 Phone 产品的类型
 export interface Product {
@@ -23,30 +24,13 @@ export interface Product {
   image: string;
   carouselImages: string[];
   startingPrice: number;
-  installments: number;
+  installments: number | null;
   models: ProductModel[];
   colors: Color[];
   memorySizes: MemorySize[];
   features: string[];
   inStock: boolean;
   category?: string;
-}
-
-export type ShoppingCart = {
-  id: number;
-  items: CartItem[];
-  createdAt: string;
-  total: number;
-};
-
-export interface Order {
-  id: number;
-  userId: string;
-  state: "Processing" | "Completed" | "Pending" | "Cancelled"; // 可以根据实际状态扩展
-  createDateUTC: string; // ISO 字符串，也可以用 Date 类型
-  paymentUri: string;
-  transactionMetadata: string | null;
-  orderItems: CartItem[];
 }
 
 interface CartItem {
@@ -69,10 +53,6 @@ interface CartItem {
   qty: number;
 }
 
-export interface SupportData {
-  data: string;
-}
-
 export interface Video {
   id: number;
   regularSrc: string;
@@ -93,7 +73,7 @@ export interface ProductInCategory {
   title: string;
   image: string;
   startingPrice: number;
-  installments: number;
+  installments: number | null;
   features: string[];
 }
 
@@ -103,5 +83,5 @@ export interface Category {
   subTitle: string;
   videos: Video;
   features: Feature[];
-  products: Product[];
+  products: ProductInCategory[];
 }

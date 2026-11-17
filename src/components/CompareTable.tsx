@@ -16,7 +16,7 @@ const CompareTableCard: React.FC<ProductInCategory> = ({
     <h3 className="mt-5 text-center text-xl font-semibold">{name}</h3>
     <p className="mt-2 text-center">{title}</p>
     <p className="mt-2 text-center text-lg font-semibold">
-      RMB {installments} /月起或 RMB {startingPrice} 起
+      {installments != null && <>RMB {installments} /月起或 </>}RMB {startingPrice} 起
     </p>
     <div className="mt-6 flex justify-center items-center gap-2">
       <button className="w-32 bg-blue-600 text-white py-2 px-4 rounded-md">

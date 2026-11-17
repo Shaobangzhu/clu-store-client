@@ -53,7 +53,6 @@
     "resolveJsonModule": true,
 
     // JavaScript Support
-    "allowJs": true,
-    "ignoreDeprecations": "6.0",
+    "allowJs": true
   }
 }

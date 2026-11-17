@@ -1,3 +1,4 @@
+import tseslint from "typescript-eslint";
 import globals from "globals";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
@@ -5,7 +6,12 @@ import react from "eslint-plugin-react";
 import { defineConfig, globalIgnores } from "eslint/config";
 
 export default defineConfig([
-  globalIgnores(["dist"]),
+  {
+    files: ['src/api/**/*.ts', 'src/helpers/api.ts', 'src/helpers/loaders.ts', 'src/hooks/useApi*.ts', 'src/hooks/useShoppingCartAction.ts', 'tests/**/*.{ts,tsx}'],
+    extends: [tseslint.configs.recommended],
+  },
+  { files: ['scripts/**/*.mjs', '*config*.{js,ts}'], languageOptions: { globals: globals.node } },
+  globalIgnores(["dist", "src/api/schema.d.ts"]),
   {
     files: ["**/*.{js,jsx}"],
     languageOptions: {

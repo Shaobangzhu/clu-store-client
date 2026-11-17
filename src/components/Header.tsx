@@ -72,7 +72,6 @@ const Header = () => {
     if (token) {
       // 解析 token
       const decode = parseJwt(token);
-      console.log("decode jwt: ", decode);
       if (decode && decode.name) {
         setUsername(decode.name);
       }

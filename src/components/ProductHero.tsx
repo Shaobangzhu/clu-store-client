@@ -34,6 +34,7 @@ function ProductHero({ product, imageUrl }: ProductHeroProps) {
     memorySizeId: null,
     memorySizePrice: null,
     qty: 1,
+    price: 0,
   });
 
   const handleAddToCart = () => {
@@ -47,8 +48,7 @@ function ProductHero({ product, imageUrl }: ProductHeroProps) {
       alert("请先选择型号, 颜色和储存容量");
       return;
     }
-    addToCart(cartItem);
-    console.log("已加入购物车:", cartItem);
+    addToCart({ ...cartItem, price: (cartItem.modelPrice ?? 0) + (cartItem.memorySizePrice ?? 0) });
   };
 
   return (
@@ -93,7 +93,7 @@ function ProductHero({ product, imageUrl }: ProductHeroProps) {
             placeholder={t(`home_page.product_hero.color`)}
             options={product.colors}
             onChange={(value) => {
-              setCartItem(updateItem({ color: value as string })); // 确保类型安全
+              setCartItem(updateItem({ color: value })); // 确保类型安全
             }}
             value={cartItem.color}
           />

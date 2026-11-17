@@ -7,6 +7,7 @@ interface ShoppingCartContextType {
   removeFromCart: (index: number) => void;
   updateItem: (index: number, newItem: CartItem) => void;
   clearCart: () => void;
+  refreshCart: () => Promise<void>;
 }
 
 const defaultShoppingCartContext: ShoppingCartContextType = {
@@ -15,6 +16,7 @@ const defaultShoppingCartContext: ShoppingCartContextType = {
   removeFromCart: () => {},
   updateItem: () => {},
   clearCart: () => {},
+  refreshCart: async () => {},
 };
 
 const ShoppingCartContext = createContext<ShoppingCartContextType>(

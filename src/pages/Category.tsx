@@ -1,4 +1,5 @@
-import { apiUrl } from "@/helpers/api";
+import { catalogService } from "@/api/services";
+import { toCategory } from "@/api/adapters";
 import { useParams } from "react-router-dom";
 import type { Category as CategoryType } from "@/types/custom";
 import {
@@ -26,7 +27,8 @@ const Category = () => {
     loading,
     error,
   } = useApiWithReducer<CategoryType>(
-    apiUrl(`categories/${category}`),
+    `category:${category}`,
+    async signal => toCategory((await catalogService.category(category, { signal })).data),
   );
 
   if (loading || productCategory == null) {
