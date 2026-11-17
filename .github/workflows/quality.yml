@@ -1,0 +1,95 @@
+name: Full-stack quality gate
+
+on:
+  pull_request:
+  push:
+    branches: [main, test/p12-fullstack-e2e-ci]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      # Only fresh hosted runners. Never use this provisioning on Ubuntu infra.
+      COMPOSE_PROJECT_NAME: clu-client-ci-${{ github.run_id }}-${{ github.run_attempt }}
+    defaults:
+      run:
+        working-directory: clu-store-client
+    steps:
+      - name: Client checkout
+        uses: actions/checkout@v4
+        with:
+          path: clu-store-client
+          persist-credentials: false
+      - name: Reviewed backend checkout
+        uses: actions/checkout@v4
+        with:
+          repository: Shaobangzhu/clu-store-api
+          ref: 71e0bd151012fba8579dbcf1a839e17e31a6d965
+          path: clu-store-api
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: |
+            clu-store-client/package-lock.json
+            clu-store-api/package-lock.json
+      - name: Install backend
+        working-directory: clu-store-api
+        run: npm ci
+      - name: Install client
+        run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run contract:check
+      - run: npm test -- --maxWorkers=2
+      - run: npm run build
+      - name: Private credentials for disposable CI database
+        id: database_env
+        working-directory: clu-store-api
+        run: npm run env:local
+      - name: Provision isolated PostgreSQL 18 service
+        working-directory: clu-store-api
+        run: docker compose up -d --wait postgres
+      - name: Apply reviewed test migrations under backend lock
+        working-directory: clu-store-api
+        run: npm run db:migrate:test
+      - name: Backend checks and fixture lifecycle regression
+        working-directory: clu-store-api
+        run: |
+          npm run lint
+          npm run typecheck
+          npm run docs:check
+          npm test -- --maxWorkers=2
+          npm run build
+          npm run test:e2e:smoke
+      - name: Install Chromium and operating system dependencies
+        run: npx playwright install --with-deps chromium
+      - name: Verify isolation, migrations and backend pin
+        run: npm run e2e:preflight
+      - name: Real API Chromium journey
+        run: npm run test:e2e
+      - name: Upload sanitized failure summary only
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: chromium-summary-${{ github.run_attempt }}
+          path: |
+            clu-store-client/e2e-report/summary.json
+            clu-store-client/e2e-report/runner.json
+          if-no-files-found: ignore
+          retention-days: 7
+          include-hidden-files: false
+      - name: Remove this hosted job's disposable database
+        if: always() && steps.database_env.outcome == 'success'
+        working-directory: clu-store-api
+        run: docker compose down --volumes
