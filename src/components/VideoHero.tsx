@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 type VideoHeroProps = {
   videoSrc: string;
@@ -7,10 +7,12 @@ type VideoHeroProps = {
 
 const VideoHero = ({ videoSrc, videoSmallSrc }: VideoHeroProps) => {
   const [isLargeScreen, setIsLargeScreen] = useState(false);
+  const [failed, setFailed] = useState<string[]>([]);
   useEffect(() => {
     const handleResize = () => {
       setIsLargeScreen(window.innerWidth >= 640);
     };
+    handleResize();
     window.addEventListener("resize", handleResize);
     return () => {
       window.removeEventListener("resize", handleResize);
@@ -31,10 +33,16 @@ const VideoHero = ({ videoSrc, videoSmallSrc }: VideoHeroProps) => {
     };
   }, []);
 
+  const preferred = isLargeScreen ? videoSrc : videoSmallSrc;
+  const alternate = isLargeScreen ? videoSmallSrc : videoSrc;
+  const src = [preferred, alternate].find(value => value && !failed.includes(value));
+  if (!src) return null;
   return (
     <div className="w-full flex justify-center items-center overflow-hidden">
       <video
-        key={isLargeScreen ? videoSrc : videoSmallSrc}
+        key={src}
+        src={src}
+        onError={() => setFailed(values => [...values, src])}
         autoPlay
         loop
         muted
@@ -48,10 +56,6 @@ const VideoHero = ({ videoSrc, videoSmallSrc }: VideoHeroProps) => {
             : "w-full object-cover rounded-[40px] m-1"
         }`}
       >
-        <source
-          src={isLargeScreen ? videoSrc : videoSmallSrc}
-          type="video/mp4"
-        />
       </video>
     </div>
   );

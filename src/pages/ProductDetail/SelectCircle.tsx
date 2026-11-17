@@ -21,7 +21,11 @@ const SelectCircle = ({
     "#FFF",
   ];
   return (
-    <div
+    <button
+      type="button"
+      title={color}
+      aria-label={color}
+      aria-pressed={isSelected}
       onClick={onClick}
       className={`w-6 h-6 rounded-full relative cursor-pointer
             ${
@@ -32,7 +36,7 @@ const SelectCircle = ({
       style={{
         background: `linear-gradient(to bottom, ${primaryColor}, ${secondaryColor})`,
       }}
-    ></div>
+    ><span className="sr-only">{color}</span></button>
   );
 };
 

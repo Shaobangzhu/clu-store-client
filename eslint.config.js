@@ -7,7 +7,7 @@ import { defineConfig, globalIgnores } from "eslint/config";
 
 export default defineConfig([
   {
-    files: ['src/api/**/*.ts', 'src/helpers/api.ts', 'src/helpers/loaders.ts', 'src/hooks/useApi*.ts', 'src/hooks/useShoppingCartAction.ts', 'tests/**/*.{ts,tsx}'],
+    files: ['src/api/**/*.ts', 'src/helpers/api.ts', 'src/helpers/loaders.ts', 'src/hooks/useApi*.ts', 'src/hooks/useShoppingCartAction.ts', 'src/hooks/useProductSelection.ts', 'src/redux/searchSlice.ts', 'src/pages/Home.tsx', 'src/pages/Category.tsx', 'src/pages/SearchResults.tsx', 'src/pages/ProductDetail/*.tsx', 'src/components/{CatalogStatus,ProductImage,ProductHero,CompareTable,SearchResultCard,ProductList,ImageHero,SkuSelect,Offer,NewArrival,VideoHero,ImageSlider}.tsx', 'tests/**/*.{ts,tsx}'],
     extends: [tseslint.configs.recommended],
   },
   { files: ['scripts/**/*.mjs', '*config*.{js,ts}'], languageOptions: { globals: globals.node } },

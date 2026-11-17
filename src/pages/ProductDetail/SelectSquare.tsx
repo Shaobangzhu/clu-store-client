@@ -3,6 +3,7 @@ interface SelectSquareProps {
   spec?: string;
   price: string;
   isSelected?: boolean;
+  disabled?: boolean;
   onClick?: () => void;
 }
 
@@ -11,12 +12,16 @@ const SelectSquare = ({
   spec,
   price,
   isSelected = false,
+  disabled = false,
   onClick,
 }: SelectSquareProps) => {
   return (
     <div className="w-full flex justify-center">
-      <div
-        className={`w-[370px] h-25 rounded-xl cursor-pointer
+      <button
+        type="button"
+        disabled={disabled}
+        aria-pressed={isSelected}
+        className={`w-[370px] h-25 rounded-xl cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
         ${
           isSelected
             ? "border-3 border-apple-blue"
@@ -30,7 +35,7 @@ const SelectSquare = ({
             <p className="text-sm mt-1 mr-2">{price}</p>
           </div>
         </div>
-      </div>
+      </button>
     </div>
   );
 };

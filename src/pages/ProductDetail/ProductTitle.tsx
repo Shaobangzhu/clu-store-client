@@ -1,23 +1,15 @@
-interface ProductTitleProps {
-  name: string;
-  startingPrice: number;
-  installment?: number | null;
+import { useTranslation } from 'react-i18next';
+import { formatMoney } from '@/api/catalog';
+
+export default function ProductTitle({ name, startingPrice, installment }: {
+  name: string; startingPrice: string; installment?: string | null;
+}) {
+  const { t } = useTranslation();
+  return <div>
+    <h4 className="text-4xl mt-2">{t('catalog.buy', { name })}</h4>
+    <p className="mt-6">
+      {installment != null && <>{t('catalog.installment', { price: formatMoney(installment) })} </>}
+      {t('catalog.from', { price: formatMoney(startingPrice) })}
+    </p>
+  </div>;
 }
-
-const ProductTitle = ({
-  name,
-  startingPrice,
-  installment,
-}: ProductTitleProps) => {
-  return (
-    <div>
-      <p className="text-apple-red text-sm font-semibold">全新</p>
-      <h4 className="text-4xl mt-2">购买 {name}</h4>
-      <p className="mt-6">
-        {installment != null && <>RMB {installment}/月起 或 </>}RMB {startingPrice} 起
-      </p>
-    </div>
-  );
-};
-
-export default ProductTitle;

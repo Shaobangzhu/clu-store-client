@@ -40,10 +40,13 @@ const shoppingCartReducer: ImmerReducer<CartItem[], CartAction> = (
   switch (action.type) {
     case "ADD_ITEM": {
       const existingItemIndex = draft.findIndex(
-        (item) => item.productId === action.payload.productId,
+        (item) => item.productId === action.payload.productId
+          && item.modelId === action.payload.modelId
+          && item.memorySizeId === action.payload.memorySizeId
+          && item.color === action.payload.color,
       );
       if (existingItemIndex !== -1) {
-        draft[existingItemIndex]!.qty += 1;
+        draft[existingItemIndex]!.qty += action.payload.qty;
       } else {
         draft.push(action.payload);
       }

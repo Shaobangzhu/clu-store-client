@@ -33,5 +33,30 @@
     },
     "newarrivals": "新品上市",
     "offers": "福利活動"
+  },
+  "catalog": {
+    "loading": "正在載入商品…",
+    "failed": "商品載入失敗。",
+    "retry": "重試",
+    "empty": "暫無商品。",
+    "noImage": "暫無圖片",
+    "searchPlaceholder": "輸入搜尋關鍵字",
+    "results": "找到 {{count}} 個商品",
+    "all": "全部",
+    "previous": "上一頁",
+    "next": "下一頁",
+    "page": "第 {{page}} 頁，共 {{total}} 頁",
+    "chooseOptions": "選擇規格",
+    "learnMore": "進一步了解",
+    "unavailable": "暫時缺貨",
+    "viewAll": "查看全部商品",
+    "compare": "比較全系列產品",
+    "installment": "{{price}} /月起或",
+    "buy": "購買 {{name}}",
+    "selectModel": "請選擇您想要的型號",
+    "selectColor": "請選擇您喜歡的顏色",
+    "selectMemory": "您需要多大的儲存空間？",
+    "total": "總計",
+    "from": "{{price}} 起"
   }
 }

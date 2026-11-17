@@ -22,6 +22,7 @@ import {
 } from "../pages";
 import RequireAuth from "@/HOCs/RequireAuth";
 import { loadProducts } from "@/helpers/loaders";
+import ProductError from '@/pages/ProductDetail/ProductError';
 
 const router = createBrowserRouter([
   // 根目录 "/"
@@ -49,7 +50,7 @@ const router = createBrowserRouter([
       {
         path: "product-detail/:id",
         element: <ProductDetail />,
-        errorElement: <ErrorPage />,
+        errorElement: <ProductError />,
         loader: async ({ params, request }: LoaderFunctionArgs) => {
           const productId = params.id;
           if (!productId) {

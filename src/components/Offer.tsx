@@ -1,4 +1,5 @@
 import styles from "./Offer.module.css";
+import ProductImage from './ProductImage';
 
 export interface OfferProps {
   type: string;
@@ -8,14 +9,9 @@ export interface OfferProps {
 }
 
 function Offer({ type, title, detail, image }: OfferProps) {
-  const handleClick: React.MouseEventHandler<HTMLDivElement> = (e) => {
-    console.log(e.target);
-    console.log(e.currentTarget);
-    alert("Offer clicked " + e.currentTarget.dataset.title);
-  };
   return (
-    <div className={styles.container} onClick={handleClick} data-title={title}>
-      <img src={image} className={styles.image} />
+    <div className={styles.container}>
+      <ProductImage src={image} alt={title} className={styles.image} />
       <div className={styles.content}>
         <div className={styles.type}>{type}</div>
         <div className={styles.title}>{title}</div>

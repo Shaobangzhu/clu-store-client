@@ -1,161 +1,69 @@
-import { useSearchParams, useNavigate } from "react-router-dom";
-import { useEffect, useState, useContext, useCallback, useMemo } from "react";
-import type { Product, CartItem } from "@/types/custom";
-import { useDebounce } from "@/helpers/useDebounce";
-import Button from "@/components/Button";
-import { SearchResultCard, FilterButton } from "@/components";
-import { ShoppingCartContext } from "@/contexts/shoppingCart";
-import { useSelector, useDispatch } from "react-redux";
-import type { RootState, StoreDispatch } from "../redux/store";
-import { fetchSearchResults } from "@/redux/searchSlice";
+import { useSearchParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
+import type { RootState, StoreDispatch } from '../redux/store';
+import { fetchSearchResults } from '@/redux/searchSlice';
+import { catalogService } from '@/api/services';
+import useApiData from '@/hooks/useApiData';
+import { useDebounce } from '@/helpers/useDebounce';
+import Button from '@/components/Button';
+import SearchResultCard from '@/components/SearchResultCard';
+import CatalogStatus from '@/components/CatalogStatus';
 
-const filters = ["全部", "电脑", "手机", "平板", "其他"];
-
-const SearchResults = () => {
-  const navigate = useNavigate();
-
-  const [searchParams, setSearchParams] = useSearchParams();
-  const query = searchParams.get("query");
-  const debouncedQuery = useDebounce(query, 500); // 使用自定义的防抖钩子
-
-  const page = parseInt(searchParams.get("page") || "1"); // 获取页码 默认为1
-
-  const handlePageChange = (newPage: number) => {
-    setSearchParams({ query: query || "", page: newPage.toString() });
-  };
-
-  const {
-    items: searchResults,
-    isLoading,
-    error,
-  } = useSelector((state: RootState) => state.search);
+export default function SearchResults() {
+  const { t } = useTranslation();
+  const [params, setParams] = useSearchParams();
+  const query = params.get('query') ?? '';
+  const category = params.get('category') ?? '';
+  const rawPage = params.get('page') ?? '1';
+  const page = /^[1-9]\d*$/.test(rawPage) && Number(rawPage) <= 10000 ? Number(rawPage) : 1;
+  const debouncedQuery = useDebounce(query, 500);
+  const [attempt, setAttempt] = useState(0);
+  const { items, meta, isLoading, error } = useSelector((state: RootState) => state.search);
   const dispatch = useDispatch<StoreDispatch>();
-
-  useEffect(() => {
-    if (!debouncedQuery) {
-      return;
+  const categories = useApiData('categories', async signal => (await catalogService.categories({ signal })).data);
+  const update = (values: Record<string, string>) => {
+    const next = new URLSearchParams(params);
+    for (const [key, value] of Object.entries(values)) {
+      if (value) next.set(key, value);
+      else next.delete(key);
     }
-    const thunkPromise = dispatch(
-      fetchSearchResults({ keyword: debouncedQuery }),
-    );
-
-    return () => {
-      // 组件卸载或关键词变化时, 取消未完成的请求
-      thunkPromise.abort();
-    };
-  }, [debouncedQuery, dispatch]); // 等待输入停止后再发起搜索请求
-  // 空数组 []: 只在组件挂载 (mount) 时执行一次。
-  // 有依赖: 依赖变化时重新执行
-  // 不写依赖: 每次渲染都会执行 (不推荐, 容易浪费性能)
-
-  const { addToCart } = useContext(ShoppingCartContext);
-
-  const handleAddToCart = useCallback((product: Product) => {
-    const cartItem: CartItem = {
-      productId: product.id,
-      name: product.name,
-      imageSrc: product.image,
-
-      modelId: product.models[0]?.id ?? null,
-      model: product.models[0]?.name ?? null,
-      modelPrice: product.models[0]?.price ?? null,
-
-      color: product.colors[0] ?? null,
-
-      memorySizeId: product.memorySizes[0]?.id ?? null,
-      memorySize: product.memorySizes[0]?.name ?? null,
-      memorySizePrice: product.memorySizes[0]?.price ?? null,
-
-      price:
-        product.startingPrice +
-        (product.models[0]?.price ?? 0) +
-        (product.memorySizes[0]?.price ?? 0),
-
-      qty: 1,
-    };
-
-    addToCart(cartItem);
-  }, []);
-
-  const [selectedCategory, setSelectedCategory] = useState<string>("全部");
-
-  const filteredProducts = useMemo(() => {
-    return searchResults.filter((product) => {
-      const matchesCategory =
-        selectedCategory === "全部" || product.category === selectedCategory;
-      console.log("过滤后的产品: ", product);
-      return matchesCategory;
-    });
-  }, [selectedCategory, searchResults]);
-
-  return (
-    <div className="flex min-h-screen w-full flex-col items-center px-4 py-8">
-      <div className="w-full max-w-4xl mx-auto mb-12">
-        <input
-          type="text"
-          value={query ?? ""}
-          onChange={(e) => {
-            setSearchParams({ query: e.target.value, page: page.toString() });
-          }}
-          placeholder="输入搜索关键词"
-          className="w-full px-6 py-4 bg-apple-white dark:bg-apple-dark rounded-xl text-lg
-          border border-apple-gray dark:border-apple-dark-gray
-          focus:outline-none focus:ring-1 focus:ring-apple-blue dark:focus:ring-apple
-          transition-all
-          "
-        />
-        <p className="mt-6">搜索关键词: {query}</p>
-      </div>
-      {error && (
-        <div className="max-w-4xl mx-auto mb-6">
-          <p className="text-red-500 text-lg">{error}</p>
-        </div>
-      )}
-      {error == null && (
-        <div className="max-w-4xl mx-auto mb-6">
-          <p className="text-lg">
-            找到{" "}
-            <span className="font-semibold">{filteredProducts.length}</span>{" "}
-            个与“{debouncedQuery}”相关的产品
-          </p>
-        </div>
-      )}
-      <div className="max-w-4xl mx-auto mb-8 flex gap-4">
-        {filters.map((filter) => (
-          <FilterButton
-            key={filter}
-            filter={filter}
-            isSelected={filter == selectedCategory}
-            onClick={() => {
-              setSelectedCategory(filter);
-            }}
-          />
-        ))}
-      </div>
-      <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
-        {filteredProducts.map((product) => (
-          <SearchResultCard
-            key={product.id}
-            product={product}
-            onAddToCart={handleAddToCart}
-          />
-        ))}
-      </div>
-      <div className="flex items-center justify-center mt-8 gap-6">
-        <h2 className="text-xl font-medium text-apple-text dark:text-apple-text-dark">
-          当前第 <span className="font-semibold">{page}</span> 页
-        </h2>
-        <Button
-          title="上一页"
-          onClick={() => handlePageChange(page - 1)}
-        ></Button>
-        <Button
-          title="下一页"
-          onClick={() => handlePageChange(page + 1)}
-        ></Button>
-      </div>
+    setParams(next);
+  };
+  useEffect(() => {
+    if (query !== debouncedQuery) return;
+    const request = dispatch(fetchSearchResults({ keyword: debouncedQuery || undefined,
+      category: category || undefined, page: String(page), pageSize: '12' }));
+    return () => request.abort();
+  }, [query, debouncedQuery, category, page, dispatch, attempt]);
+  const waiting = isLoading || query !== debouncedQuery;
+  return <div className="flex min-h-screen w-full flex-col items-center px-4 py-8">
+    <div className="w-full max-w-4xl mx-auto mb-12">
+      <input type="search" aria-label={t('header.search')} value={query}
+        onChange={event => update({ query: event.target.value, page: '1' })}
+        placeholder={t('catalog.searchPlaceholder')}
+        className="w-full px-6 py-4 bg-apple-white dark:bg-apple-dark rounded-xl text-lg border border-apple-gray dark:border-apple-dark-gray" />
+      {!waiting && meta && <p className="mt-6">{t('catalog.results', { count: meta.total })}</p>}
     </div>
-  );
-};
-
-export default SearchResults;
+    <div className="max-w-4xl mx-auto mb-8 flex flex-wrap gap-4">
+      <Button title={t('catalog.all')} variant={!category ? 'primary' : 'outline'} onClick={() => update({ category: '', page: '1' })} />
+      {categories.data?.map(item => <Button key={item.id} title={item.title}
+        variant={category === item.slug ? 'primary' : 'outline'}
+        onClick={() => update({ category: item.slug, page: '1' })} />)}
+    </div>
+    <CatalogStatus error={categories.error} retry={() => { void categories.fetchData().catch(() => {}); }} />
+    <CatalogStatus loading={waiting} error={waiting ? null : error} empty={!waiting && !error && items.length === 0}
+      retry={() => setAttempt(value => value + 1)} />
+    {!waiting && !error && <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+      {items.map(product => <SearchResultCard key={product.id} product={product} />)}
+    </div>}
+    <div className="flex items-center justify-center mt-8 gap-6">
+      <Button title={t('catalog.previous')} disabled={waiting || !meta || meta.totalPages === 0 || page <= 1}
+        onClick={() => update({ page: String(Math.min(page - 1, meta?.totalPages ?? 1)) })} />
+      <p>{t('catalog.page', { page: meta?.totalPages === 0 ? 0 : meta?.page ?? page, total: meta?.totalPages ?? 0 })}</p>
+      <Button title={t('catalog.next')} disabled={waiting || !meta || page >= meta.totalPages || page >= 10000}
+        onClick={() => update({ page: String(page + 1) })} />
+    </div>
+  </div>;
+}
