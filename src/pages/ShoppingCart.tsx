@@ -13,7 +13,7 @@ export default function ShoppingCart() {
   const canCheckout = ready && cartItems.length > 0 && cartItems.every(item => item.available);
   return <div className="min-h-screen p-6 pt-30 max-w-4xl mx-auto bg-apple-light dark:bg-apple-dark font-light">
     <h1 className="text-4xl">{t('cart.title')}</h1>
-    {!authenticated ? <Link to="/auth/signin" state={{ from: { pathname: '/cart' } }}>{t('cart.signIn')}</Link> : <>
+    {!authenticated ? <Link to="/auth/signin" state={{ from: '/cart' }}>{t('cart.signIn')}</Link> : <>
       {busy && <p role="status">{t('cart.loading')}</p>}
       {error && cart && <p>{t('cart.lastConfirmed')}</p>}
       {ready && cartItems.length === 0 && <p>{t('cart.empty')}</p>}

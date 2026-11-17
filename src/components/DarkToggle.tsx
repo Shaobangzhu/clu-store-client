@@ -3,7 +3,10 @@ import { FiMoon } from "react-icons/fi";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { useEffect } from "react";
 
+import { useTranslation } from "react-i18next";
+
 function DarkToggle() {
+  const { t } = useTranslation();
   const [isDark, setIsDark] = useLocalStorage("darkMode", false);
 
   const toggleDark = () => {
@@ -24,7 +27,7 @@ function DarkToggle() {
   }, [isDark]);
 
   return (
-    <button
+    <button aria-label={t("ui.theme")} aria-pressed={isDark}
       className="p-1 bg-gray-200 dark:bg-gray-600 rounded-full
         hover:bg-gray-300 dark:hover:bg-gray-400 transition-all duration-300
         hover:rotate-12

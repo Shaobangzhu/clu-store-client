@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 
+import { useTranslation } from "react-i18next";
+
 type VideoHeroProps = {
   videoSrc: string;
   videoSmallSrc: string;
 };
 
 const VideoHero = ({ videoSrc, videoSmallSrc }: VideoHeroProps) => {
+  const { t } = useTranslation();
   const [isLargeScreen, setIsLargeScreen] = useState(false);
   const [failed, setFailed] = useState<string[]>([]);
   useEffect(() => {
@@ -36,13 +39,16 @@ const VideoHero = ({ videoSrc, videoSmallSrc }: VideoHeroProps) => {
   const preferred = isLargeScreen ? videoSrc : videoSmallSrc;
   const alternate = isLargeScreen ? videoSmallSrc : videoSrc;
   const src = [preferred, alternate].find(value => value && !failed.includes(value));
-  if (!src) return null;
+  if (!src) return <p role="status" className="p-6 text-center">{t("ui.noVideo")}</p>;
   return (
     <div className="w-full flex justify-center items-center overflow-hidden">
       <video
         key={src}
         src={src}
         onError={() => setFailed(values => [...values, src])}
+        aria-label={t("ui.video")}
+        playsInline
+        controls
         autoPlay
         loop
         muted

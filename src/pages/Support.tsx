@@ -1,31 +1,20 @@
-import { catalogService } from "@/api/services";
-import Skeleton from "@components/Skeleton";
-import useApiData from "@/hooks/useApiData";
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { catalogService } from '@/api/services';
+import useApiData from '@/hooks/useApiData';
+import { sanitizeSupportHtml } from '@/helpers/supportHtml';
 
-const Support = () => {
-  const { data, loading, error } = useApiData(
-    "support", async signal => (await catalogService.support({ signal })).data,
+export default function Support() {
+  const { t } = useTranslation();
+  const { data, loading, error, fetchData } = useApiData(
+    'support', async signal => (await catalogService.support({ signal })).data,
   );
-
-  if (loading) {
-    return <Skeleton />;
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-red-500">
-        <p>加载数据失败: {error}</p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen text-apple-text dark:text-apple-text-dark">
-      <div
-        className="p-4 text-xs text-gray-500"
-        dangerouslySetInnerHTML={{ __html: data?.html || "" }}
-      ></div>
-    </div>
-  );
-};
-export default Support;
+  const html = useMemo(() => sanitizeSupportHtml(data?.html ?? ''), [data]);
+  const empty = !new DOMParser().parseFromString(html, 'text/html').body.textContent?.trim();
+  return <section className="min-h-screen p-4 text-apple-text dark:text-apple-text-dark" aria-label={t('routes.support')}>
+    {loading ? <p role="status">{t('ui.loading')}</p> : error ? <div role="alert">
+      <p>{t('support.failed')}</p>
+      <button onClick={() => { void fetchData().catch(() => {}); }}>{t('catalog.retry')}</button>
+    </div> : empty ? <p>{t('support.empty')}</p> : <div lang={data?.locale} className="text-sm" dangerouslySetInnerHTML={{ __html: html }} />}
+  </section>;
+}
