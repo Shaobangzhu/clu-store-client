@@ -22,9 +22,7 @@ import VideoHero from '../src/components/VideoHero';
 import { ShoppingCartContext } from '../src/contexts/shoppingCart';
 import { loadProducts } from '../src/helpers/loaders';
 import english from '../src/assets/languages/en-US.json';
-import shoppingCartReducer, { addItem } from '../src/reducers/shoppingCartReducer';
-import { produce } from 'immer';
-import type { CartItem } from '../src/types/custom';
+import { defaultShoppingCartContext } from '../src/contexts/shoppingCart/shoppingCartContext';
 import Header from '../src/components/Header';
 import i18nReducer from '../src/redux/i18nSlice';
 import userReducer from '../src/redux/userSlice';
@@ -57,30 +55,19 @@ function mockApi(handler: (url: URL, request: Request) => unknown) {
 }
 const provide = (children: ReactNode) => <I18nextProvider i18n={i18n}>{children}</I18nextProvider>;
 function cartProvider(children: ReactNode, add = vi.fn()) {
-  return <ShoppingCartContext.Provider value={{ cartItems: [], addToCart: add, removeFromCart: vi.fn(),
-    updateItem: vi.fn(), clearCart: vi.fn(), refreshCart: async () => {} }}>{children}</ShoppingCartContext.Provider>;
+  return <ShoppingCartContext.Provider value={{ ...defaultShoppingCartContext, authenticated: true, ready: true, cartItems: [], addToCart: add, removeFromCart: vi.fn(),
+    updateItem: vi.fn(), clearCart: vi.fn(), refreshCart: async () => true }}>{children}</ShoppingCartContext.Provider>;
 }
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
 
 describe('catalog pricing and availability', () => {
-  it('keeps guest cart SKU configurations distinct and combines identical configurations', () => {
-    const base = selectedCartItem(product, 11, 'Blue', 21)!;
-    const upgraded = selectedCartItem(product, 12, 'Black', 22)!;
-    const empty: CartItem[] = [];
-    let items = produce(empty, draft => shoppingCartReducer(draft, addItem(base)));
-    items = produce(items, draft => shoppingCartReducer(draft, addItem(upgraded)));
-    items = produce(items, draft => shoppingCartReducer(draft, addItem({ ...base, qty: 2 })));
-    expect(items).toHaveLength(2);
-    expect(items[0]).toMatchObject({ modelId: 11, memorySizeId: 21, color: 'Blue', price: 10.3, qty: 3 });
-    expect(items[1]).toMatchObject({ modelId: 12, memorySizeId: 22, color: 'Black', price: 23.5, qty: 1 });
-  });
   it('adds model base plus memory increment exactly without startingPrice', () => {
     expect(addMoney('0.10', '0.20')).toBe('0.30');
     expect(formatMoney('9007199254740993.01')).toBe('RMB 9,007,199,254,740,993.01');
     expect(previewPrice(product)).toBe('10.30');
     expect(previewPrice(product, 12, 22)).toBe('23.50');
     expect(previewPrice(product, undefined, 22)).toBe('13.40');
-    expect(selectedCartItem(product, 12, 'Blue', 22)?.price).toBe(23.5);
+    expect(selectedCartItem(product, 12, 'Blue', 22)).toEqual({ productId: 41, modelId: 12, memorySizeId: 22, color: 'Blue', qty: 1 });
     expect(toProduct(product).startingPrice).toBe('900.00');
   });
   it('refuses incomplete, foreign and unavailable SKU selections', () => {
@@ -93,7 +80,7 @@ describe('catalog pricing and availability', () => {
     expect(canPurchase({ ...product, models: [] })).toBe(false);
     expect(canPurchase({ ...product, colors: [] })).toBe(false);
     expect(canPurchase({ ...product, memorySizes: [] })).toBe(false);
-    expect(selectedCartItem({ ...product, models: [{ ...product.models[0]!, price: '9007199254740993.01' }] }, 11, 'Blue', 21)).toBeNull();
+    expect(selectedCartItem({ ...product, models: [{ ...product.models[0]!, price: '9007199254740993.01' }] }, 11, 'Blue', 21)).toEqual({ productId: 41, modelId: 11, memorySizeId: 21, color: 'Blue', qty: 1 });
   });
 });
 
@@ -125,7 +112,7 @@ describe('live home and category content', () => {
     expect(screen.getByText('Special Offers')).toBeTruthy();
     expect(screen.queryByText('迎新春限时优惠')).toBeNull();
     expect(requests.some(request => new URL(request.url).pathname === '/api/products/41')).toBe(true);
-    expect((screen.getByRole('button', { name: 'Add to Cart' }) as HTMLButtonElement).disabled).toBe(true);
+    expect(screen.getByRole('link', { name: english.cart.signIn })).toBeTruthy();
   });
   it('renders active offers returned by the API with nullable product links', async () => {
     mockApi(url => {
@@ -269,7 +256,7 @@ describe('detail and hero SKU selection', () => {
     expect(screen.getByText('RMB 23.50')).toBeTruthy();
     expect(button.disabled).toBe(false);
     fireEvent.click(button);
-    expect(add).toHaveBeenCalledWith(expect.objectContaining({ productId: 41, modelId: 12, memorySizeId: 22, color: 'Blue', price: 23.5, qty: 1 }));
+    expect(add).toHaveBeenCalledWith(expect.objectContaining({ productId: 41, modelId: 12, memorySizeId: 22, color: 'Blue', qty: 1 }));
   });
   it('disables purchases for an unavailable product and incomplete summary SKU data', () => {
     const add = vi.fn();
@@ -288,7 +275,7 @@ describe('detail and hero SKU selection', () => {
     fireEvent.change(screen.getByLabelText('Storage Capacity'), { target: { value: '22' } });
     expect(screen.getByText('RMB 23.50')).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: 'Add to Cart' }));
-    expect(add).toHaveBeenCalledWith(expect.objectContaining({ modelId: 12, memorySizeId: 22, price: 23.5 }));
+    expect(add).toHaveBeenCalledWith(expect.objectContaining({ modelId: 12, memorySizeId: 22 }));
     rerender(provide(cartProvider(<ProductHero product={{ ...product, id: 42 }} />, add)));
     expect((screen.getByRole('button', { name: 'Add to Cart' }) as HTMLButtonElement).disabled).toBe(true);
     expect((screen.getByLabelText('Model') as HTMLSelectElement).value).toBe('');

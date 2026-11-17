@@ -76,5 +76,29 @@
     "rateLimit": "Too many attempts. Please wait before trying again.",
     "invalidCredentials": "Invalid credentials or expired session. Please sign in again.",
     "serverError": "Unable to authenticate. Please try again."
+  },
+  "cart": {
+    "title": "Shopping cart",
+    "signIn": "Sign in to use your cart",
+    "loading": "Updating cart…",
+    "empty": "Your cart is empty.",
+    "unitPrice": "Unit price",
+    "lineTotal": "Line total",
+    "total": "Total",
+    "quantity": "Quantity",
+    "decrease": "Decrease quantity",
+    "increase": "Increase quantity",
+    "remove": "Remove item from cart",
+    "clear": "Clear cart",
+    "checkout": "Checkout",
+    "reload": "Reload cart",
+    "unavailable": "Unavailable. Remove this item to continue to checkout.",
+    "lastConfirmed": "Showing the last confirmed cart. Reload before making more changes.",
+    "failed": "Cart request failed. Its outcome may be uncertain. Reload the cart before trying again.",
+    "reconcileFailed": "Your change was saved, but the cart could not be refreshed. Reload the cart; do not repeat the change.",
+    "limit": "Cart limits: 99 units per item, 50 configurations, 500 units total.",
+    "unavailableError": "This product or configuration is unavailable. Reload the cart and review your selection.",
+    "missing": "This cart item no longer exists. Reload your cart.",
+    "rateLimited": "Too many requests. Wait a moment, then reload the cart."
   }
 }

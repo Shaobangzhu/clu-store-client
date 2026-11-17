@@ -17,7 +17,7 @@ function writeIntent(value: string | null) {
 }
 const CheckOut = () => {
   const { token } = useSelector((s: RootState) => s.user);
-  const { cartItems, refreshCart } = useContext(ShoppingCartContext);
+  const { cartItems, refreshCart, ready } = useContext(ShoppingCartContext);
   const navigate = useNavigate();
   const key = useRef<string | null>(readIntent());
   const alive = useRef(true);
@@ -26,7 +26,7 @@ const CheckOut = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const handleSubmit = async () => {
-    if (submitting.current || !token) return;
+    if (submitting.current || !token || !ready || cartItems.some(item => !item.available)) return;
     submitting.current = true;
     setLoading(true);
     setError(null);
@@ -53,7 +53,7 @@ const CheckOut = () => {
     <p>将提交服务器已保存的购物车。订单金额以服务器确认为准。</p>
     {!token && <p role="alert">请先登录</p>}
     {error && <p role="alert">{error}</p>}
-    <Button title="下单" onClick={handleSubmit} loading={loading} disabled={!token || (cartItems.length === 0 && !key.current)} />
+    <Button title="下单" onClick={handleSubmit} loading={loading} disabled={!token || !ready || cartItems.some(item => !item.available) || (cartItems.length === 0 && !key.current)} />
   </div>;
 };
 export default CheckOut;

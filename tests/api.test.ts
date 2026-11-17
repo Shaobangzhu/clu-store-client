@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ApiError, mediaUrl } from '../src/helpers/api';
 import { authService, cartService, catalogService, orderService } from '../src/api/services';
-import { toProduct, toCartItem, toCategory } from '../src/api/adapters';
+import { toProduct, toCategory } from '../src/api/adapters';
 import contract from '../src/api/openapi.json';
 
 const json = (body: unknown, status = 200, headers = {}) => new Response(JSON.stringify(body), {
@@ -83,17 +83,12 @@ describe('media and display adapters', () => {
   it.each([null, undefined, '', '//outside.test/media/a', 'https://outside.test/media/a', '/media/../a', '/media/%2e%2e/a', '/media/a?x=1', 'javascript:alert(1)'])('rejects non-contract media: %s', value => {
     expect(mediaUrl(value)).toBe('');
   });
-  it('maps real product, category and cart examples to existing display models', () => {
+  it('maps real product and category examples to existing display models', () => {
     const product = contract.paths['/api/products/{id}'].get.responses['200'].content['application/json'].example.data;
     const adapted = toProduct(product);
     expect(adapted.startingPrice).toBe(product.startingPrice);
     expect(adapted.models[0]?.price).toBe(product.models[0]?.price);
     expect(adapted.colors).toEqual(product.colors);
-    const cart = contract.paths['/api/shopping-cart'].get.responses['200'].content['application/json'].example.data;
-    const first = cart.items[0];
-    if (!first) throw new Error('Contract cart example must contain an item');
-    if (first.currency !== 'CNY') throw new Error('Invalid fixture currency');
-    expect(toCartItem({ ...first, currency: first.currency }).price).toBe(Number(first.unitPrice));
     const category = contract.paths['/api/categories/{title}'].get.responses['200'].content['application/json'].example.data;
     expect(toCategory(category).title).toBe(category.title);
   });

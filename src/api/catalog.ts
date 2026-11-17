@@ -1,4 +1,5 @@
-import type { CartItem, Product } from '../types/custom';
+import type { Product } from '../types/custom';
+import type { CartInput } from './cart';
 
 // Integer fen arithmetic avoids floating-point price previews and preserves large amounts.
 function fen(value: string): bigint {
@@ -26,19 +27,9 @@ export function canPurchase(product: Product): boolean {
   return product.inStock && product.models.some(model => model.inStock)
     && product.memorySizes.some(size => size.inStock) && product.colors.length > 0;
 }
-export function selectedCartItem(product: Product, modelId?: number, color?: string, memorySizeId?: number): CartItem | null {
+export function selectedCartItem(product: Product, modelId?: number, color?: string, memorySizeId?: number): CartInput | null {
   const model = product.models.find(item => item.id === modelId && item.inStock);
   const memory = product.memorySizes.find(item => item.id === memorySizeId && item.inStock);
   if (!product.inStock || !model || !memory || !color || !product.colors.includes(color)) return null;
-  const price = addMoney(model.price, memory.price);
-  // The existing guest cart is numeric. Refuse a lossy conversion at that boundary.
-  const numeric = (amount: string) => {
-    const value = Number(amount);
-    return Number.isFinite(value) && value.toFixed(2) === addMoney(amount, '0.00') ? value : null;
-  };
-  const unitPrice = numeric(price), modelPrice = numeric(model.price), memorySizePrice = numeric(memory.price);
-  if (unitPrice === null || modelPrice === null || memorySizePrice === null) return null;
-  return { productId: product.id, name: product.name, imageSrc: product.image,
-    modelId: model.id, model: model.name, modelPrice, color,
-    memorySizeId: memory.id, memorySize: memory.name, memorySizePrice, price: unitPrice, qty: 1 };
+  return { productId: product.id, modelId: model.id, memorySizeId: memory.id, color, qty: 1 };
 }

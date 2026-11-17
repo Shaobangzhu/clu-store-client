@@ -76,5 +76,29 @@
     "rateLimit": "Trop de tentatives. Veuillez patienter.",
     "invalidCredentials": "Identifiants invalides ou session expirée. Reconnectez-vous.",
     "serverError": "Authentification impossible. Réessayez."
+  },
+  "cart": {
+    "title": "Panier",
+    "signIn": "Connectez-vous pour utiliser votre panier",
+    "loading": "Mise à jour du panier…",
+    "empty": "Votre panier est vide.",
+    "unitPrice": "Prix unitaire",
+    "lineTotal": "Total de la ligne",
+    "total": "Total",
+    "quantity": "Quantité",
+    "decrease": "Diminuer la quantité",
+    "increase": "Augmenter la quantité",
+    "remove": "Retirer du panier",
+    "clear": "Vider le panier",
+    "checkout": "Commander",
+    "reload": "Recharger le panier",
+    "unavailable": "Article indisponible. Retirez-le pour passer commande.",
+    "lastConfirmed": "Dernier panier confirmé affiché. Rechargez avant toute modification.",
+    "failed": "Échec de la requête. Le résultat peut être incertain. Rechargez le panier avant de réessayer.",
+    "reconcileFailed": "Modification enregistrée, mais actualisation impossible. Rechargez sans répéter la modification.",
+    "limit": "Limites : 99 unités par article, 50 configurations et 500 unités au total.",
+    "unavailableError": "Produit ou configuration indisponible. Rechargez le panier et vérifiez votre sélection.",
+    "missing": "Cet article ne figure plus dans le panier. Rechargez le panier.",
+    "rateLimited": "Trop de requêtes. Patientez puis rechargez le panier."
   }
 }

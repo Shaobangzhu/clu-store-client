@@ -1,15 +1,12 @@
 import SkuSelect from './SkuSelect';
-import { useContext } from 'react';
 import type { Product } from '@/types/custom';
-import { ShoppingCartContext } from '@/contexts/shoppingCart';
 import { useTranslation } from 'react-i18next';
 import { canPurchase, formatMoney } from '@/api/catalog';
 import useProductSelection from '@/hooks/useProductSelection';
 import ProductImage from './ProductImage';
-import Button from './Button';
+import AddToCartButton from './AddToCartButton';
 
 export default function ProductHero({ product, imageUrl }: { product: Product; imageUrl?: string }) {
-  const { addToCart } = useContext(ShoppingCartContext);
   const { t } = useTranslation();
   const selection = useProductSelection(product);
   return <div className="flex flex-col lg:flex-row-reverse pt-8 mt-4 md:pt-28 lg:pt-52 space-y-4 text-apple-text-light dark:text-apple-text-dark">
@@ -31,8 +28,7 @@ export default function ProductHero({ product, imageUrl }: { product: Product; i
           options={product.memorySizes.map(size => ({ value: String(size.id), label: size.name, disabled: !size.inStock }))}
           value={selection.memorySizeId === undefined ? '' : String(selection.memorySizeId)}
           onChange={value => selection.select({ memorySizeId: value ? Number(value) : undefined })} />
-        <Button title={t('home_page.product_hero.add_cart')} disabled={!selection.cartItem}
-          onClick={() => { if (selection.cartItem) void addToCart(selection.cartItem); }} />
+        <AddToCartButton item={selection.cartItem} />
       </div>
       {!canPurchase(product) && <p>{t('catalog.unavailable')}</p>}
     </div>

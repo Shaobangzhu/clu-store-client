@@ -1,7 +1,6 @@
 import { useLoaderData } from 'react-router-dom';
 import type { Product } from '@/types/custom';
-import { Button } from '@/components';
-import { useContext } from 'react';
+import AddToCartButton from '@/components/AddToCartButton';
 import { useTranslation } from 'react-i18next';
 import ProductTitle from './ProductTitle';
 import ProductHero from './ProductHero';
@@ -9,7 +8,6 @@ import SelectTitle from './SelectTitle';
 import SelectSquare from './SelectSquare';
 import SelectCircle from './SelectCircle';
 import PriceTag from './PriceTag';
-import { ShoppingCartContext } from '@/contexts/shoppingCart';
 import { canPurchase, formatMoney } from '@/api/catalog';
 import useProductSelection from '@/hooks/useProductSelection';
 
@@ -18,7 +16,6 @@ export default function ProductDetail() {
   return <ProductConfiguration key={product.id} product={product} />;
 }
 function ProductConfiguration({ product }: { product: Product }) {
-  const { addToCart } = useContext(ShoppingCartContext);
   const { t } = useTranslation();
   const selection = useProductSelection(product);
   const model = product.models.find(item => item.id === selection.modelId);
@@ -57,8 +54,7 @@ function ProductConfiguration({ product }: { product: Product }) {
     </div>
     <PriceTag modelAmount={model?.price} sizeAmount={memory?.price} totalAmount={selection.price} />
     <div className="flex justify-end mt-12 mr-8">
-      <Button title={t('home_page.product_hero.add_cart')} disabled={!selection.cartItem}
-        onClick={() => { if (selection.cartItem) void addToCart(selection.cartItem); }} />
+      <AddToCartButton item={selection.cartItem} />
     </div>
   </div>;
 }

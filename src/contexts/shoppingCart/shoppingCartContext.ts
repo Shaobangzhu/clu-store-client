@@ -1,26 +1,23 @@
-import type { CartItem } from "@/types/custom";
-import { createContext } from "react";
+import { createContext } from 'react';
+import type { CartDto } from '../../api/services';
+import type { CartInput, CartLine } from '../../api/cart';
 
-interface ShoppingCartContextType {
-  cartItems: CartItem[];
-  addToCart: (item: CartItem) => void;
-  removeFromCart: (index: number) => void;
-  updateItem: (index: number, newItem: CartItem) => void;
-  clearCart: () => void;
-  refreshCart: () => Promise<void>;
+export interface ShoppingCartContextType {
+  cart: CartDto | null;
+  cartItems: CartLine[];
+  authenticated: boolean;
+  busy: boolean;
+  ready: boolean;
+  error: string | null;
+  addToCart: (item: CartInput) => Promise<boolean>;
+  removeFromCart: (id: number) => Promise<boolean>;
+  updateItem: (id: number, qty: number) => Promise<boolean>;
+  clearCart: () => Promise<boolean>;
+  refreshCart: () => Promise<boolean>;
 }
-
-const defaultShoppingCartContext: ShoppingCartContextType = {
-  cartItems: [],
-  addToCart: () => {},
-  removeFromCart: () => {},
-  updateItem: () => {},
-  clearCart: () => {},
-  refreshCart: async () => {},
+export const defaultShoppingCartContext: ShoppingCartContextType = {
+  cart: null, cartItems: [], authenticated: false, busy: false, ready: false, error: null,
+  addToCart: async () => false, removeFromCart: async () => false,
+  updateItem: async () => false, clearCart: async () => false, refreshCart: async () => false,
 };
-
-const ShoppingCartContext = createContext<ShoppingCartContextType>(
-  defaultShoppingCartContext,
-);
-
-export default ShoppingCartContext;
+export default createContext<ShoppingCartContextType>(defaultShoppingCartContext);
