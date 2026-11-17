@@ -1,7 +1,7 @@
 interface ProductTitleProps {
   name: string;
   startingPrice: number;
-  installment?: number;
+  installment?: number | null;
 }
 
 const ProductTitle = ({
@@ -14,7 +14,7 @@ const ProductTitle = ({
       <p className="text-apple-red text-sm font-semibold">全新</p>
       <h4 className="text-4xl mt-2">购买 {name}</h4>
       <p className="mt-6">
-        RMB {installment}/月起 或 RMB {startingPrice} 起
+        {installment != null && <>RMB {installment}/月起 或 </>}RMB {startingPrice} 起
       </p>
     </div>
   );

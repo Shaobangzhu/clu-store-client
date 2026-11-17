@@ -32,13 +32,12 @@ const CartItem = ({ item, onItemUpdate, onItemRemove }: CartItemProps) => {
             </p>
             <p className="text-sm font-semibold">
               ¥{" "}
-              {(
-                item.modelPrice ?? 0 + (item.memorySizePrice ?? 0)
-              ).toLocaleString()}
+              {(item.price ?? ((item.modelPrice ?? 0) + (item.memorySizePrice ?? 0))).toLocaleString()}
             </p>
           </div>
           <div className="flex space-x-6 mt-4">
             <select
+              value={item.qty}
               onChange={(e) => setQty(Number(e.target.value))}
               className="border border-apple-gray-300 dark:border-apple-gray-700 rounded-md p-1 text-sm"
             >

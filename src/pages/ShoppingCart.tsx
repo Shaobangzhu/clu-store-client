@@ -11,16 +11,12 @@ const shoppingCart = () => {
   const [total, setTotal] = useState(0);
   useEffect(() => {
     const total = cartItems.reduce(
-      (acc, item) =>
-        acc +
-        ((item.modelPrice ?? 0) + (item.memorySizePrice ?? 0)) *
-          (item.qty ?? 0),
+      (acc, item) => acc +
+        (item.price ?? ((item.modelPrice ?? 0) + (item.memorySizePrice ?? 0))) * item.qty,
       0,
     );
     setTotal(total);
   }, [cartItems]);
-
-  const shippingFee = cartItems.length > 0 ? 150 : 0;
 
   return (
     <div
@@ -32,14 +28,14 @@ const shoppingCart = () => {
       "
     >
       <h2 className="text-4xl">
-        购物车总价 ¥{(total + shippingFee).toLocaleString()}
+        购物车总价 ¥{total.toLocaleString()}
       </h2>
       {/* 商品列表 */}
       <div className="mb-6">
         {cartItems.map((item, index) => (
           <CartItem
             item={item}
-            key={item.productId}
+            key={item.id ?? `${item.productId}:${item.modelId}:${item.memorySizeId}:${item.color}`}
             onItemUpdate={(qty) => {
               const newItem = { ...item, qty };
               updateItem(index, newItem);
@@ -53,14 +49,12 @@ const shoppingCart = () => {
         <div className="grid grid-cols-2 items-center">
           <p className="text-center">小计: </p>
           <p className="text-right">RMB {total.toLocaleString()}</p>
-          <p className="text-center">运费: </p>
-          <p className="text-right">RMB {shippingFee.toLocaleString()}</p>
         </div>
         <hr className="ml-8 border-t border-apple-gray-200 dark:border-apple-gray-800" />
         <div className="grid grid-cols-2 items-center">
           <p className="text-center text-2xl">总计: </p>
           <p className="text-right text-2xl">
-            RMB {(total + shippingFee).toLocaleString()}
+            RMB {total.toLocaleString()}
           </p>
           <div className="col-span-2 flex justify-end mt-12">
             <Button

@@ -1,4 +1,4 @@
-const colorMapping = {
+const colorMapping: Record<string, readonly [string, string]> = {
   沙漠色钛金属: ["#BFA48F", "#D8C7B8"],
   原色钛金属: ["#6D6E74", "#B0B1B4"],
   白色钛金属: ["#E0E0E0", "#F5F5F5"],
@@ -6,7 +6,7 @@ const colorMapping = {
 } as const;
 
 interface SelectCircleProps {
-  color: keyof typeof colorMapping;
+  color: string;
   isSelected?: boolean;
   onClick?: () => void;
 }

@@ -27,7 +27,10 @@ export default defineConfig({
     host: "127.0.0.1",
     port: 5178,
     strictPort: true,
-    proxy: { "/api": "http://127.0.0.1:3008" },
+    proxy: {
+      "/api": "http://127.0.0.1:3008",
+      "/media": "http://127.0.0.1:3008",
+    },
   },
   resolve: {
     alias: {

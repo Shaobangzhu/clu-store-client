@@ -1,11 +1,10 @@
-import { apiUrl } from "@/helpers/api";
+import { catalogService } from "@/api/services";
 import Skeleton from "@components/Skeleton";
-import type { SupportData } from "../types/custom";
 import useApiData from "@/hooks/useApiData";
 
 const Support = () => {
-  const { data, loading, error } = useApiData<SupportData>(
-    apiUrl("information/support"),
+  const { data, loading, error } = useApiData(
+    "support", async signal => (await catalogService.support({ signal })).data,
   );
 
   if (loading) {
@@ -24,7 +23,7 @@ const Support = () => {
     <div className="min-h-screen text-apple-text dark:text-apple-text-dark">
       <div
         className="p-4 text-xs text-gray-500"
-        dangerouslySetInnerHTML={{ __html: data?.data || "" }}
+        dangerouslySetInnerHTML={{ __html: data?.html || "" }}
       ></div>
     </div>
   );

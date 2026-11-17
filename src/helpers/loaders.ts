@@ -1,28 +1,4 @@
-import { apiUrl } from "@/helpers/api";
-export const loadProducts = async (
-  productId: string | number,
-  signal?: AbortSignal,
-) => {
-  try {
-    const response = await fetch(
-      apiUrl(`products/${productId}`),
-      {
-        method: "GET",
-        signal: signal ?? null,
-      },
-    );
-    if (!response.ok) {
-      throw new Error(
-        `Error fetching product with ID ${productId}: ${response.statusText}`,
-      );
-    }
-    return await response.json();
-  } catch (error) {
-    if ((error as any).name === "AbortError") {
-      console.log("请求被取消");
-    } else {
-      console.error("加载失败", error);
-    }
-    throw error;
-  }
-};
+import { catalogService } from '../api/services';
+import { positiveId, toProduct } from '../api/adapters';
+export const loadProducts = async (productId: string | number, signal?: AbortSignal) =>
+  toProduct((await catalogService.product(positiveId(productId), { signal })).data);

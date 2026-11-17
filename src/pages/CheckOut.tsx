@@ -1,126 +1,46 @@
-import { apiUrl } from "@/helpers/api";
-import { useState, useEffect, useContext } from "react";
-import SquareInput from "@/components/SquareInput";
-import PaymentSelector from "@/components/PaymentSelector";
-import { SiAlipay, SiWechat } from "react-icons/si";
-import Button from "@/components/Button";
-import useApiData from "@/hooks/useApiData";
-import { useSelector } from "react-redux";
-import { type RootState } from "../redux/store";
-import type { Order } from "@/types/custom";
-import { ShoppingCartContext } from "@/contexts/shoppingCart";
+import { useRef, useState, useContext } from 'react';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import type { RootState } from '../redux/store';
+import { orderService } from '../api/services';
+import { ShoppingCartContext } from '../contexts/shoppingCart';
+import Button from '../components/Button';
 
 const CheckOut = () => {
-  const { clearCart } = useContext(ShoppingCartContext);
-
   const { token } = useSelector((s: RootState) => s.user);
-  const { data, loading, error, fetchData } = useApiData<Order>(
-    apiUrl("orders/place"),
-    {
-      method: "POST",
-      autoFetch: false,
-    },
-  );
-
-  const [name, setName] = useState("");
-  const [address, setAddress] = useState("");
-  const [extraAddress, setExtraAddress] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [selectedPayment, setSelectedPayment] = useState("");
-
+  const { cartItems, refreshCart } = useContext(ShoppingCartContext);
+  const navigate = useNavigate();
+  const key = useRef<string | null>(sessionStorage.getItem('clu.checkout.intent'));
+  const submitting = useRef(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const handleSubmit = async () => {
-    if (!name || !address || !phoneNumber || !selectedPayment) {
-      alert("请填写所有必填信息!");
-      return;
-    }
-
-    const body = {
-      name,
-      address,
-      extraAddress,
-      selectedPayment,
-    };
-
-    console.log("提交的订单信息: ", body);
+    if (submitting.current || !token) return;
+    submitting.current = true;
+    setLoading(true);
+    setError(null);
+    key.current ??= crypto.randomUUID();
+    sessionStorage.setItem('clu.checkout.intent', key.current);
     try {
-      await fetchData({
-        overrideBody: body,
-        overrideHeaders: { Authorization: `Bearer ${token}` },
-      });
-      console.log("返回数据: ", data);
-      alert("订单已提交");
-    } catch (error) {
-      console.error("订单提交失败: ", error);
-      alert("订单提交失败");
+      const { data } = await orderService.place({}, key.current, { token });
+      // Checkout consumes selected persisted lines atomically. Do not DELETE the cart here.
+      sessionStorage.removeItem('clu.checkout.intent');
+      key.current = null;
+      await refreshCart();
+      navigate(`/orders/${data.id}`);
+    } catch (failure) {
+      setError(failure instanceof Error ? failure.message : '订单提交失败');
+    } finally {
+      submitting.current = false;
+      setLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (loading) return;
-    if (error) alert(error);
-    if (data) {
-      // 清空购物车
-      clearCart();
-      // Payment integration is unavailable in the local preparation profile.
-      // Never follow an unreviewed payment URI returned by an API.
-      alert("本地环境暂不支持支付跳转");
-    }
-  }, [data, loading, error]);
-
-  return (
-    <div className="min-h-screen pt-6 p-4">
-      <p className="text-4xl mt-3">你的送货地址是那里?</p>
-      <div className="flex flex-col gap-6 mt-12">
-        <p className="text-2xl">输入收件人姓名和地址: </p>
-        {/* 用户名 */}
-        <SquareInput
-          subTitle="姓名"
-          title="请输入姓名"
-          value={name}
-          onChange={setName}
-        />
-        {/* 地址 */}
-        <SquareInput
-          subTitle="收货地址"
-          title="请输入你的地址"
-          value={address}
-          onChange={setAddress}
-        />
-        {/* 地址说明 */}
-        <SquareInput
-          subTitle="详细地址"
-          title="附加详细地址"
-          value={extraAddress}
-          onChange={setExtraAddress}
-        />
-        <p className="text-2xl">你的联系方式是什么? </p>
-        <SquareInput
-          subTitle="电话号码"
-          title="请输入收件人的电话号码"
-          value={phoneNumber}
-          onChange={setPhoneNumber}
-        />
-      </div>
-      <p className="text-3xl mt-6">选择你的支付方式: </p>
-      <div className="flex flex-col gap-4 mt-6">
-        <PaymentSelector
-          name="支付宝"
-          icon={<SiAlipay className="w-6 h-6 text-blue-500" />}
-          isSelected={selectedPayment === "alipay"}
-          onClick={() => setSelectedPayment("alipay")}
-        />
-        <PaymentSelector
-          name="微信支付"
-          icon={<SiWechat className="w-6 h-6 text-green-500" />}
-          isSelected={selectedPayment === "wechat"}
-          onClick={() => setSelectedPayment("wechat")}
-        />
-      </div>
-      <div className="flex justify-end mt-12 mr-4">
-        <Button title="下单" onClick={handleSubmit} loading={loading} />
-      </div>
-    </div>
-  );
+  return <div className="min-h-screen pt-6 p-4">
+    <h1 className="text-3xl">确认购物车订单</h1>
+    <p>将提交服务器已保存的购物车。订单金额以服务器确认为准。</p>
+    {!token && <p role="alert">请先登录</p>}
+    {error && <p role="alert">{error}</p>}
+    <Button title="下单" onClick={handleSubmit} loading={loading} disabled={!token || (cartItems.length === 0 && !key.current)} />
+  </div>;
 };
-
 export default CheckOut;

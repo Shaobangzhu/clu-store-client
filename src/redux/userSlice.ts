@@ -1,4 +1,4 @@
-import { apiUrl } from "@/helpers/api";
+import { authService } from "@/api/services";
 import {
   createAsyncThunk,
   createSlice,
@@ -23,23 +23,8 @@ const initialState: UserState = {
 export const login = createAsyncThunk<
   string, // 返回值类型, jwt
   { username: string; password: string } // credentials 类型
->("user/login", async (credentials) => {
-  const response = await fetch(apiUrl("auth/login"), {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(credentials),
-  });
-
-  if (!response.ok) {
-    throw new Error("登录失败");
-  }
-
-  const data = await response.json();
-  if (!data.token) {
-    throw new Error("token is missing");
-  }
+>("user/login", async (credentials, { signal }) => {
+  const { data } = await authService.login({ identifier: credentials.username, password: credentials.password }, { signal });
   return data.token;
 });
 

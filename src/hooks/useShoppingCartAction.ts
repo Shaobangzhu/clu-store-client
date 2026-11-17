@@ -1,53 +1,52 @@
-import { apiUrl } from "@/helpers/api";
-import type { Dispatch } from "react";
-import {
-  clearCart,
-  type CartAction,
-  addItem,
-  removeItem,
-  updateItem,
-  syncCart,
-} from "@/reducers/shoppingCartReducer";
-import type { CartItem } from "@/types/custom";
-import useApiData from "./useApiData";
+import { useRef, useState } from 'react';
+import type { Dispatch } from 'react';
+import { clearCart, addItem, removeItem, updateItem, syncCart } from '../reducers/shoppingCartReducer';
+import type { CartAction } from '../reducers/shoppingCartReducer';
+import type { CartItem } from '../types/custom';
+import { cartService } from '../api/services';
+import { positiveId, toCartItem } from '../api/adapters';
 
-const useShoppingCartAction = (dispatch: Dispatch<CartAction>) => {
-  const { data, fetchData: callApi } = useApiData(
-    apiUrl("ShoppingCart/items"),
-    { autoFetch: false },
-  );
-
-  const jwt = localStorage.getItem("token");
-
+const useShoppingCartAction = (dispatch: Dispatch<CartAction>, items: CartItem[], token: string | null) => {
+  const [error, setError] = useState<string | null>(null);
+  const queue = useRef<Promise<void>>(Promise.resolve());
+  const currentToken = useRef(token);
+  currentToken.current = token;
+  const run = (mutation: () => Promise<unknown>) => {
+    const owner = token;
+    queue.current = queue.current.then(async () => {
+      if (currentToken.current !== owner) return;
+      setError(null);
+      await mutation();
+      const result = await cartService.get({ token: owner });
+      if (currentToken.current === owner) dispatch(syncCart(result.data.items.map(toCartItem)));
+    }).catch(failure => {
+      if (currentToken.current === owner) setError(failure instanceof Error ? failure.message : 'Cart request failed');
+    });
+    return queue.current;
+  };
   return {
-    addToCart: async (item: CartItem) => {
-      try {
-        await callApi({
-          overrideMethod: "POST",
-          overrideHeaders: { Authorization: `Bearer ${jwt}` },
-          overrideBody: item,
-        });
-        dispatch(addItem(item));
-      } catch (error) {
-        console.error("添加购物车失败: ", error);
-      }
+    error,
+    addToCart: (item: CartItem) => {
+      if (!token) { dispatch(addItem(item)); return; }
+      return run(() => cartService.add({ productId: positiveId(item.productId), modelId: positiveId(item.modelId),
+        memorySizeId: positiveId(item.memorySizeId), color: item.color ?? '', qty: item.qty }, { token }));
     },
-    removeFromCart: (index: number) => dispatch(removeItem(index)),
-    updateItem: (index: number, newItem: CartItem) =>
-      dispatch(updateItem(index, newItem)),
-    clearCart: async () => {
-      try {
-        await callApi({
-          overrideMethod: "DELETE",
-          overrideHeaders: { Authorization: `Bearer ${jwt}` },
-        });
-        dispatch(clearCart());
-      } catch (error) {
-        console.error("清空购物车失败: ", error);
-      }
+    removeFromCart: (index: number) => {
+      if (!token) { dispatch(removeItem(index)); return; }
+      const id = items[index]?.id;
+      return run(() => cartService.remove(positiveId(id ?? null), { token }));
     },
-    syncCart: (items: CartItem[]) => dispatch(syncCart(items)),
+    updateItem: (index: number, item: CartItem) => {
+      if (!token) { dispatch(updateItem(index, item)); return; }
+      const id = items[index]?.id;
+      return run(() => cartService.update(positiveId(id ?? null), { qty: item.qty }, { token }));
+    },
+    clearCart: () => {
+      if (!token) { dispatch(clearCart()); return; }
+      return run(() => cartService.clear({ token }));
+    },
+    refreshCart: () => token ? run(async () => {}) : Promise.resolve(),
+    syncCart: (cartItems: CartItem[]) => dispatch(syncCart(cartItems)),
   };
 };
-
 export default useShoppingCartAction;

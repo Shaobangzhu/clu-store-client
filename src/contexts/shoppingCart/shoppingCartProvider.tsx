@@ -1,62 +1,36 @@
-import { apiUrl } from "@/helpers/api";
-import ShoppingCartContext from "./shoppingCartContext";
-import shoppingCartReducer from "../../reducers/shoppingCartReducer";
-import usePersistedReducer from "@/hooks/usePersistedReducer";
-import useShoppingCartAction from "@/hooks/useShoppingCartAction";
-import type { ShoppingCart } from "@/types/custom";
-import { useState, useEffect } from "react";
-import useApiData from "@/hooks/useApiData";
+import ShoppingCartContext from './shoppingCartContext';
+import shoppingCartReducer, { syncCart } from '../../reducers/shoppingCartReducer';
+import usePersistedReducer from '../../hooks/usePersistedReducer';
+import useShoppingCartAction from '../../hooks/useShoppingCartAction';
+import { useEffect, useState, useRef } from 'react';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../redux/store';
+import { cartService } from '../../api/services';
+import { toCartItem } from '../../api/adapters';
 
-interface ShoppingCartProviderProps {
-  children: React.ReactNode;
-}
-
-const ShoppingCartProvider = ({ children }: ShoppingCartProviderProps) => {
-  const { data: shoppingCartData, fetchData } = useApiData<ShoppingCart>(
-    apiUrl("ShoppingCart"),
-    { autoFetch: false },
-  );
-
-  // 1. app 启动, 读取本地购物车
-  const [cartItems, dispatch] = usePersistedReducer(
-    shoppingCartReducer,
-    "shoppingCart",
-    [],
-  );
-
-  // 2. 若用户已登录, 有jwt
-  const [jwt] = useState(() => localStorage.getItem("token"));
-
-  // 3. 从后端获取购物车信息
+const ShoppingCartProvider = ({ children }: { children: React.ReactNode }) => {
+  const [cartItems, dispatch] = usePersistedReducer(shoppingCartReducer, 'shoppingCart', []);
+  const { token } = useSelector((state: RootState) => state.user);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const previousToken = useRef(token);
+  const actions = useShoppingCartAction(dispatch, cartItems, token);
   useEffect(() => {
-    if (jwt) {
-      fetchData({
-        overrideHeaders: {
-          Authorization: `Bearer ${jwt}`,
-        },
+    const controller = new AbortController();
+    setLoadError(null);
+    if (token || previousToken.current !== token) dispatch(syncCart([]));
+    previousToken.current = token;
+    if (token) {
+      void cartService.get({ token, signal: controller.signal }).then(({ data }) => {
+        if (!controller.signal.aborted) dispatch(syncCart(data.items.map(toCartItem)));
+      }).catch(failure => {
+        if (!controller.signal.aborted) setLoadError(failure instanceof Error ? failure.message : 'Cart request failed');
       });
     }
-  }, [jwt]);
-
-  // 4. 用后端数据覆盖本地(localStorage)数据
-  useEffect(() => {
-    if (shoppingCartData) {
-      // 同步 (覆盖) 购物车
-      syncCart(shoppingCartData.items);
-    }
-  }, [shoppingCartData]);
-
-  // 5. 保持购物车同步: addToCart, removeFromCart, updateItem, clearCart
-  const { addToCart, removeFromCart, updateItem, clearCart, syncCart } =
-    useShoppingCartAction(dispatch);
-
-  return (
-    <ShoppingCartContext.Provider
-      value={{ cartItems, addToCart, removeFromCart, updateItem, clearCart }}
-    >
-      {children}
-    </ShoppingCartContext.Provider>
-  );
+    return () => controller.abort();
+  }, [token, dispatch]);
+  return <ShoppingCartContext.Provider value={{ cartItems, ...actions }}>
+    {(loadError || actions.error) && <p role="alert">{loadError || actions.error}</p>}
+    {children}
+  </ShoppingCartContext.Provider>;
 };
-
 export default ShoppingCartProvider;

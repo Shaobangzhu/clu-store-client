@@ -1,4 +1,5 @@
-import { apiUrl } from "@/helpers/api";
+import { catalogService } from "@/api/services";
+import { toProduct } from "@/api/adapters";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { Product } from "../types/custom";
 
@@ -6,23 +7,8 @@ export const fetchSearchResults = createAsyncThunk<
   Product[],
   { keyword: string }
 >("search", async ({ keyword }: { keyword: string }, { signal }) => {
-  const controller = new AbortController();
-  signal.addEventListener("abort", () => {
-    controller.abort();
-  });
-
-  const response = await fetch(
-    apiUrl(`products?keyword=${encodeURIComponent(keyword)}`),
-    { signal: controller.signal },
-  );
-  if (response.status == 404) {
-    throw new Error("没有找到商品"); // 抛出的错误会自动进入RTK的reject分支
-  }
-  if (!response.ok) {
-    throw new Error("请求失败"); // 抛出的错误会自动进入RTK的reject分支
-  }
-  const data: Product[] = await response.json();
-  return data; // 返回的数据会自动进入RTK的fulfilled分支
+  const { data } = await catalogService.products({ keyword }, { signal });
+  return data.map(toProduct);
 });
 
 export interface SearchState {

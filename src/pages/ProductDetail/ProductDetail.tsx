@@ -35,7 +35,7 @@ const ProductDetail = () => {
 
   useEffect(() => {
     const total =
-      (product.startingPrice ?? 0) + (selectedMemorySize?.price ?? 0);
+      (selectedModel?.price ?? product.startingPrice) + (selectedMemorySize?.price ?? 0);
     setTotalAmount(total);
   }, [product, selectedModel, selectedMemorySize, selectedColor]);
 
@@ -55,6 +55,7 @@ const ProductDetail = () => {
       memorySizeId: selectedMemorySize.id,
       memorySizePrice: selectedMemorySize.price,
       qty: 1,
+      price: selectedModel.price + selectedMemorySize.price,
     };
     addToCart(cartItem);
   };
