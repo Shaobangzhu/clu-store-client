@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import React from "react";
 
 interface NotFoundProps {
@@ -6,13 +8,15 @@ interface NotFoundProps {
 }
 
 const NotFound: React.FC<NotFoundProps> = ({ onGoHome, onGoBack }) => {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
   const handleGoHome = () => {
     if (onGoHome) {
       onGoHome();
       return;
     }
 
-    window.location.href = "/";
+    navigate("/");
   };
 
   const handleGoBack = () => {
@@ -21,7 +25,7 @@ const NotFound: React.FC<NotFoundProps> = ({ onGoHome, onGoBack }) => {
       return;
     }
 
-    window.history.back();
+    navigate(-1);
   };
 
   return (
@@ -44,7 +48,7 @@ const NotFound: React.FC<NotFoundProps> = ({ onGoHome, onGoBack }) => {
         {/* Badge */}
         <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-medium text-slate-300 backdrop-blur-md">
           <span className="h-2 w-2 rounded-full bg-cyan-400 shadow-[0_0_12px_rgba(34,211,238,0.8)]" />
-          PAGE NOT FOUND
+          {t("ui.notFound")}
         </div>
 
         {/* 404 */}
@@ -58,12 +62,11 @@ const NotFound: React.FC<NotFoundProps> = ({ onGoHome, onGoBack }) => {
 
         {/* Message */}
         <h2 className="mt-4 text-2xl font-bold tracking-tight text-white sm:text-4xl">
-          Looks like you're lost.
+          {t("ui.notFound")}
         </h2>
 
         <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-slate-400 sm:text-base">
-          The page you're trying to reach may have been moved, deleted, or never
-          existed in the first place.
+          {t("ui.pageUnavailable")}
         </p>
 
         {/* Decorative route */}
@@ -113,7 +116,7 @@ const NotFound: React.FC<NotFoundProps> = ({ onGoHome, onGoBack }) => {
                 d="m3 11 9-8 9 8M5 10v10h14V10M9 20v-6h6v6"
               />
             </svg>
-            Go Home
+            {t("ui.home")}
           </button>
 
           <button
@@ -134,7 +137,7 @@ const NotFound: React.FC<NotFoundProps> = ({ onGoHome, onGoBack }) => {
                 d="m15 18-6-6 6-6"
               />
             </svg>
-            Go Back
+            {t("ui.back")}
           </button>
         </div>
       </main>

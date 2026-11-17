@@ -162,5 +162,26 @@
     "reconcileButton": "Recharger l’état actuel",
     "invalidNote": "Utilisez au maximum 500 caractères sans caractères de contrôle.",
     "toggleMenu": "Afficher ou masquer la navigation"
+  },
+  "ui": {
+    "loading": "Chargement…",
+    "language": "Langue",
+    "cart": "Panier",
+    "logout": "Déconnexion",
+    "menu": "Menu",
+    "close": "Fermer le menu",
+    "theme": "Changer le thème",
+    "noVideo": "Vidéo indisponible",
+    "video": "Vidéo du produit",
+    "notFound": "Page introuvable",
+    "pageUnavailable": "Cette page est indisponible.",
+    "home": "Accueil",
+    "back": "Retour",
+    "error": "Une erreur est survenue",
+    "contactSupport": "Réessayez ou contactez l’assistance."
+  },
+  "support": {
+    "failed": "Impossible de charger l’assistance.",
+    "empty": "Aucun contenu d’assistance disponible."
   }
 }

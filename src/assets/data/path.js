@@ -49,12 +49,12 @@ export const ACCOUNT_PAGES = [
   {
     id: "account",
     title: "管理你的账户",
-    path: "/account",
+    path: "/user",
   },
   {
     id: "orders",
     title: "订单历史",
-    path: "/computers",
+    path: "/user",
   },
 ];
 

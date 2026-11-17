@@ -68,10 +68,10 @@ const router = createBrowserRouter([
         element: <SearchResults />,
         errorElement: <ErrorPage />,
       },
-      { path: "/cart", element: <ShoppingCart /> },
-      { path: "/checkout", element: <RequireAuth><CheckOut /></RequireAuth> },
-      { path: "/admin/orders", element: <RequireAuth><AdminOrders /></RequireAuth> },
-      { path: "/orders/:id", element: <RequireAuth><OrderDetail /></RequireAuth> },
+      { path: "cart", element: <ShoppingCart /> },
+      { path: "checkout", element: <RequireAuth><CheckOut /></RequireAuth> },
+      { path: "admin/orders", element: <RequireAuth><AdminOrders /></RequireAuth> },
+      { path: "orders/:id", element: <RequireAuth><OrderDetail /></RequireAuth> },
       { path: "*", element: <NotFound /> },
     ],
   },
@@ -91,7 +91,7 @@ const router = createBrowserRouter([
         <UserLayout />
       </RequireAuth>
     ),
-    children: [{ path: "", element: <UserCenter /> }],
+    children: [{ index: true, element: <UserCenter /> }],
   },
 ]);
 

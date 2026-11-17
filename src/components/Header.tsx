@@ -7,7 +7,7 @@ import {
 } from "react-icons/ai";
 import { useState, useContext, useEffect, useRef } from "react";
 import DarkToggle from "./DarkToggle";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { SHOPPING_PAGES } from "@/assets/data/path";
 import { ShoppingCartContext } from "@/contexts/shoppingCart";
 import { AnimatePresence, motion } from "framer-motion";
@@ -51,6 +51,15 @@ const Header = () => {
   const [isSearchEnable, setIsSearchEnable] = useState(false);
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
+  const menuRef = useRef<HTMLDivElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const searchButtonRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => { setIsOpen(false); setIsSearchEnable(false); }, [location]);
+  useEffect(() => {
+    if (isOpen) menuRef.current?.querySelector<HTMLElement>('a, button')?.focus();
+  }, [isOpen]);
+  const closeMenu = () => { setIsOpen(false); menuButtonRef.current?.focus(); };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -93,9 +102,9 @@ const Header = () => {
       shadow-apple-md
       backdrop-blur-md"
     >
-      <a href="#" className="text-xl font-bold">
+      <NavLink to="/" aria-label={t("routes.store")} className="text-xl font-bold">
         <Logo className="w-6 h-6 hover:scale-105 transition-transform dark:fill-white" />
-      </a>
+      </NavLink>
       <div
         className="gap-6 hidden md:flex mx-auto
         text-apple-text-light
@@ -105,6 +114,7 @@ const Header = () => {
           <NavLink
             key={page.path}
             to={page.path}
+            end={page.path === "/"}
             className={({ isActive }) => `
             hover:text-apple-blue ${
               isActive
@@ -123,6 +133,9 @@ const Header = () => {
       {isSearchEnable && (
         <div className="relative">
           <input
+            id="header-search"
+            aria-label={t("header.search")}
+            onKeyUp={event => { if (event.key === "Escape") { setIsSearchEnable(false); searchButtonRef.current?.focus(); } }}
             ref={inputRef}
             className="peer border 
             border-apple-gray-200 px-4 py-2 w-64 rounded-lg focus:outline-none focus:ring-2 
@@ -132,7 +145,7 @@ const Header = () => {
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
           />
-          <label
+          <label htmlFor="header-search"
             className="absolute left-2 top-2
             peer-focus:-top-2
             peer-focus:text-xs
@@ -155,14 +168,14 @@ const Header = () => {
         space-x-2
         "
       >
-        <button onClick={() => setIsSearchEnable((prev) => !prev)}>
+        <button ref={searchButtonRef} aria-label={t("header.search")} aria-expanded={isSearchEnable} onClick={() => setIsSearchEnable((prev) => !prev)}>
           <AiOutlineSearch size={24} />
         </button>
         <DarkToggle />
-        <button onClick={handleLanguageChange}>
+        <button aria-label={t("ui.language")} onClick={handleLanguageChange}>
           <IoLanguageOutline size={24} />
         </button>
-        <button onClick={() => navigate("/cart")} className="relative">
+        <button aria-label={t("ui.cart")} onClick={() => navigate("/cart")} className="relative">
           <AiOutlineShopping size={24} />
           <AnimatePresence>
             {cartItems.length > 0 && (
@@ -188,7 +201,7 @@ const Header = () => {
           <>
             <span>{username}</span>
             <button className="hover: text-apple-blue" onClick={handleLogout}>
-              登出
+              {t("ui.logout")}
             </button>
           </>
         ) : (
@@ -196,6 +209,7 @@ const Header = () => {
             <NavLink
               key={page.id}
               to={page.path}
+            end={page.path === "/"}
               className={({ isActive }) =>
                 `hover:text-apple-blue hidden md:block ${
                   isActive
@@ -204,16 +218,18 @@ const Header = () => {
                 }`
               }
             >
-              {page.title}
+              {t(`routes.${page.id}`)}
             </NavLink>
           ))
         )}
-        <button className="md:hidden" onClick={() => setIsOpen(true)}>
+        <button ref={menuButtonRef} aria-label={t("ui.menu")} aria-expanded={isOpen} aria-controls="mobile-navigation" className="md:hidden" onClick={() => isOpen ? closeMenu() : setIsOpen(true)}>
           <AiOutlineMenu size={24} />
         </button>
       </div>
       <div
-        className={`md:hidden fixed top-0 right-0 h-full w-64 ${isOpen ? "block" : "hidden"}`}
+        id="mobile-navigation" ref={menuRef}
+        onKeyDown={event => { if (event.key === 'Escape') closeMenu(); }}
+        className={`md:hidden z-20 fixed top-0 right-0 h-full w-64 ${isOpen ? "block" : "hidden"}`}
       >
         <div
           className="flex flex-col mt-17 space-y-6 
@@ -224,10 +240,12 @@ const Header = () => {
           text-apple-text-light
           dark:text-apple-text-dark"
         >
+          <button onClick={closeMenu}>{t("ui.close")}</button>
           {shoppingPages.map((page) => (
             <NavLink
               key={page.path}
               to={page.path}
+            end={page.path === "/"}
               className={({ isActive }) => `
               hover:text-apple-blue ${
                 isActive
@@ -248,7 +266,7 @@ const Header = () => {
             <>
               <span>{username}</span>
               <button className="hover: text-apple-blue" onClick={handleLogout}>
-                登出
+                {t("ui.logout")}
               </button>
             </>
           ) : (
@@ -256,6 +274,7 @@ const Header = () => {
               <NavLink
                 key={page.id}
                 to={page.path}
+            end={page.path === "/"}
                 className={({ isActive }) =>
                   `hover:text-apple-blue ${
                     isActive
@@ -264,7 +283,7 @@ const Header = () => {
                   }`
                 }
               >
-                {page.title}
+                {t(`routes.${page.id}`)}
               </NavLink>
             ))
           )}
@@ -276,7 +295,8 @@ const Header = () => {
           bg-apple-black/50
           dark:bg-apple-white/10
           backdrop-blur-md"
-          onClick={() => setIsOpen(false)}
+          onClick={closeMenu}
+          aria-hidden="true"
         ></div>
       )}
     </nav>

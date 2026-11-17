@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import React from "react";
 
 interface ErrorPageProps {
@@ -9,19 +11,21 @@ interface ErrorPageProps {
 }
 
 const ErrorPage: React.FC<ErrorPageProps> = ({
-  statusCode = 404,
-  title = "Something went wrong",
-  message = "The page you're looking for doesn't exist, has moved, or is temporarily unavailable.",
+  statusCode = 500,
+  title,
+  message,
   onRetry,
   onGoHome,
 }) => {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
   const handleGoHome = () => {
     if (onGoHome) {
       onGoHome();
       return;
     }
 
-    window.location.href = "/";
+    navigate("/");
   };
 
   const handleRetry = () => {
@@ -79,11 +83,11 @@ const ErrorPage: React.FC<ErrorPageProps> = ({
           </div>
 
           <h2 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
-            {title}
+            {title ?? t("ui.error")}
           </h2>
 
           <p className="mx-auto mt-4 max-w-lg text-sm leading-6 text-slate-400 sm:text-base">
-            {message}
+            {message ?? t("ui.pageUnavailable")}
           </p>
 
           {/* Actions */}
@@ -106,7 +110,7 @@ const ErrorPage: React.FC<ErrorPageProps> = ({
                   d="m15 18-6-6 6-6"
                 />
               </svg>
-              Back Home
+              {t("ui.home")}
             </button>
 
             <button
@@ -127,13 +131,13 @@ const ErrorPage: React.FC<ErrorPageProps> = ({
                   d="M20 11a8.1 8.1 0 0 0-15.5-2M4 4v5h5m-5 4a8.1 8.1 0 0 0 15.5 2M20 20v-5h-5"
                 />
               </svg>
-              Try Again
+              {t("catalog.retry")}
             </button>
           </div>
         </div>
 
         <p className="mt-6 text-xs text-slate-600">
-          If the problem continues, please contact support.
+          {t("ui.contactSupport")}
         </p>
       </div>
     </div>

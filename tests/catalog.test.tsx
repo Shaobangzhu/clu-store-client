@@ -92,6 +92,19 @@ describe('live home and category content', () => {
     await waitFor(() => expect(screen.getAllByRole('link', { name: 'iPad' })).toHaveLength(2));
     for (const link of screen.getAllByRole('link', { name: 'iPad' })) expect(link.getAttribute('href')).toBe('/categories/tablets');
     expect(screen.queryByRole('link', { name: 'iPhone' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'Shopping cart' })).toBeTruthy();
+    const menu = screen.getByRole('button', { name: 'Menu' });
+    fireEvent.click(menu);
+    expect(menu.getAttribute('aria-expanded')).toBe('true');
+    expect(document.activeElement?.textContent).toBe('Close menu');
+    fireEvent.keyDown(document.activeElement!, { key: 'Escape' });
+    expect(menu.getAttribute('aria-expanded')).toBe('false');
+    expect(document.activeElement).toBe(menu);
+    fireEvent.click(screen.getByRole('button', { name: 'Search' }));
+    expect(document.activeElement).toBe(screen.getByRole('textbox', { name: 'Search' }));
+    fireEvent.keyUp(document.activeElement!, { key: 'Escape' });
+    expect(screen.queryByRole('textbox')).toBeNull();
+
   });
   it('loads live cards and full featured SKU data, linking only product cards', async () => {
     const requests = mockApi(url => {
@@ -260,23 +273,23 @@ describe('detail and hero SKU selection', () => {
   });
   it('disables purchases for an unavailable product and incomplete summary SKU data', () => {
     const add = vi.fn();
-    const { rerender } = render(provide(cartProvider(<ProductHero product={{ ...product, inStock: false }} />, add)));
+    const { rerender } = render(provide(cartProvider(<MemoryRouter><ProductHero product={{ ...product, inStock: false }} /></MemoryRouter>, add)));
     expect((screen.getByRole('button', { name: 'Add to Cart' }) as HTMLButtonElement).disabled).toBe(true);
     expect(screen.getByText('Currently unavailable')).toBeTruthy();
-    rerender(provide(cartProvider(<ProductHero product={{ ...product, models: [], memorySizes: [], colors: [] }} />, add)));
+    rerender(provide(cartProvider(<MemoryRouter><ProductHero product={{ ...product, models: [], memorySizes: [], colors: [] }} /></MemoryRouter>, add)));
     expect((screen.getByRole('button', { name: 'Add to Cart' }) as HTMLButtonElement).disabled).toBe(true);
     expect(add).not.toHaveBeenCalled();
   });
   it('uses IDs for hero choices and clears selections when the product changes', () => {
     const add = vi.fn();
-    const { rerender } = render(provide(cartProvider(<ProductHero product={product} />, add)));
+    const { rerender } = render(provide(cartProvider(<MemoryRouter><ProductHero product={product} /></MemoryRouter>, add)));
     fireEvent.change(screen.getByLabelText('Model'), { target: { value: '12' } });
     fireEvent.change(screen.getByLabelText('Finish'), { target: { value: 'Blue' } });
     fireEvent.change(screen.getByLabelText('Storage Capacity'), { target: { value: '22' } });
     expect(screen.getByText('RMB 23.50')).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: 'Add to Cart' }));
     expect(add).toHaveBeenCalledWith(expect.objectContaining({ modelId: 12, memorySizeId: 22 }));
-    rerender(provide(cartProvider(<ProductHero product={{ ...product, id: 42 }} />, add)));
+    rerender(provide(cartProvider(<MemoryRouter><ProductHero product={{ ...product, id: 42 }} /></MemoryRouter>, add)));
     expect((screen.getByRole('button', { name: 'Add to Cart' }) as HTMLButtonElement).disabled).toBe(true);
     expect((screen.getByLabelText('Model') as HTMLSelectElement).value).toBe('');
   });

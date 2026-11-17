@@ -162,5 +162,26 @@
     "reconcileButton": "Reload current status",
     "invalidNote": "Use up to 500 characters without control characters.",
     "toggleMenu": "Toggle navigation"
+  },
+  "ui": {
+    "loading": "Loading…",
+    "language": "Language",
+    "cart": "Shopping cart",
+    "logout": "Log out",
+    "menu": "Menu",
+    "close": "Close menu",
+    "theme": "Toggle color theme",
+    "noVideo": "Video unavailable",
+    "video": "Product video",
+    "notFound": "Page not found",
+    "pageUnavailable": "This page is unavailable.",
+    "home": "Go home",
+    "back": "Go back",
+    "error": "Something went wrong",
+    "contactSupport": "Please try again or contact support."
+  },
+  "support": {
+    "failed": "Support could not be loaded.",
+    "empty": "No support content available."
   }
 }

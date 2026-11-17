@@ -162,5 +162,26 @@
     "reconcileButton": "重新加载当前状态",
     "invalidNote": "请使用不超过500个字符，不含控制字符。",
     "toggleMenu": "展开或收起导航"
+  },
+  "ui": {
+    "loading": "加载中…",
+    "language": "语言",
+    "cart": "购物车",
+    "logout": "退出登录",
+    "menu": "菜单",
+    "close": "关闭菜单",
+    "theme": "切换主题",
+    "noVideo": "视频不可用",
+    "video": "产品视频",
+    "notFound": "页面未找到",
+    "pageUnavailable": "此页面不可用。",
+    "home": "返回首页",
+    "back": "返回上一页",
+    "error": "出现错误",
+    "contactSupport": "请重试或联系支持。"
+  },
+  "support": {
+    "failed": "无法加载支持内容。",
+    "empty": "暂无支持内容。"
   }
 }
